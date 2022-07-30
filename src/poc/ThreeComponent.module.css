@@ -1,0 +1,9 @@
+.container {
+  height: 100vh;
+  width: 100vw;
+}
+
+.container canvas {
+  width: 100vw !important;
+  height: 100vh !important;
+}

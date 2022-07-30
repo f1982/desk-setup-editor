@@ -1,0 +1,15 @@
+
+module.exports = {
+  module: {
+    loaders: [
+      {
+        test: /\.(glsl|vs|fs)$/,
+        loader: 'ts-shader-loader'
+      }
+    ],
+    rules: {
+      test: /\.(frag|vert|glsl)$/,
+      use: ['ts-shader-loader','glsl-shader-loader', 'raw-loader']
+    }
+  }
+}
