@@ -7,41 +7,28 @@ const ThreeComp: React.FC = () => {
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const startDrawing = (threeCanvas: ThreeCanvas) => {
-    const renderLoop = () => {
-      threeCanvas.render();
-    };
-    threeCanvas.setAnimationLoop(renderLoop);
+    threeCanvas.setAnimationLoop(
+      () => {
+        threeCanvas.render();
+      }
+    );
   };
 
-  // useEffect(() => {
-  //   const init = () => {
-  //     // @ts-ignore
-
-  //     const canvas = new ThreeCanvas({
-  //       mountPoint: canvasRef.current!,
-  //       width: canvasRef.current?.clientWidth!,
-  //       height: canvasRef.current?.clientHeight!,
-  //     });
-  //     startDrawing(canvas);
-  //     setInitialized(true);
-  //   };
-
-  //   if (!initialized) {
-  //     init();
-  //   }
-  // }, [initialized]);
-
-
   useEffect(() => {
-    const canvas = new ThreeCanvas({
-      mountPoint: canvasRef.current!,
-      width: 500,
-      height: 500,
-    });
-    startDrawing(canvas);
-    setInitialized(true);
+    if (!initialized) {
+      if (canvasRef.current) {
+        const { clientWidth, clientHeight } = canvasRef.current;
+        const canvas = new ThreeCanvas({
+          mountPoint: canvasRef.current,
+          width: clientWidth,
+          height: clientHeight,
+        });
 
-  }, []);
+        startDrawing(canvas);
+        setInitialized(true);
+      }
+    }
+  }, [initialized]);
 
   return (
     <div className="container" data-renderer={initialized}>
