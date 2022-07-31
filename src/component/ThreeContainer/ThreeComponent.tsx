@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ThreeCanvas from './ThreeCanvas';
+import ThreeCanvas from '../ThreeCanvas';
 import './ThreeComponent.scss';
 
 const ThreeComp: React.FC = () => {
@@ -15,7 +15,11 @@ const ThreeComp: React.FC = () => {
   };
 
   useEffect(() => {
+    console.log('useEffect');
+    
     if (!initialized) {
+      console.log('initialized');
+
       if (canvasRef.current) {
         const { clientWidth, clientHeight } = canvasRef.current;
         const canvas = new ThreeCanvas({
@@ -28,10 +32,10 @@ const ThreeComp: React.FC = () => {
         setInitialized(true);
       }
     }
-  }, [initialized]);
+  }, []);
 
   return (
-    <div className="container" data-renderer={initialized}>
+    <div className="container" data-test={initialized}>
       <div className="visualizationMount" ref={canvasRef} />
     </div>
   );
