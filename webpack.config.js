@@ -7,15 +7,13 @@ module.exports = {
     //     loader: 'ts-shader-loader'
     //   }
     // ],
-    rules: {
+    rules: [{
       test: /\.(frag|vert|glsl)$/,
-      // use: 'ts-shader-loader',
+      exclude: '/node_modules/',
       use: [
-        {
-          loader: 'ts-shader-loader',
-          options: {}
-        }
+        'raw-loader',
+        'ts-shader-loader'
       ]
-    }
+    }]
   }
 }

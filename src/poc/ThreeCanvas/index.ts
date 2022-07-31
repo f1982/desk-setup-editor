@@ -1,12 +1,12 @@
 // @ts-ignore
 import * as THREE from 'three';
-// import gsap from 'gsap';
+import gsap from 'gsap';
 import { DragControls } from 'three/examples/jsm/controls/DragControls';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // import theme from 'utils/theme';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-// import { vertex as basicVertex, fragment as basicFragment } from './shaders/basic';
+import { vertex as basicVertex, fragment as basicFragment } from '../../shaders/index';
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -18,6 +18,18 @@ interface IOptions {
 
 function addCube(scene: THREE.Scene) {
   const geo = new THREE.BoxGeometry(20, 20, 20);
+
+  const material = new THREE.ShaderMaterial({
+    // transparent: true,
+    side: THREE.DoubleSide,
+    vertexShader: basicVertex,
+    fragmentShader: basicFragment,
+    uniforms: {
+      time: { value: 0 },
+    },
+  });
+
+  
 
   for (let i = 0; i < 200; i += 1) {
     const object = new THREE.Mesh(
@@ -37,8 +49,14 @@ function addCube(scene: THREE.Scene) {
     object.scale.y = Math.random() + 0.5;
     object.scale.z = Math.random() + 0.5;
 
+    gsap.to(object.rotation, {
+      duration: 19, y: Math.PI * 2, repeat: -1, ease: 'none',
+    });
+
     scene.add(object);
   }
+
+  
 }
 
 function findType(scene: THREE.Group, type: string, name: string) {

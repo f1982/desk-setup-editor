@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ThreeCanvas from './ThreeCanvas';
-import styles from './ThreeComponent.module.css';
+import './ThreeComponent.scss';
 
 const ThreeComp: React.FC = () => {
   const [initialized, setInitialized] = useState<boolean>(false);
@@ -44,7 +44,7 @@ const ThreeComp: React.FC = () => {
   }, []);
 
   return (
-    <div className={styles.container} data-renderer={initialized}>
+    <div className="container" data-renderer={initialized}>
       <div className="visualizationMount" ref={canvasRef} />
     </div>
   );

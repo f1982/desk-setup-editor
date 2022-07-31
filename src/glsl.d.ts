@@ -1,4 +1,14 @@
+declare module '*.vert' {
+  const src: string;
+  export default src;
+}
+
+declare module '*.frag' {
+  const src: string;
+  export default src;
+}
+
 declare module '*.glsl' {
-  const value: string
-  export default value
+  const src: string;
+  export default src;
 }
