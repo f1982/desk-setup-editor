@@ -32,15 +32,14 @@ const ThreeComp: React.FC = () => {
   // }, [initialized]);
 
 
-    useEffect(() => {
-  
-      const canvas = new ThreeCanvas({
-        mountPoint: canvasRef.current!,
-        width: 500,
-        height: 500,
-      });
-      startDrawing(canvas);
-      setInitialized(true);
+  useEffect(() => {
+    const canvas = new ThreeCanvas({
+      mountPoint: canvasRef.current!,
+      width: 500,
+      height: 500,
+    });
+    startDrawing(canvas);
+    setInitialized(true);
 
   }, []);
 
