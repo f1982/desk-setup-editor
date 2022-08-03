@@ -7,6 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { vertex as basicVertex, fragment as basicFragment } from '../../shaders/index';
+import { addControl, getCubeGroup, getCamera, getLights, getRenderer, getScene, loadScene } from '../../SceneElements';
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -15,54 +16,6 @@ interface IOptions {
   width: number;
   height: number;
 }
-
-function addCube(scene: THREE.Scene) {
-  const geo = new THREE.BoxGeometry(20, 20, 20);
-
-  const material = new THREE.ShaderMaterial({
-    // transparent: true,
-    side: THREE.DoubleSide,
-    vertexShader: basicVertex,
-    fragmentShader: basicFragment,
-    uniforms: {
-      time: { value: 0 },
-    },
-  });
-
-  
-
-  for (let i = 0; i < 200; i += 1) {
-    const object = new THREE.Mesh(
-      geo,
-      new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff }),
-    );
-
-    object.position.x = Math.random() * 800 - 400;
-    object.position.y = Math.random() * 800 - 400;
-    object.position.z = Math.random() * 800 - 400;
-
-    object.rotation.x = Math.random() * 2 * Math.PI;
-    object.rotation.y = Math.random() * 2 * Math.PI;
-    object.rotation.z = Math.random() * 2 * Math.PI;
-
-    object.scale.x = Math.random() + 0.5;
-    object.scale.y = Math.random() + 0.5;
-    object.scale.z = Math.random() + 0.5;
-
-    gsap.to(object.rotation, {
-      duration: 19, y: Math.PI * 2, repeat: -1, ease: 'none',
-    });
-
-    scene.add(object);
-  }
-
-  
-}
-
-function findType(scene: THREE.Group, type: string, name: string) {
-  return scene.children.find((child) => (child.type === type && child.name === name));
-}
-
 
 class ThreeCanvas {
   // @ts-ignore
@@ -80,31 +33,26 @@ class ThreeCanvas {
     this.initScene(options);
 
     //@ts-ignore
-    addCube(this.scene);
+    this.scene.add(getCubeGroup())
+    loadScene((obj: THREE.Group) => {
+      this.scene.add(obj);
+    })
   }
 
-  initScene(options:any) {
+  initScene(options: IOptions) {
     const { mountPoint, width, height } = options;
     // basics
     this.clock = new THREE.Clock();
     // scene
-    this.scene = new THREE.Scene();
-    this.scene.background = new THREE.Color('#ffffff');
+    this.scene = getScene();
+    this.camera = getCamera(width, height);
 
-    this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    this.camera.position.set(0, 0.5, 1.5);
-    // this.camera.position.z = 0;
+    const lights = getLights();
+    lights.forEach(light => {
+      this.scene.add(light);
+    })
 
-    this.addLights();
-
-    this.renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: true,
-    });
-
-    this.renderer.setSize(width, height);
-    // VR support
-    // renderer.xr.enabled = true;
+    this.renderer = getRenderer(width, height);
 
     // post processing support
     const renderPass = new RenderPass(this.scene, this.camera);
@@ -117,26 +65,11 @@ class ThreeCanvas {
     mountPoint.appendChild(this.renderer.domElement);
     // mountPoint.appendChild(VRButton.createButton(this.renderer));
 
-    this.addControl();
+    addControl(this.camera, this.renderer.domElement)
   }
 
-  addLights() {
-    const ambientLight = new THREE.AmbientLight(0x505050, 4);
-    ambientLight.position.set(0, 3, 0);
-    this.scene.add(ambientLight);
 
-    const directionLight = new THREE.DirectionalLight(0xffffff, 3);
-    directionLight.position.set(3.5, 5, -2.5);
-    this.scene.add(directionLight);
-  }
-
-  addControl() {
-    const controls = new OrbitControls(this.camera, this.renderer.domElement);
-    controls.target.set(0, 0.5, 0);
-    controls.update();
-    controls.enablePan = false;
-    controls.enableDamping = true;
-  }
+ 
 
   addDragAndDrop(objects: THREE.Mesh) {
     // @ts-ignore
