@@ -2,21 +2,21 @@ import * as THREE from 'three'
 
 class SimpleDesk extends THREE.Group {
 
-  desktopWidth;
-  desktopDepth;
-  desktopHeight = 0.5
+  desktopWidth=2;
+  desktopDepth=0.6;
+  desktopHeight = 0.05
 
-  legWidth = 1;
-  legHeight = 10;
-  padding = 1;
+  legWidth = 0.05;
+  legHeight = 0.8;
+  padding = 0.1;
 
   legs = Array<THREE.Mesh>();
 
-  constructor({ width, depth }: { width: number, depth: number }) {
+  constructor() {
     super();
 
-    this.desktopWidth = width;
-    this.desktopDepth = depth;
+    // this.desktopWidth = width;
+    // this.desktopDepth = depth;
 
     this.init();
     this.layout();

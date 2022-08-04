@@ -11,6 +11,7 @@ import { getCamera, getGUIPanel, getLights, getRenderer, getScene, getStats } fr
 import { addControl } from '../../Controllers';
 import SimpleDesk from '../../models/SimpleDesk';
 import Stats from 'stats.js';
+import { getCubeGroup, loadScene } from '../../models';
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -22,7 +23,7 @@ interface IOptions {
 
 class ThreeCanvas {
   // @ts-ignore
-  private scene: THREE.Scene;
+  public scene: THREE.Scene;
   // @ts-ignore
   private camera: THREE.PerspectiveCamera;
   // @ts-ignore
@@ -36,6 +37,7 @@ class ThreeCanvas {
 
   constructor(options: IOptions) {
     this.initScene(options);
+    this.initTools();
     this.initElements();
     this.initControl();
   }
@@ -65,9 +67,10 @@ class ThreeCanvas {
     // mount to DOM
     mountPoint.appendChild(this.renderer.domElement);
     // mountPoint.appendChild(VRButton.createButton(this.renderer));
+  }
 
+  initTools () {
     const panel = getGUIPanel();
-    panel.add(this.renderer.domElement, 'adjustment');
 
     this.stats = getStats();
     document.body.append(this.stats.dom)
@@ -75,17 +78,20 @@ class ThreeCanvas {
 
   initElements() {
     // this.scene.add(getCubeGroup());
-    // loadScene((obj: THREE.Group) => {
-    //   this.scene.add(obj);
-    // });
 
-    const desk = new SimpleDesk({width:20,depth:10});
-    desk.position.set(0,0,0)
+    loadScene((obj: THREE.Group) => {
+      this.scene.add(obj);
+    });
+
+    const desk = new SimpleDesk();
+    desk.position.set(0,2,0);
+    // desk.rotation.set(0, 0,0)
+    desk.rotation.set(-Math.PI / 2, 0,0)
     this.scene.add(desk);
   }
 
   initControl() {
-    addControl(this.camera, this.renderer.domElement)
+    addControl(this.camera, this.renderer.domElement);
   }
 
   resizeRendererToDisplaySize() {
