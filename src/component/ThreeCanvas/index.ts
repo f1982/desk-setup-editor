@@ -7,9 +7,10 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { vertex as basicVertex, fragment as basicFragment } from '../../shaders/index';
-import { getCubeGroup, getCamera, getLights, getRenderer, getScene, loadScene } from '../../SceneElements';
+import { getCamera, getGUIPanel, getLights, getRenderer, getScene, getStats } from '../../SceneElements';
 import { addControl } from '../../Controllers';
 import SimpleDesk from '../../models/SimpleDesk';
+import Stats from 'stats.js';
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -30,6 +31,8 @@ class ThreeCanvas {
   private composer: EffectComposer;
   // @ts-ignore
   private clock: THREE.Clock;
+  // @ts-ignore
+  private stats: Stats;
 
   constructor(options: IOptions) {
     this.initScene(options);
@@ -62,6 +65,12 @@ class ThreeCanvas {
     // mount to DOM
     mountPoint.appendChild(this.renderer.domElement);
     // mountPoint.appendChild(VRButton.createButton(this.renderer));
+
+    const panel = getGUIPanel();
+    panel.add(this.renderer.domElement, 'adjustment');
+
+    this.stats = getStats();
+    document.body.append(this.stats.dom)
   }
 
   initElements() {
@@ -101,6 +110,8 @@ class ThreeCanvas {
   }
 
   render() {
+    this.stats.begin();
+
     // check if we need to resize the canvas and re-setup the camera
     if (this.resizeRendererToDisplaySize()) {
       const canvas = this.renderer.domElement;
@@ -109,6 +120,7 @@ class ThreeCanvas {
       this.camera.updateProjectionMatrix();
     }
     this.composer.render();
+    this.stats.end();
   }
 }
 
