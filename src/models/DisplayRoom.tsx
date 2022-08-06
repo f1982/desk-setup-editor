@@ -1,7 +1,8 @@
 import GUI from 'lil-gui';
 import * as THREE from 'three'
+import DSEObject from './DSEObject';
 
-class DisplayRoom extends THREE.Group {
+class DisplayRoom extends DSEObject {
 
   private groundWidth = 5;
   private groundHeight = 5;

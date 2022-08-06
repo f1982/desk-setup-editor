@@ -1,7 +1,7 @@
 import GUI from 'lil-gui';
 import * as THREE from 'three'
-
-class SimpleDesk extends THREE.Group {
+import DSEObject from './DSEObject';
+class SimpleDesk extends DSEObject {
 
   private desktopWidth = 2;
   private desktopDepth = 0.6;

@@ -8,7 +8,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { vertex as basicVertex, fragment as basicFragment } from '../../shaders/index';
 import { getCamera, getGirds, getGUIPanel, getLights, getRenderer, getScene, getStats } from '../../SceneElements';
-import { addControl } from '../../Controllers';
+import GlobalController, { addControl, addDragAndDrop } from '../../Controllers';
 import SimpleDesk from '../../models/SimpleDesk';
 import Stats from 'stats.js';
 import { getCubeGroup, loadScene } from '../../models';
@@ -97,10 +97,16 @@ class ThreeCanvas {
     const desk = new SimpleDesk();
     desk.setGUI(this.gui);
     this.scene.add(desk);
+
+    // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);
+    const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
+    ctrl.attachObject(desk);
   }
 
   initControl() {
-    addControl(this.camera, this.renderer.domElement);
+    // addControl(this.camera, this.renderer.domElement);
+    
+
   }
 
   resizeRendererToDisplaySize() {

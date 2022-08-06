@@ -1,4 +1,5 @@
-import { OrbitControls, DragControls } from "three-stdlib";
+import { Camera, Group, Renderer, Scene } from "three";
+import { OrbitControls, DragControls, TransformControls } from "three-stdlib";
 
 export const addControl = (camera: THREE.Camera, domElement: HTMLElement) => {
   const controls = new OrbitControls(camera, domElement);
@@ -12,24 +13,90 @@ export const addControl = (camera: THREE.Camera, domElement: HTMLElement) => {
 export const addDragAndDrop = (
   camera: THREE.Camera,
   domElement: HTMLElement,
-  objects: THREE.Mesh
+  objects: THREE.Group[]
 ) => {
   // @ts-ignore
-  const controls = new DragControls(objects, this.camera, this.renderer.domElement);
+  const controls = new DragControls(objects, camera, domElement);
+  controls.transformGroup = true;
 
   // add event listener to highlight dragged objects
   controls.addEventListener('dragstart', (event) => {
-    event.object.material.emissive.set(0xaaaaaa);
+    // event.object.material.emissive.set(0xaaaaaa);
   });
 
   controls.addEventListener('drag', (event) => {
     // This will prevent moving z axis, but will be on 0 line.
     // change this to your object position of z axis.
-    const p = event.object.position;
+    // const p = event.object.position;
     // event.object.position.set(p.x, p.y, 0);
   });
 
   controls.addEventListener('dragend', (event) => {
-    event.object.material.emissive.set(0x000000);
+    // event.object.material.emissive.set(0x000000);
   });
 }
+
+
+class GlobalController {
+
+  currentCamera;
+  renderer;
+  scene;
+
+  orbit: OrbitControls;
+  control: TransformControls;
+
+  attachObj: Group;
+
+  constructor(scene: Scene, camera: Camera, renderer: Renderer) {
+    this.currentCamera = camera;
+    this.renderer = renderer;
+    this.scene = scene;
+
+    this.init();
+  };
+
+  public attachObject(obj: Group) {
+    if (this.attachObj) {
+      this.control.detach();
+    }
+    this.attachObj = obj;
+    this.control.attach(this.attachObj);
+  }
+
+
+  init() {
+    const orbit = new OrbitControls(this.currentCamera, this.renderer.domElement);
+    orbit.update();
+
+    orbit.addEventListener('change', this.render);
+    this.orbit = orbit;
+
+    const control = new TransformControls(this.currentCamera, this.renderer.domElement);
+    control.setMode('translate');
+    // control.show
+    control.addEventListener('change', (event) => {
+      
+      // restrict move area of specific object
+      if (this.attachObj.position.x <= -3) {
+        this.attachObj.position.set(-3, this.attachObj.position.y, this.attachObj.position.z)
+      }
+
+    });
+    control.addEventListener('dragging-changed', (event) => {
+      console.log('dragging-changed', event)
+      this.orbit.enabled = !event.value;
+
+    });
+    this.scene.add(control);
+    this.control = control;
+
+  }
+
+  render(event: any) {
+    console.log('event', event);
+    // dispatchEvent(new CustomEvent('change'));
+  }
+}
+
+export default GlobalController;
