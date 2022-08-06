@@ -11,19 +11,21 @@ export const getScene = () => {
 export const getCamera = (width: number, height: number) => {
   const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
   camera.position.set(3, 2, -3);
-  // camera.position.z = 0;
-  // camera.lookAt(0, 0, 0);
-  camera.rotation.set(0,0,0)
+  camera.rotation.set(0, 0, 0)
   return camera;
 }
 
-export const getLights = () => {
-  const ambientLight = new THREE.AmbientLight(0x505050, 4);
+export const getLights = (scene: THREE.Scene) => {
+  const ambientLight = new THREE.AmbientLight(0x505050, 1);
   ambientLight.position.set(0, 3, 0);
+  scene.add(ambientLight);
 
   const directionLight = new THREE.DirectionalLight(0xffffff, 3);
-  directionLight.position.set(3.5, 5, -2.5);
-  return [ambientLight, directionLight]
+  directionLight.position.set(13.5, 15, -12.5);
+  scene.add(directionLight);
+
+  const directionLightHelper = new THREE.DirectionalLightHelper(directionLight, 10, 0xff0000);
+  scene.add(directionLightHelper);
 }
 
 export const getRenderer = (width: number, height: number) => {
@@ -42,6 +44,18 @@ export const getRenderer = (width: number, height: number) => {
 export const getGUIPanel = () => {
   const panel = new GUI({ width: 310 });
 
+  const myObject = {
+    myBoolean: true,
+    myFunction: function () { },
+    myString: 'lil-gui',
+    myNumber: 1
+  };
+
+  panel.add(myObject, 'myNumber')
+    .name('Custom Name')
+    .onChange((value: number) => {
+      console.log(value);
+    });
   const folder1 = panel.addFolder('Base Actions');
   const folder2 = panel.addFolder('Additive Action Weights');
   const folder3 = panel.addFolder('General Speed');

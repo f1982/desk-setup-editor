@@ -12,6 +12,7 @@ import { addControl } from '../../Controllers';
 import SimpleDesk from '../../models/SimpleDesk';
 import Stats from 'stats.js';
 import { getCubeGroup, loadScene } from '../../models';
+import GUI from 'lil-gui';
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -35,6 +36,8 @@ class ThreeCanvas {
   // @ts-ignore
   private stats: Stats;
 
+  private gui: GUI;
+
   constructor(options: IOptions) {
     this.initScene(options);
     this.initTools();
@@ -50,10 +53,7 @@ class ThreeCanvas {
     this.scene = getScene();
     this.camera = getCamera(width, height);
 
-    const lights = getLights();
-    lights.forEach(light => {
-      this.scene.add(light);
-    })
+    const lights = getLights(this.scene);
 
     this.renderer = getRenderer(width, height);
 
@@ -69,9 +69,13 @@ class ThreeCanvas {
     // mountPoint.appendChild(VRButton.createButton(this.renderer));
   }
 
-  initTools () {
+  initTools() {
     this.scene.add(getGirds());
-    const panel = getGUIPanel();
+    const axesHelper = new THREE.AxesHelper(5);
+    this.scene.add(axesHelper);
+
+    this.gui = getGUIPanel();
+
 
     this.stats = getStats();
     document.body.append(this.stats.dom)
@@ -85,9 +89,7 @@ class ThreeCanvas {
     // });
 
     const desk = new SimpleDesk();
-    desk.position.set(0,2,0);
-    // desk.rotation.set(0, 0,0)
-    desk.rotation.set(-Math.PI / 2, 0,0)
+    desk.setGUI(this.gui);
     this.scene.add(desk);
   }
 
