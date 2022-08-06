@@ -7,7 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { vertex as basicVertex, fragment as basicFragment } from '../../shaders/index';
-import { getCamera, getGUIPanel, getLights, getRenderer, getScene, getStats } from '../../SceneElements';
+import { getCamera, getGirds, getGUIPanel, getLights, getRenderer, getScene, getStats } from '../../SceneElements';
 import { addControl } from '../../Controllers';
 import SimpleDesk from '../../models/SimpleDesk';
 import Stats from 'stats.js';
@@ -70,6 +70,7 @@ class ThreeCanvas {
   }
 
   initTools () {
+    this.scene.add(getGirds());
     const panel = getGUIPanel();
 
     this.stats = getStats();
@@ -79,9 +80,9 @@ class ThreeCanvas {
   initElements() {
     // this.scene.add(getCubeGroup());
 
-    loadScene((obj: THREE.Group) => {
-      this.scene.add(obj);
-    });
+    // loadScene((obj: THREE.Group) => {
+    //   this.scene.add(obj);
+    // });
 
     const desk = new SimpleDesk();
     desk.position.set(0,2,0);
