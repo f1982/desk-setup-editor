@@ -13,6 +13,7 @@ import SimpleDesk from '../../models/SimpleDesk';
 import Stats from 'stats.js';
 import { getCubeGroup, loadScene } from '../../models';
 import GUI from 'lil-gui';
+import DisplayRoom from '../../models/DisplayRoom';
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -87,6 +88,11 @@ class ThreeCanvas {
     // loadScene((obj: THREE.Group) => {
     //   this.scene.add(obj);
     // });
+
+    const room = new DisplayRoom();
+    room.setGUI(this.gui);
+    this.scene.add(room);
+    // room.position.set(0,-0.01,0)
 
     const desk = new SimpleDesk();
     desk.setGUI(this.gui);

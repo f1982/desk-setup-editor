@@ -35,33 +35,40 @@ class SimpleDesk extends THREE.Group {
 
   public setGUI(gui: GUI) {
     const folder = gui.addFolder('Desk');
-    const params = {
-      deskWidth: 2,
-      deskDepth: 0.6,
-      deskHeight: 0.05,
-      legsHeight: 0.1,
-      legsWidth: 0.05
-    }
-    folder.add(params, 'deskWidth', 1, 2.9).onChange((value: number) => {
+    folder.add(this, 'desktopWidth', 1, 3.6, 0.1).onChange((value: number) => {
       this.desktopWidth = value;
       this.layout();
     })
-    folder.add(params, 'deskDepth', 0.5, 1.6).onChange((value: number) => {
+    folder.add(this, 'desktopDepth', 0.5, 2, 0.01).onChange((value: number) => {
       this.desktopDepth = value;
       this.layout();
     })
-    folder.add(params, 'deskHeight', 0.02, 0.1).onChange((value: number) => {
+    folder.add(this, 'desktopHeight', 0.02, 0.1, 0.01).onChange((value: number) => {
       this.desktopHeight = value;
       this.layout();
     })
-    folder.add(params, 'legsHeight', 0.5, 1.25).onChange((value: number) => {
+    folder.add(this, 'legHeight', 0.5, 1.6, 0.1).onChange((value: number) => {
       this.legHeight = value;
       this.layout();
     })
-    folder.add(params, 'legsWidth', 0.02, 0.12).onChange((value: number) => {
+    folder.add(this, 'legWidth', 0.02, 0.12, 0.01).onChange((value: number) => {
       this.legWidth = value;
       this.layout();
     })
+    folder.add(this, 'padding', 0.01, 0.2, 0.01).onChange((value: number) => {
+      this.padding = value;
+      this.layout();
+    })
+  }
+
+  /**
+   * Get configuration object can be used for saving 
+   * @returns desk object data
+   */
+  public getConfiguration() {
+    return {
+
+    }
   }
 
   constructor() {
@@ -81,9 +88,7 @@ class SimpleDesk extends THREE.Group {
     const geo = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshLambertMaterial({ color: this.boardColor });
     this.desktop = new THREE.Mesh(geo, material);
-    // desktop.scale.set(width, depth, height);
-    this.desktop.rotation.set(Math.PI / 2, 0, 0)
-    this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0)
+   
     this.add(this.desktop);
   }
 
@@ -100,6 +105,10 @@ class SimpleDesk extends THREE.Group {
   }
 
   layout() {
+    // desktop.scale.set(width, depth, height);
+    this.desktop.rotation.set(Math.PI / 2, 0, 0)
+    this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0)
+    
     // resize the desk board
     this.desktop.scale.set(this.desktopWidth, this.desktopDepth, this.desktopHeight);
     // set position of the desk board

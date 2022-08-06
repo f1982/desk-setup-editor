@@ -16,16 +16,19 @@ export const getCamera = (width: number, height: number) => {
 }
 
 export const getLights = (scene: THREE.Scene) => {
-  const ambientLight = new THREE.AmbientLight(0x505050, 1);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 0.66);
   ambientLight.position.set(0, 3, 0);
   scene.add(ambientLight);
 
-  const directionLight = new THREE.DirectionalLight(0xffffff, 3);
+  const directionLight = new THREE.DirectionalLight(0xffffff, 1);
   directionLight.position.set(13.5, 15, -12.5);
   scene.add(directionLight);
 
-  const directionLightHelper = new THREE.DirectionalLightHelper(directionLight, 10, 0xff0000);
-  scene.add(directionLightHelper);
+  // const pointLight = new THREE.PointLight(0xffffff, 1);
+  // scene.add(pointLight);
+
+  // const directionLightHelper = new THREE.DirectionalLightHelper(directionLight, 10, 0xff0000);
+  // scene.add(directionLightHelper);
 }
 
 export const getRenderer = (width: number, height: number) => {
@@ -44,21 +47,21 @@ export const getRenderer = (width: number, height: number) => {
 export const getGUIPanel = () => {
   const panel = new GUI({ width: 310 });
 
-  const myObject = {
-    myBoolean: true,
-    myFunction: function () { },
-    myString: 'lil-gui',
-    myNumber: 1
-  };
+  // const myObject = {
+  //   myBoolean: true,
+  //   myFunction: function () { },
+  //   myString: 'lil-gui',
+  //   myNumber: 1
+  // };
 
-  panel.add(myObject, 'myNumber')
-    .name('Custom Name')
-    .onChange((value: number) => {
-      console.log(value);
-    });
-  const folder1 = panel.addFolder('Base Actions');
-  const folder2 = panel.addFolder('Additive Action Weights');
-  const folder3 = panel.addFolder('General Speed');
+  // panel.add(myObject, 'myNumber')
+  //   .name('Custom Name')
+  //   .onChange((value: number) => {
+  //     console.log(value);
+  //   });
+  // const folder1 = panel.addFolder('Base Actions');
+  // const folder2 = panel.addFolder('Additive Action Weights');
+  // const folder3 = panel.addFolder('General Speed');
 
   return panel;
 }
@@ -71,6 +74,9 @@ export const getGirds = () => {
   return grid;
 }
 
+export const addGroundAndWall = () => {
+  
+}
 
 export const getStats = () => {
   const stats = new Stats();
