@@ -89,14 +89,22 @@ class ThreeCanvas {
     //   this.scene.add(obj);
     // });
 
+    const desk = new SimpleDesk();
+    desk.setGUI(this.gui);
+    this.scene.add(desk);
+
     const room = new DisplayRoom();
+    room.addEventListener('layout-change', () => {
+      const { min, max } = room.getContainerBox()
+      console.log('room layout has been changed: min:', min, 'max: ',max);
+      desk.updateRestrictArea(min, max);
+      console.log(desk.getRestrictArea());
+    })
     room.setGUI(this.gui);
     this.scene.add(room);
     // room.position.set(0,-0.01,0)
 
-    const desk = new SimpleDesk();
-    desk.setGUI(this.gui);
-    this.scene.add(desk);
+    
 
     // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);
     const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
@@ -105,7 +113,7 @@ class ThreeCanvas {
 
   initControl() {
     // addControl(this.camera, this.renderer.domElement);
-    
+
 
   }
 

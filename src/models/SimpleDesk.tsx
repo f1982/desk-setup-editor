@@ -1,5 +1,6 @@
 import GUI from 'lil-gui';
 import * as THREE from 'three'
+import { Vector3 } from 'three';
 import DSEObject from './DSEObject';
 class SimpleDesk extends DSEObject {
 
@@ -61,6 +62,31 @@ class SimpleDesk extends DSEObject {
     })
   }
 
+  public updateRestrictArea(min: Vector3, max: Vector3) {
+    this.restrictMin = min;
+    this.restrictMax = max;
+  }
+
+  /**
+   * Get restrict min and max, will be used for object.position.clamp
+   *  
+   * @returns {min:Vector3, max: Vector3}
+   */
+  public getRestrictArea() {
+    return {
+      min: new Vector3(
+        this.restrictMin.x + this.desktopWidth / 2,
+        0,
+        this.restrictMin.z + this.desktopDepth / 2,
+      ),
+      max: new Vector3(
+        this.restrictMax.x - this.desktopWidth / 2,
+        0,
+        this.restrictMax.z - this.desktopDepth / 2,
+      )
+    }
+  }
+
   /**
    * Get configuration object can be used for saving 
    * @returns desk object data
@@ -74,6 +100,9 @@ class SimpleDesk extends DSEObject {
   constructor() {
     super();
 
+
+    console.log('this.restrictMin', this.restrictMin);
+    console.log('this.restrictMax', this.restrictMax);
     this.init();
     this.layout();
 
@@ -88,7 +117,7 @@ class SimpleDesk extends DSEObject {
     const geo = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshLambertMaterial({ color: this.boardColor });
     this.desktop = new THREE.Mesh(geo, material);
-   
+
     this.add(this.desktop);
   }
 
@@ -108,7 +137,7 @@ class SimpleDesk extends DSEObject {
     // desktop.scale.set(width, depth, height);
     this.desktop.rotation.set(Math.PI / 2, 0, 0)
     this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0)
-    
+
     // resize the desk board
     this.desktop.scale.set(this.desktopWidth, this.desktopDepth, this.desktopHeight);
     // set position of the desk board

@@ -1,5 +1,6 @@
-import { Camera, Group, Renderer, Scene } from "three";
+import { Camera, Group, Renderer, Scene, Vector3 } from "three";
 import { OrbitControls, DragControls, TransformControls } from "three-stdlib";
+import DSEObject from "./models/DSEObject";
 
 export const addControl = (camera: THREE.Camera, domElement: HTMLElement) => {
   const controls = new OrbitControls(camera, domElement);
@@ -46,7 +47,7 @@ class GlobalController {
   orbit: OrbitControls;
   control: TransformControls;
 
-  attachObj: Group;
+  attachObj: DSEObject;
 
   constructor(scene: Scene, camera: Camera, renderer: Renderer) {
     this.currentCamera = camera;
@@ -56,12 +57,14 @@ class GlobalController {
     this.init();
   };
 
-  public attachObject(obj: Group) {
+  public attachObject(obj: DSEObject) {
     if (this.attachObj) {
       this.control.detach();
     }
     this.attachObj = obj;
     this.control.attach(this.attachObj);
+
+    console.log(this.attachObj.getRestrictArea());
   }
 
 
@@ -75,12 +78,13 @@ class GlobalController {
     const control = new TransformControls(this.currentCamera, this.renderer.domElement);
     control.setMode('translate');
     // control.show
+
     control.addEventListener('change', (event) => {
-      
-      // restrict move area of specific object
-      if (this.attachObj.position.x <= -3) {
-        this.attachObj.position.set(-3, this.attachObj.position.y, this.attachObj.position.z)
-      }
+
+      const { min, max } = this.attachObj.getRestrictArea()
+      this.attachObj.position.clamp(min, max);
+
+      this.render(event);
 
     });
     control.addEventListener('dragging-changed', (event) => {

@@ -1,5 +1,6 @@
 import GUI from 'lil-gui';
 import * as THREE from 'three'
+import { Vector3 } from 'three';
 import DSEObject from './DSEObject';
 
 class DisplayRoom extends DSEObject {
@@ -8,10 +9,10 @@ class DisplayRoom extends DSEObject {
   private groundHeight = 5;
 
   private wallHeight = 2;
-  
+
   private ground: THREE.Mesh;
   private walls: THREE.Mesh[] = [];
-  
+
   private showWalls = 3;
 
   private groundColor = 0xcccccc;
@@ -44,6 +45,21 @@ class DisplayRoom extends DSEObject {
       this.showWalls = value;
       this.layout();
     })
+  }
+
+  public getContainerBox() {
+    return {
+      min: new Vector3(
+        -this.groundWidth / 2,
+        0,
+        -this.groundHeight / 2
+      ),
+      max: new Vector3(
+        this.groundWidth / 2,
+        0,
+        this.groundHeight / 2
+      )
+    }
   }
 
   initGround() {
@@ -95,7 +111,10 @@ class DisplayRoom extends DSEObject {
       this.walls[2].rotation.set(0, -Math.PI / 2, 0);
       this.walls[2].position.set(-this.groundWidth / 2, this.wallHeight / 2, 0);
     }
+
+    this.dispatchEvent({ type: 'layout-change', message: 'room changed' });
   }
+
 }
 
 export default DisplayRoom;
