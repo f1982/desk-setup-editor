@@ -20,8 +20,6 @@ const ThreeComp: React.FC = () => {
 
   useEffect(() => {
     if (!initialized) {
-      console.log('initialized');
-
       if (canvasRef.current) {
         const { clientWidth, clientHeight } = canvasRef.current;
         const threeScene = new ThreeCanvas({
@@ -32,6 +30,12 @@ const ThreeComp: React.FC = () => {
         threeSceneRef.current = threeScene;
         startDrawing(threeScene);
         setInitialized(true);
+      }
+    }
+    return ()=>{
+      if (canvasRef.current){
+        const child = canvasRef.current.firstChild;
+        canvasRef.current.removeChild(child!);
       }
     }
   }, []);

@@ -11,7 +11,6 @@ function App() {
         <div className="right"> right
         </div>
       </div>
-      
     </div>
   );
 }

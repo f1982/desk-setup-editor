@@ -47,7 +47,16 @@ class ThreeCanvas {
     this.initControl();
   }
 
-  initScene(options: IOptions) {
+  public switchToSTLScene() {
+    // remove controller from scene
+    // controller.removeTransformController()
+  }
+
+  public resetNormalScene() {
+
+  }
+
+  private initScene(options: IOptions) {
     const { mountPoint, width, height } = options;
     // basics
     this.clock = new THREE.Clock();
@@ -71,7 +80,7 @@ class ThreeCanvas {
     // mountPoint.appendChild(VRButton.createButton(this.renderer));
   }
 
-  initTools() {
+  private initTools() {
     this.scene.add(getGirds());
     const axesHelper = new THREE.AxesHelper(5);
     this.scene.add(axesHelper);
@@ -97,10 +106,7 @@ class ThreeCanvas {
     desk.setGUI(this.gui);
     desk.addEventListener('layout-change', () => {
       const { min, max } = desk.getContainerBox();
-      console.log('desk max', max);
-      console.log('desk min', min);
       mug.updateRestrictArea(min, max);
-      // console.log('mug.getRestrictArea:', mug.getRestrictArea());
     });
     desk.position.set(1,0,1);
     this.scene.add(desk);
@@ -111,15 +117,10 @@ class ThreeCanvas {
     const room = new DisplayRoom();
     room.addEventListener('layout-change', () => {
       const { min, max } = room.getContainerBox()
-      console.log('room layout has been changed: min:', min, 'max: ',max);
       desk.updateRestrictArea(min, max);
-      console.log(desk.getRestrictArea());
     })
     room.setGUI(this.gui);
     this.scene.add(room);
-    // room.position.set(0,-0.01,0)
-
-    
 
     // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);
     const ctrl = new GlobalController(this.scene, this.camera, this.renderer);

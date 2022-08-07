@@ -91,6 +91,7 @@ class GlobalController {
       this.orbit.enabled = !event.value;
     });
 
+    // this will affect save STL, when trying to save STL, you need to remove this controller from scene
     this.scene.add(control);
     this.control = control;
   }
