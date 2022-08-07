@@ -1,5 +1,5 @@
-import { Camera, Group, Renderer, Scene, Vector3 } from "three";
-import { OrbitControls, DragControls, TransformControls } from "three-stdlib";
+import { Camera, Renderer, Scene } from "three";
+import { DragControls, OrbitControls, TransformControls } from "three-stdlib";
 import DSEObject from "./models/DSEObject";
 
 export const addControl = (camera: THREE.Camera, domElement: HTMLElement) => {
@@ -37,69 +37,66 @@ export const addDragAndDrop = (
   });
 }
 
-
 class GlobalController {
 
-  currentCamera;
+  camera;
   renderer;
   scene;
 
   orbit: OrbitControls;
   control: TransformControls;
 
-  attachObj: DSEObject;
+  movableObject: DSEObject;
 
   constructor(scene: Scene, camera: Camera, renderer: Renderer) {
-    this.currentCamera = camera;
+    this.camera = camera;
     this.renderer = renderer;
     this.scene = scene;
 
-    this.init();
+    this.initOrbit();
+    this.initTransformControls();
   };
 
   public attachObject(obj: DSEObject) {
-    if (this.attachObj) {
+    if (this.movableObject) {
       this.control.detach();
     }
-    this.attachObj = obj;
-    this.control.attach(this.attachObj);
-
-    console.log(this.attachObj.getRestrictArea());
+    
+    this.movableObject = obj;
+    this.control.attach(this.movableObject);
   }
 
-
-  init() {
-    const orbit = new OrbitControls(this.currentCamera, this.renderer.domElement);
+  initOrbit() {
+    const orbit = new OrbitControls(this.camera, this.renderer.domElement);
+    orbit.enablePan = false;
+    orbit.enableDamping = true;
     orbit.update();
 
     orbit.addEventListener('change', this.render);
     this.orbit = orbit;
+  }
 
-    const control = new TransformControls(this.currentCamera, this.renderer.domElement);
+  initTransformControls() {
+    const control = new TransformControls(this.camera, this.renderer.domElement);
     control.setMode('translate');
-    // control.show
 
     control.addEventListener('change', (event) => {
-
-      const { min, max } = this.attachObj.getRestrictArea()
-      this.attachObj.position.clamp(min, max);
+      const { min, max } = this.movableObject.getRestrictArea()
+      this.movableObject.position.clamp(min, max);
 
       this.render(event);
-
     });
+
     control.addEventListener('dragging-changed', (event) => {
-      console.log('dragging-changed', event)
       this.orbit.enabled = !event.value;
-
     });
+
     this.scene.add(control);
     this.control = control;
-
   }
 
   render(event: any) {
-    console.log('event', event);
-    // dispatchEvent(new CustomEvent('change'));
+    // console.log('event', event);
   }
 }
 

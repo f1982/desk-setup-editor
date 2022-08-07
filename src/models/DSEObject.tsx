@@ -40,10 +40,15 @@ class DSEObject extends THREE.Group {
     return { min: new Vector3(), max: new Vector3() }
   }
 
+  /**
+   * Get the surface can be used for content object
+   * The moving area
+   * 
+   * @returns {min, max}
+   */
   public getContainerBox () {
     return { min: new Vector3(), max: new Vector3() }
   }
-  
 }
 
 export default DSEObject;

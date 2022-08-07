@@ -2,6 +2,7 @@ import GUI from 'lil-gui';
 import * as THREE from 'three'
 import { Vector3 } from 'three';
 import DSEObject from './DSEObject';
+
 class SimpleDesk extends DSEObject {
 
   private desktopWidth = 2;
@@ -18,19 +19,12 @@ class SimpleDesk extends DSEObject {
   private desktop: THREE.Mesh;
   private legs: THREE.Mesh[] = [];
 
+  constructor() {
+    super();
 
-  public set deskWidth(v: number) {
-    this.desktopWidth = v;
-    this.layout();
-  }
+    this.initDesktop();
+    this.initLegs();
 
-  public set deskHeight(v: number) {
-    this.desktopWidth = v;
-    this.layout();
-  }
-
-  public set legsWidth(v: number) {
-    this.legWidth = v;
     this.layout();
   }
 
@@ -88,6 +82,28 @@ class SimpleDesk extends DSEObject {
   }
 
   /**
+   * Get the surface can be used for content object
+   * The moving area
+   * 
+   * @returns {min, max}
+   */
+  public getContainerBox() {
+    const topSurface = this.legHeight + this.desktopHeight;
+    return {
+      min: new Vector3(
+        -this.desktopWidth / 2,
+        topSurface,
+        -this.desktopDepth / 2
+      ),
+      max: new Vector3(
+        this.desktopWidth / 2,
+        topSurface,
+        this.desktopDepth / 2
+      )
+    }
+  }
+
+  /**
    * Get configuration object can be used for saving 
    * @returns desk object data
    */
@@ -97,23 +113,7 @@ class SimpleDesk extends DSEObject {
     }
   }
 
-  constructor() {
-    super();
-
-
-    console.log('this.restrictMin', this.restrictMin);
-    console.log('this.restrictMax', this.restrictMax);
-    this.init();
-    this.layout();
-
-  }
-
-  init() {
-    this.initDesktop();
-    this.initLegs();
-  }
-
-  initDesktop() {
+  private initDesktop() {
     const geo = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshLambertMaterial({ color: this.boardColor });
     this.desktop = new THREE.Mesh(geo, material);
@@ -121,7 +121,7 @@ class SimpleDesk extends DSEObject {
     this.add(this.desktop);
   }
 
-  initLegs() {
+  private initLegs() {
     for (let i = 0; i < 4; i++) {
       const geo = new THREE.BoxGeometry(1, 1, 1);
       const material = new THREE.MeshLambertMaterial({ color: this.legsColor });
@@ -133,10 +133,9 @@ class SimpleDesk extends DSEObject {
     }
   }
 
-  layout() {
-    // desktop.scale.set(width, depth, height);
+  private layout() {
     this.desktop.rotation.set(Math.PI / 2, 0, 0)
-    this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0)
+    // this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0)
 
     // resize the desk board
     this.desktop.scale.set(this.desktopWidth, this.desktopDepth, this.desktopHeight);
@@ -154,19 +153,16 @@ class SimpleDesk extends DSEObject {
       this.legHeight / 2,
       -this.desktopDepth / 2 + this.padding + this.legWidth / 2
     );
-
     this.legs[1].position.set(
       this.desktopWidth / 2 - this.padding - this.legWidth / 2,
       this.legHeight / 2,
       -this.desktopDepth / 2 + this.padding + this.legWidth / 2
     );
-
     this.legs[2].position.set(
       -this.desktopWidth / 2 + this.padding + this.legWidth / 2,
       this.legHeight / 2,
       this.desktopDepth / 2 - this.padding - this.legWidth / 2
     );
-
     this.legs[3].position.set(
       this.desktopWidth / 2 - this.padding - this.legWidth / 2,
       this.legHeight / 2,

@@ -7,16 +7,14 @@ class DisplayRoom extends DSEObject {
 
   private groundWidth = 5;
   private groundHeight = 5;
-
   private wallHeight = 2;
-
-  private ground: THREE.Mesh;
-  private walls: THREE.Mesh[] = [];
-
   private showWalls = 3;
 
   private groundColor = 0xcccccc;
   private wallColor = 0xffcc66;
+
+  private ground: THREE.Mesh;
+  private walls: THREE.Mesh[] = [];
 
   constructor() {
     super();
@@ -62,7 +60,7 @@ class DisplayRoom extends DSEObject {
     }
   }
 
-  initGround() {
+  private initGround() {
     const geometry = new THREE.PlaneGeometry(1, 1)
     const material = new THREE.MeshLambertMaterial({ color: this.groundColor });
     material.side = THREE.DoubleSide;
@@ -70,7 +68,7 @@ class DisplayRoom extends DSEObject {
     this.add(this.ground);
   }
 
-  initWall() {
+  private initWall() {
     for (let i = 0; i < this.showWalls; i++) {
       const geometry = new THREE.PlaneGeometry(1, 1);
       const material = new THREE.MeshLambertMaterial({
@@ -83,7 +81,7 @@ class DisplayRoom extends DSEObject {
     }
   }
 
-  layout() {
+  private layout() {
     this.ground.rotation.set(Math.PI / 2, 0, 0);
     this.ground.scale.set(this.groundWidth, this.groundHeight, 0.5);
 
@@ -114,7 +112,6 @@ class DisplayRoom extends DSEObject {
 
     this.dispatchEvent({ type: 'layout-change', message: 'room changed' });
   }
-
 }
 
 export default DisplayRoom;
