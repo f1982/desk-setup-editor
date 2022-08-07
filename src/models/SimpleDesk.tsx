@@ -56,11 +56,6 @@ class SimpleDesk extends DSEObject {
     })
   }
 
-  public updateRestrictArea(min: Vector3, max: Vector3) {
-    this.restrictMin = min;
-    this.restrictMax = max;
-  }
-
   /**
    * Get restrict min and max, will be used for object.position.clamp
    *  
@@ -91,14 +86,14 @@ class SimpleDesk extends DSEObject {
     const topSurface = this.legHeight + this.desktopHeight;
     return {
       min: new Vector3(
-        -this.desktopWidth / 2,
+        this.position.x - this.desktopWidth / 2,
         topSurface,
-        -this.desktopDepth / 2
+        this.position.z - this.desktopDepth / 2
       ),
       max: new Vector3(
-        this.desktopWidth / 2,
+        this.position.x + this.desktopWidth / 2,
         topSurface,
-        this.desktopDepth / 2
+        this.position.z + this.desktopDepth / 2
       )
     }
   }
@@ -168,6 +163,8 @@ class SimpleDesk extends DSEObject {
       this.legHeight / 2,
       this.desktopDepth / 2 - this.padding - this.legWidth / 2
     );
+
+    this.dispatchEvent({ type: 'layout-change', message: 'desk changed' });
   }
 }
 

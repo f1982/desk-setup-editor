@@ -1,3 +1,4 @@
+import GUI from 'lil-gui';
 import * as THREE from 'three'
 import { Vector3 } from 'three';
 
@@ -20,12 +21,15 @@ class DSEObject extends THREE.Group {
     super();
   }
 
+  public setGUI(gui: GUI) { 
+  }
+
   /**
    * Update the container size
    * @param max 
    * @param min 
    */
-  public updateRestrictArea(max: Vector3, min: Vector3) {
+  public updateRestrictArea(min: Vector3, max: Vector3) {
     this.restrictMin = min;
     this.restrictMax = max;
   }

@@ -14,6 +14,7 @@ import Stats from 'stats.js';
 import { getCubeGroup, loadScene } from '../../models';
 import GUI from 'lil-gui';
 import DisplayRoom from '../../models/DisplayRoom';
+import Mug from '../../models/Mug';
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -89,9 +90,23 @@ class ThreeCanvas {
     //   this.scene.add(obj);
     // });
 
+    const mug = new Mug();
+    this.scene.add(mug);
+
     const desk = new SimpleDesk();
     desk.setGUI(this.gui);
+    desk.addEventListener('layout-change', () => {
+      const { min, max } = desk.getContainerBox();
+      console.log('desk max', max);
+      console.log('desk min', min);
+      mug.updateRestrictArea(min, max);
+      // console.log('mug.getRestrictArea:', mug.getRestrictArea());
+    });
+    desk.position.set(1,0,1);
     this.scene.add(desk);
+    // init state to set mug on the desk
+    const { min, max } = desk.getContainerBox();
+    mug.updateRestrictArea(min, max);
 
     const room = new DisplayRoom();
     room.addEventListener('layout-change', () => {
@@ -108,7 +123,8 @@ class ThreeCanvas {
 
     // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);
     const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
-    ctrl.attachObject(desk);
+    // ctrl.attachObject(desk);
+    ctrl.attachObject(mug);
   }
 
   initControl() {
