@@ -7,8 +7,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { vertex as basicVertex, fragment as basicFragment } from '../../shaders/index';
-import { getCamera, getGirds, getGUIPanel, getLights, getRenderer, getScene, getStats } from '../../SceneElements';
-import GlobalController, { addControl, addDragAndDrop } from '../../Controllers';
+import { getCamera, getGirds, getGUIPanel, getLights, getRenderer, getScene, getStats } from '../../editor/SceneElements';
+import GlobalController, { addControl, addDragAndDrop } from '../../editor/Controllers';
 import SimpleDesk from '../../models/SimpleDesk';
 import Stats from 'stats.js';
 import { getCubeGroup, loadScene } from '../../models';
@@ -133,13 +133,13 @@ class ThreeCanvas {
     this.scene.add(room);
 
     // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);
-    const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
     // ctrl.attachObject(desk);
-    ctrl.attachObject(mug);
+    // ctrl.attachObject(mug);
   }
 
   initControl() {
     // addControl(this.camera, this.renderer.domElement);
+    const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
 
 
   }
