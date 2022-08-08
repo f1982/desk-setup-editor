@@ -190,8 +190,13 @@ class GlobalController {
 
     controls.addEventListener('drag', (event) => {
       const obj: THREE.Object3D = event.object;
-      // get the restrict area can be moved in
-      obj.position.clamp(new Vector3(-2, 0, -2), new Vector3(2, 0, 2))
+      // obj.position.clamp(new Vector3(-2, 0, -2), new Vector3(2, 0, 2))
+      if (this.selectedObj) {
+        // get the restrict area can be moved in
+        const { min, max } = this.selectedObj.getRestrictArea()
+        this.selectedObj.position.clamp(min, max);
+      }
+
     });
 
     controls.addEventListener('dragend', (event) => {
@@ -202,12 +207,12 @@ class GlobalController {
   }
 
   updateDragObject(item: DSEObject | null) {
-    this.selectedObj = item;    
+    this.selectedObj = item;
     const dragObjects = this.dragControl.getObjects();
     dragObjects.length = 0
     if (this.selectedObj) {
       dragObjects.push(this.selectedObj);
-    } 
+    }
   }
 
   render(event: any) {

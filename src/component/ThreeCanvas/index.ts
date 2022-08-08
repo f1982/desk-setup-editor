@@ -129,6 +129,11 @@ class ThreeCanvas {
       const { min, max } = room.getContainerBox()
       desk.updateRestrictArea(min, max);
     })
+
+    // Need to send initial container area to all the children items
+    const { min: rmin, max:rmax } = room.getContainerBox()
+    desk.updateRestrictArea(rmin, rmax);
+    
     room.setGUI(this.gui);
     this.scene.add(room);
 
