@@ -108,6 +108,10 @@ class SimpleDesk extends DSEObject {
     }
   }
 
+  public addSub(child: THREE.Object3D) {
+    this.desktop.add(child); 
+  }
+
   private initDesktop() {
     const geo = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshLambertMaterial({ color: this.boardColor });

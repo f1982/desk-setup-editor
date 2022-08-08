@@ -1,6 +1,7 @@
-import { Camera, Renderer, Scene } from "three";
+import { Camera, Mesh, Object3D, Raycaster, Renderer, Scene, Vector2 } from "three";
 import { DragControls, OrbitControls, TransformControls } from "three-stdlib";
 import DSEObject from "./models/DSEObject";
+import { getMovableMeshes } from "./utils/threeUtils";
 
 export const addControl = (camera: THREE.Camera, domElement: HTMLElement) => {
   const controls = new OrbitControls(camera, domElement);
@@ -46,6 +47,10 @@ class GlobalController {
   orbit: OrbitControls;
   control: TransformControls;
 
+  rayCaster: Raycaster;
+  rayPointer: Vector2 = new Vector2();
+  selectedObj: DSEObject | null = null;
+
   movableObject: DSEObject;
 
   constructor(scene: Scene, camera: Camera, renderer: Renderer) {
@@ -55,13 +60,15 @@ class GlobalController {
 
     this.initOrbit();
     this.initTransformControls();
+
+    this.initRayCaster();
   };
 
   public attachObject(obj: DSEObject) {
     if (this.movableObject) {
       this.control.detach();
     }
-    
+
     this.movableObject = obj;
     this.control.attach(this.movableObject);
   }
@@ -96,9 +103,52 @@ class GlobalController {
     this.control = control;
   }
 
+
+  initRayCaster() {
+    const rayCaster = new Raycaster();
+    this.renderer.domElement.addEventListener('pointerdown', (event) => {
+
+      this.updateRayCasterPointer(event);
+
+      rayCaster.setFromCamera(this.rayPointer, this.camera);
+      const intersects = rayCaster.intersectObjects<Object3D>(
+        getMovableMeshes(this.scene),
+        true
+      );
+
+      if (intersects.length > 0 && intersects[0].object.parent instanceof DSEObject) {
+        if (this.selectedObj !== intersects[0].object.parent) {
+          this.selectedObj = intersects[0].object.parent;
+
+          this.control.detach();
+          this.control.attach(this.selectedObj);
+
+        } else {
+          // this.selectedObj = null;
+          this.control.detach();
+        }
+      } else {
+        // this.control.detach();
+        // this.selectedObj = null;
+      }
+    });
+
+    this.rayCaster = rayCaster;
+  }
+
+  updateRayCasterPointer(event: MouseEvent) {
+
+    const domElement = this.renderer.domElement;
+    const rect = domElement.getBoundingClientRect();
+
+    this.rayPointer.x = (event.clientX - rect.left) / rect.width * 2 - 1;
+    this.rayPointer.y = - (event.clientY - rect.top) / rect.height * 2 + 1;
+  }
+
   render(event: any) {
     // console.log('event', event);
   }
 }
 
 export default GlobalController;
+

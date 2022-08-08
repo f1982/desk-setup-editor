@@ -19,6 +19,8 @@ class DisplayRoom extends DSEObject {
   constructor() {
     super();
 
+    this.name = 'displayRoom';
+    
     this.initGround();
     this.initWall();
 
