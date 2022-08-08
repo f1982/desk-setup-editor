@@ -6,16 +6,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // import theme from 'utils/theme';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { vertex as basicVertex, fragment as basicFragment } from '../../shaders/index';
-import { getCamera, getGirds, getGUIPanel, getLights, getRenderer, getScene, getStats } from '../../editor/SceneElements';
-import GlobalController, { addControl, addDragAndDrop } from '../../editor/Controllers';
-import SimpleDesk from '../../models/SimpleDesk';
+import { vertex as basicVertex, fragment as basicFragment } from '../shaders/index';
+import { getCamera, getGirds, getGUIPanel, getLights, getRenderer, getScene, getStats } from './SceneElements';
+import GlobalController, { addControl, addDragAndDrop } from './Controllers';
+import SimpleDesk from '../models/SimpleDesk';
 import Stats from 'stats.js';
-import { getCubeGroup, loadScene } from '../../models';
+import { getCubeGroup, loadScene } from '../models';
 import GUI from 'lil-gui';
-import DisplayRoom from '../../models/DisplayRoom';
-import Mug from '../../models/Mug';
-import DSEObject from '../../models/DSEObject';
+import DisplayRoom from '../models/DisplayRoom';
+import Mug from '../models/Mug';
+import DSEObject from '../models/DSEObject';
+import SetupObjects from './SetupObjects';
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -40,6 +41,8 @@ class ThreeCanvas {
   private stats: Stats;
 
   private gui: GUI;
+
+  private setupObjects: SetupObjects;
 
   public movableObjects: DSEObject[] = [];
 
@@ -96,50 +99,8 @@ class ThreeCanvas {
   }
 
   initElements() {
-    // this.scene.add(getCubeGroup());
-
-    // loadScene((obj: THREE.Group) => {
-    //   this.scene.add(obj);
-    // });
-
-    const mug = new Mug();
-    this.scene.add(mug);
-    this.movableObjects.push(mug);
-
-    const desk = new SimpleDesk();
-    desk.setGUI(this.gui);
-    desk.addEventListener('layout-change', () => {
-      const { min, max } = desk.getContainerBox();
-      mug.updateRestrictArea(min, max);
-    });
-    desk.position.set(1,0,1);
-    this.scene.add(desk);
-    this.movableObjects.push(desk);
-
-    //test
-    const mug2 = new Mug();
-    // desk.addSub(mug2);
-
-    // init state to set mug on the desk
-    const { min, max } = desk.getContainerBox();
-    mug.updateRestrictArea(min, max);
-
-    const room = new DisplayRoom();
-    room.addEventListener('layout-change', () => {
-      const { min, max } = room.getContainerBox()
-      desk.updateRestrictArea(min, max);
-    })
-
-    // Need to send initial container area to all the children items
-    const { min: rmin, max:rmax } = room.getContainerBox()
-    desk.updateRestrictArea(rmin, rmax);
+    this.setupObjects = new SetupObjects(this.scene, this.gui);
     
-    room.setGUI(this.gui);
-    this.scene.add(room);
-
-    // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);
-    // ctrl.attachObject(desk);
-    // ctrl.attachObject(mug);
   }
 
   initControl() {
