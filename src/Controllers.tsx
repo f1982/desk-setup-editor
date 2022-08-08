@@ -116,22 +116,28 @@ class GlobalController {
         true
       );
 
-      console.log('all meshes: ', getMovableMeshes(this.scene))
+      // console.log('all meshes: ', getMovableMeshes(this.scene));
 
       if (intersects.length > 0 && intersects[0].object.parent instanceof DSEObject) {
-        console.log('intersects[0]: ',intersects[0]);
-        if (this.selectedObj !== intersects[0].object.parent) {
-          this.selectedObj = intersects[0].object.parent;
+        console.log('intersects[0]: ',intersects[0].object);
 
-          this.control.detach();
-          this.control.attach(this.selectedObj);
+        this.selectedObj = intersects[0].object.parent;
+        this.control.attach(this.selectedObj);
+        return;
 
-        } else {
-          // this.selectedObj = null;
-          this.control.detach();
-        }
+        // if (this.selectedObj !== intersects[0].object.parent) {
+        //   this.selectedObj = intersects[0].object.parent;
+        //   console.log('this.selectedObj', this.selectedObj);
+
+        //   this.control.detach();
+        //   this.control.attach(this.selectedObj);
+
+        // } else {
+        //   // this.selectedObj = null;
+        //   this.control.detach();
+        // }
       } else {
-        // this.control.detach();
+        this.control.detach();
         // this.selectedObj = null;
       }
     });

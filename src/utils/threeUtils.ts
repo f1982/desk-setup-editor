@@ -16,10 +16,14 @@ function getMovableMeshes(scene: THREE.Scene) {
     const elementMeshes = element.children.filter(item => (item instanceof THREE.Mesh));
     meshes.push(...elementMeshes);
 
+    // get dse object list inside des object
     const subObjs = element.children.filter(item => (item instanceof DSEObject));
     console.log('subObjs', subObjs);
     subObjs.forEach(subObj=>{
-      meshes.push(subObj.children.filter(subItem => (subItem instanceof THREE.Mesh)));
+      //meshes inside des
+      const subMeshes = subObj.children.filter(subItem => (subItem instanceof THREE.Mesh));
+      console.log('subMeshes', subMeshes);
+      meshes.push(...subMeshes);
     })
     
 
