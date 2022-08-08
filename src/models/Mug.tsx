@@ -6,7 +6,7 @@ class Mug extends DSEObject {
 
   body: Mesh;
 
-  mugWidth: number = 0.05
+  mugWidth: number = 0.2
 
   constructor() {
     super();

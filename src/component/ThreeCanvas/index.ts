@@ -118,7 +118,7 @@ class ThreeCanvas {
 
     //test
     const mug2 = new Mug();
-    desk.addSub(mug2);
+    // desk.addSub(mug2);
 
     // init state to set mug on the desk
     const { min, max } = desk.getContainerBox();

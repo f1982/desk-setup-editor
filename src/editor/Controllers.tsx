@@ -1,4 +1,4 @@
-import { Camera, Group, Mesh, Object3D, Raycaster, Renderer, Scene, Vector2, Vector3 } from "three";
+import { Camera, Group, Mesh, MeshLambertMaterial, Object3D, Raycaster, Renderer, Scene, Vector2, Vector3 } from "three";
 import { DragControls, OrbitControls, TransformControls } from "three-stdlib";
 import DSEObject from "../models/DSEObject";
 
@@ -96,8 +96,10 @@ class GlobalController {
     // this.initTransformControls();
 
     this.initDragDrop();
+    //test to drag the desk
+    // this.updateDragObject(getDSEObjects(this.scene)[1] as DSEObject);
 
-    this.updateDragObject(getDSEObjects(this.scene)[1]);
+
   };
 
   // public attachObject(obj: DSEObject) {
@@ -144,16 +146,18 @@ class GlobalController {
 
   initRayCaster() {
     const rayCaster = new Raycaster();
+
+    // when user point down
     this.renderer.domElement.addEventListener('pointerdown', (event) => {
 
-      // this.updateRayCasterPointer(event);
-      // Update ray caster pointer
+      // update ray caster pointer
       const domElement = this.renderer.domElement;
       const rect = domElement.getBoundingClientRect();
       this.rayPointer.x = (event.clientX - rect.left) / rect.width * 2 - 1;
       this.rayPointer.y = - (event.clientY - rect.top) / rect.height * 2 + 1;
       rayCaster.setFromCamera(this.rayPointer, this.camera);
 
+      // get and set the object can be interacted with
       const selectableElements = getMovableMeshes(this.scene);
       const intersects = rayCaster.intersectObjects<Object3D>(selectableElements, true);
 
@@ -161,13 +165,12 @@ class GlobalController {
         intersects.length > 0 &&
         intersects[0].object.parent instanceof DSEObject
       ) {
-        this.selectedObj = intersects[0].object.parent;
-        // this.control.attach(this.selectedObj);
+        this.updateDragObject(intersects[0].object.parent);
+
       } else {
-        // this.control.detach();
-        this.selectedObj = null;
+        // click on blank area, unselect objects
+        this.updateDragObject(null);
       }
-      console.log('this.selectedObj', this.selectedObj);
     });
 
     this.rayCaster = rayCaster;
@@ -186,10 +189,8 @@ class GlobalController {
     });
 
     controls.addEventListener('drag', (event) => {
-      // This will prevent moving z axis, but will be on 0 line.
-      // change this to your object position of z axis.
-      // const p = event.object.position;
       const obj: THREE.Object3D = event.object;
+      // get the restrict area can be moved in
       obj.position.clamp(new Vector3(-2, 0, -2), new Vector3(2, 0, 2))
     });
 
@@ -200,23 +201,13 @@ class GlobalController {
     this.dragControl = controls
   }
 
-  updateDragObject(item: Object3D) {
-    // const objects = getDSEObjects(this.scene)[1].children;
-    // const objects = getMovableMeshes(this.scene);
-    // console.log('initDragDrop objects', objects);
-    // for (let i = 0; i < objects.length; i++) {
-    //   const element = objects[i];
-    //   console.log('element', element);
-    //   this.dragGroup.attach(element)
-    // }
-    
-    while (item.children.length > 0) {
-      this.dragGroup.attach(item.children[0])
-    }
-
+  updateDragObject(item: DSEObject | null) {
+    this.selectedObj = item;    
     const dragObjects = this.dragControl.getObjects();
     dragObjects.length = 0
-    dragObjects.push(this.dragGroup);
+    if (this.selectedObj) {
+      dragObjects.push(this.selectedObj);
+    } 
   }
 
   render(event: any) {
