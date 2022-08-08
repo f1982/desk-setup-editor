@@ -14,7 +14,15 @@ function getMovableMeshes(scene: THREE.Scene) {
   const meshes: any[] = [];
   objs.forEach(element => {
     const elementMeshes = element.children.filter(item => (item instanceof THREE.Mesh));
-    meshes.push(...elementMeshes)
+    meshes.push(...elementMeshes);
+
+    const subObjs = element.children.filter(item => (item instanceof DSEObject));
+    console.log('subObjs', subObjs);
+    subObjs.forEach(subObj=>{
+      meshes.push(subObj.children.filter(subItem => (subItem instanceof THREE.Mesh)));
+    })
+    
+
   });
   return meshes;
 }

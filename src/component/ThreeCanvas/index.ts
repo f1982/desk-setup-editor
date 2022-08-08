@@ -116,6 +116,10 @@ class ThreeCanvas {
     this.scene.add(desk);
     this.movableObjects.push(desk);
 
+    //test
+    const mug2 = new Mug();
+    desk.addSub(mug2);
+
     // init state to set mug on the desk
     const { min, max } = desk.getContainerBox();
     mug.updateRestrictArea(min, max);

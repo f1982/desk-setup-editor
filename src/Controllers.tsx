@@ -116,7 +116,10 @@ class GlobalController {
         true
       );
 
+      console.log('all meshes: ', getMovableMeshes(this.scene))
+
       if (intersects.length > 0 && intersects[0].object.parent instanceof DSEObject) {
+        console.log('intersects[0]: ',intersects[0]);
         if (this.selectedObj !== intersects[0].object.parent) {
           this.selectedObj = intersects[0].object.parent;
 
