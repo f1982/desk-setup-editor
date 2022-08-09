@@ -93,7 +93,6 @@ class ThreeCanvas {
 
     this.gui = getGUIPanel();
 
-
     this.stats = getStats();
     document.body.append(this.stats.dom)
   }
@@ -106,8 +105,6 @@ class ThreeCanvas {
   initControl() {
     // addControl(this.camera, this.renderer.domElement);
     const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
-
-
   }
 
   resizeRendererToDisplaySize() {

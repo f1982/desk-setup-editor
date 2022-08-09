@@ -75,9 +75,10 @@ class GlobalController {
 
   orbit: OrbitControls;
   control: TransformControls;
-  dragControl: DragControls;
 
-  dragGroup: THREE.Group = new Group();;
+  dragControl: DragControls;
+  dragGroup: THREE.Group = new Group();
+  dragMoved = false;
 
   rayCaster: Raycaster;
   rayPointer: Vector2 = new Vector2();
@@ -131,7 +132,6 @@ class GlobalController {
         this.selectedObj.position.clamp(min, max);
         this.render(event);
       }
-
     });
 
     control.addEventListener('dragging-changed', (event) => {
@@ -189,8 +189,8 @@ class GlobalController {
     });
 
     controls.addEventListener('drag', (event) => {
-      const obj: THREE.Object3D = event.object;
-      // obj.position.clamp(new Vector3(-2, 0, -2), new Vector3(2, 0, 2))
+      this.dragMoved = true;
+      // const obj: THREE.Object3D = event.object;
       if (this.selectedObj) {
         // get the restrict area can be moved in
         const { min, max } = this.selectedObj.getRestrictArea()
@@ -200,10 +200,25 @@ class GlobalController {
     });
 
     controls.addEventListener('dragend', (event) => {
+      console.log('dragend');
       this.orbit.enabled = true;
       // event.object.material.emissive.set(0x000000);
+
+      // check it's click action or not
+      if (!this.dragMoved) {
+        if (this.selectedObj){
+          this.dragClick(this.selectedObj);
+        }
+      }
+      this.dragMoved = false;
     });
+    
     this.dragControl = controls
+  }
+
+  dragClick(item: DSEObject) {
+    console.log('dragClick', item);
+
   }
 
   updateDragObject(item: DSEObject | null) {
