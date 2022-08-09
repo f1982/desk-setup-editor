@@ -7,7 +7,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { vertex as basicVertex, fragment as basicFragment } from '../shaders/index';
-import { getCamera, getGirds, getGUIPanel, getLights, getRenderer, getScene, getStats } from './SceneElements';
+import { getCamera, getGirds, getGUIPanel, getLights, getOrthographicCamera, getRenderer, getScene, getStats } from './SceneElements';
 import GlobalController, { addControl, addDragAndDrop } from './Controllers';
 import SimpleDesk from '../models/SimpleDesk';
 import Stats from 'stats.js';
@@ -27,16 +27,17 @@ interface IOptions {
 }
 
 class ThreeCanvas {
-  // @ts-ignore
+
   public scene: THREE.Scene;
-  // @ts-ignore
-  private camera: THREE.PerspectiveCamera;
-  // @ts-ignore
   private renderer: THREE.WebGLRenderer;
-  // @ts-ignore
+
   private composer: EffectComposer;
-  // @ts-ignore
   private clock: THREE.Clock;
+
+  private camera: THREE.Camera;
+  private perspectiveCamera: THREE.PerspectiveCamera;
+  private orthographicCamera: THREE.OrthographicCamera;
+
   // @ts-ignore
   private stats: Stats;
 
@@ -68,7 +69,11 @@ class ThreeCanvas {
     this.clock = new THREE.Clock();
     // scene
     this.scene = getScene();
-    this.camera = getCamera(width, height);
+
+    this.perspectiveCamera = getCamera(width, height);
+    this.orthographicCamera = getOrthographicCamera(width, height);
+
+    this.camera = this.perspectiveCamera;
 
     const lights = getLights(this.scene);
 
@@ -99,7 +104,7 @@ class ThreeCanvas {
 
   initElements() {
     this.setupObjects = new SetupObjects(this.scene, this.gui);
-    
+
   }
 
   initControl() {
@@ -134,12 +139,16 @@ class ThreeCanvas {
     // check if we need to resize the canvas and re-setup the camera
     if (this.resizeRendererToDisplaySize()) {
       const canvas = this.renderer.domElement;
-      this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      // @ts-ignore
-      this.camera.updateProjectionMatrix();
+
+      if (this.camera === this.perspectiveCamera) {
+        this.perspectiveCamera.aspect = canvas.clientWidth / canvas.clientHeight;
+        this.perspectiveCamera.updateProjectionMatrix();
+      } else {
+        this.orthographicCamera.updateProjectionMatrix();
+      }
+      this.composer.render();
+      this.stats.end();
     }
-    this.composer.render();
-    this.stats.end();
   }
 }
 

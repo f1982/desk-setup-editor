@@ -1,8 +1,10 @@
 import GUI from "lil-gui";
 import { Scene } from "three";
+import { GLTF, GLTFLoader } from "three-stdlib";
 import Chair from "../models/Chair";
 import DisplayRoom from "../models/DisplayRoom";
 import DSEObject from "../models/DSEObject";
+import MonitorSample from "../models/MonitorSample";
 import Mug from "../models/Mug";
 import SimpleDesk from "../models/SimpleDesk";
 
@@ -23,7 +25,29 @@ class SetupObjects {
 
     this.initRoom();
     this.initInRoomObjects();
-    // this.init();
+    this.initOnDeskObjects();
+
+    // const loader = new GLTFLoader();
+
+    // loader.load(
+    //   // resource URL
+    //   'https://raw.githubusercontent.com/f1982/planet-of-images/main/img/my-room-v0.69.gltf',
+    //   // called when the resource is loaded
+    //   (gltf: GLTF) => {
+    //     // this.body = gltf.scene;
+    //     // console.log('this.body ', this.body);
+    //     // this.add(this.body);
+    //     this.scene.add(gltf.scene);
+    //   },
+    //   // called while loading is progressing
+    //   (xhr: ProgressEvent) => {
+    //     console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+    //   },
+    //   // called when loading has errors
+    //   (error) => {
+    //     console.log('An error  happened');
+    //   },
+    // );
   }
 
   private initRoom() {
@@ -37,13 +61,11 @@ class SetupObjects {
     this.room = room;
   }
 
-  private initInRoomObjects () {
+  private initInRoomObjects() {
     const desk = new SimpleDesk();
     desk.setGUI(this.gui);
     desk.addEventListener('layout-change', () => {
-      // const { min, max } = desk.getContainerBox();
-      // mug.updateRestrictArea(min, max);
-      //update all on desk objects restriction area
+      this.updateOnTableObjectRestrictArea();
     });
     this.scene.add(desk);
     this.inRoomObjects.push(desk);
@@ -52,11 +74,11 @@ class SetupObjects {
     const chair = new Chair();
     this.inRoomObjects.push(chair);
     this.scene.add(chair);
-    
+
     this.updateInRoomObjectsRestrictArea();
   }
 
-  private updateInRoomObjectsRestrictArea(){
+  private updateInRoomObjectsRestrictArea() {
     const { min, max } = this.room.getContainerBox();
     // update all the object
     this.inRoomObjects.forEach(obj => {
@@ -64,46 +86,31 @@ class SetupObjects {
     });
   }
 
-  private init() {
+  private initOnDeskObjects() {
 
-    // this.scene.add(getCubeGroup());
-
-    // loadScene((obj: THREE.Group) => {
-    //   this.scene.add(obj);
-    // });
 
     const mug = new Mug();
-    this.scene.add(mug);
-    // this.movableObjects.push(mug);
+    this.desk.addSub(mug);
+    this.onTableObjects.push(mug);
 
-    const desk = new SimpleDesk();
-    desk.setGUI(this.gui);
-    // Need to send initial container area to all the children items
-    const { min: rmin, max: rmax } = this.room.getContainerBox()
-    this.desk.updateRestrictArea(rmin, rmax);
 
-    desk.addEventListener('layout-change', () => {
-      const { min, max } = desk.getContainerBox();
-      mug.updateRestrictArea(min, max);
-    });
-    desk.position.set(1, 0, 1);
-    this.scene.add(desk);
-    // this.movableObjects.push(desk);
-
-    //test
-    // const mug2 = new Mug();
-    // desk.addSub(mug2);
-
-    // init state to set mug on the desk
-    const { min, max } = desk.getContainerBox();
-    mug.updateRestrictArea(min, max);
-
+    const monitor = new MonitorSample()
+    this.desk.addSub(monitor);
+    this.onTableObjects.push(monitor);
 
 
     // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);
     // ctrl.attachObject(desk);
     // ctrl.attachObject(mug);
 
+    this.updateOnTableObjectRestrictArea();
+  }
+
+  private updateOnTableObjectRestrictArea() {
+    const { min, max } = this.desk.getContainerBox();
+    this.onTableObjects.forEach(obj => {
+      obj.updateRestrictArea(min, max);
+    });
   }
 
 }

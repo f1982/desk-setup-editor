@@ -1,18 +1,20 @@
+import GUI from 'lil-gui';
 import { BoxGeometry, Mesh, MeshLambertMaterial, Vector3 } from 'three';
-import { GLTF, GLTFLoader } from 'three-stdlib';
+import { GLTF, GLTFLoader, OBJLoader } from 'three-stdlib';
 import DSEObject from './DSEObject';
+import * as THREE from 'three'
 
-class Chair extends DSEObject {
 
-  body: Mesh;
+class MonitorSample extends DSEObject {
 
-  mugWidth = 0.4
-  chairHeight = 0.6;
+  body: THREE.Group;
+
+  mugWidth: number = 0.2
 
   constructor() {
     super();
 
-    this.loadGLTF()
+    this.loadMonitor()
     this.layout();
   }
 
@@ -25,18 +27,18 @@ class Chair extends DSEObject {
     return {
       min: new Vector3(
         this.restrictMin.x + this.mugWidth / 2,
-        0,
+        this.restrictMin.y,
         this.restrictMin.z + this.mugWidth / 2,
       ),
       max: new Vector3(
         this.restrictMax.x - this.mugWidth / 2,
-        0,
+        this.restrictMax.y,
         this.restrictMax.z - this.mugWidth / 2,
       )
     }
   }
 
-  private loadGLTF() {
+  private loadMonitor() {
 
     const geo = new BoxGeometry(1, 1, 1);
     const material = new MeshLambertMaterial({ color: 0xff0000, wireframe: true });
@@ -45,7 +47,7 @@ class Chair extends DSEObject {
 
     this.add(mesh);
 
-    const url = process.env.PUBLIC_URL + '/static/models/chair.gltf';
+    const url = process.env.PUBLIC_URL + '/static/models/monitor-34.gltf';
 
     // Instantiate a loader
     const loader = new GLTFLoader();
@@ -55,8 +57,10 @@ class Chair extends DSEObject {
       url,
       // called when the resource is loaded
       (gltf: GLTF) => {
+        this.body = gltf.scene;
+        console.log('this.body ', this.body);
 
-        this.add(gltf.scene);
+        this.add(this.body);
       },
       // called while loading is progressing
       (xhr: ProgressEvent) => {
@@ -71,11 +75,10 @@ class Chair extends DSEObject {
 
 
 
-
   private layout() {
-    // this.body.scale.set(this.mugWidth, this.chairHeight, this.mugWidth);
-    // this.body.position.set(0, this.chairHeight/2, 0);
+    // this.body.scale.set(this.mugWidth, this.mugWidth, this.mugWidth)
   }
 }
 
-export default Chair;
+
+export default MonitorSample;
