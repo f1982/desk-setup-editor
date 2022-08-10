@@ -1,50 +1,7 @@
 import gsap from 'gsap';
 import * as THREE from 'three';
-import { GLTF, GLTFLoader, OrbitControls } from 'three-stdlib';
+import { GLTF, GLTFLoader } from 'three-stdlib';
 
-
-export const getScene = () => {
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#ffffff');
-  return scene;
-}
-
-export const getCamera = (width: number, height: number) => {
-  const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-  camera.position.set(0, 0.5, 1.5);
-  // camera.position.z = 0;
-  return camera;
-}
-
-export const getLights = () => {
-  const ambientLight = new THREE.AmbientLight(0x505050, 4);
-  ambientLight.position.set(0, 3, 0);
-
-  const directionLight = new THREE.DirectionalLight(0xffffff, 3);
-  directionLight.position.set(3.5, 5, -2.5);
-  return [ambientLight, directionLight]
-}
-
-export const getRenderer = (width: number, height: number) => {
-  const renderer = new THREE.WebGLRenderer({
-    alpha: true,
-    antialias: true,
-  });
-
-  renderer.setSize(width, height);
-  // VR support
-  // renderer.xr.enabled = true;
-  return renderer;
-}
-
-export const addControl = (camera: THREE.Camera, domElement: HTMLElement) => {
-  const controls = new OrbitControls(camera, domElement);
-  controls.target.set(0, 0.5, 0);
-  controls.update();
-  controls.enablePan = false;
-  controls.enableDamping = true;
-  return controls;
-}
 
 export const loadScene = (callback: (objects: THREE.Group) => void) => {
   // Instantiate a loader
@@ -102,5 +59,3 @@ export const getCubeGroup = () => {
   return group
 
 }
-
-export default {}
