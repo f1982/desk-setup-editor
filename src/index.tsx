@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client';
 import {
-  BrowserRouter, Route, Routes
+  BrowserRouter, HashRouter, Route, Routes
 } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 
@@ -15,13 +15,13 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <BrowserRouter>
+  <HashRouter basename="/">
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/editor" element={<Editor />} />
       <Route path="/about" element={<About />} />
     </Routes>
-  </BrowserRouter>
+  </HashRouter>
 
   // <React.StrictMode>
   // <App />
