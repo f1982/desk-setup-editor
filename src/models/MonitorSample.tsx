@@ -7,7 +7,7 @@ import * as THREE from 'three'
 
 class MonitorSample extends DSEObject {
 
-  body: THREE.Group;
+  handle: THREE.Object3D;
 
   mugWidth: number = 0.2
 
@@ -43,9 +43,10 @@ class MonitorSample extends DSEObject {
     const geo = new BoxGeometry(1, 1, 1);
     const material = new MeshLambertMaterial({ color: 0xff0000, wireframe: true });
     const mesh = new Mesh(geo, material);
-    mesh.scale.set(1.2, 0.45, 0.1);
-
+    mesh.scale.set(0.3, 0.1, 0.3);
     this.add(mesh);
+    this.handle = mesh;
+
 
     const url = process.env.PUBLIC_URL + '/static/models/monitor-34.gltf';
 
@@ -57,10 +58,10 @@ class MonitorSample extends DSEObject {
       url,
       // called when the resource is loaded
       (gltf: GLTF) => {
-        this.body = gltf.scene;
-        console.log('this.body ', this.body);
+        const monitorMesh = gltf.scene;
+        console.log('this.monitorMesh ', monitorMesh);
 
-        this.add(this.body);
+        this.add(monitorMesh);
       },
       // called while loading is progressing
       (xhr: ProgressEvent) => {
@@ -76,7 +77,8 @@ class MonitorSample extends DSEObject {
 
 
   private layout() {
-    // this.body.scale.set(this.mugWidth, this.mugWidth, this.mugWidth)
+    this.handle.scale.set(0.3, 0.1, 0.3);
+    this.handle.position.set(0, 0.05, 0);
   }
 }
 

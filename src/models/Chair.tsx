@@ -41,7 +41,7 @@ class Chair extends DSEObject {
     const geo = new BoxGeometry(1, 1, 1);
     const material = new MeshLambertMaterial({ color: 0xff0000, wireframe: true });
     const mesh = new Mesh(geo, material);
-    mesh.scale.set(1.2, 0.45, 0.1);
+    mesh.scale.set(0.6, 0.1, 0.6);
 
     this.add(mesh);
 
@@ -55,8 +55,13 @@ class Chair extends DSEObject {
       url,
       // called when the resource is loaded
       (gltf: GLTF) => {
+      console.log('gltf', gltf);
+        const mesh = gltf.scene.children.find((child) => (child.name === 'chair-seat001'));
+        if (mesh){
 
-        this.add(gltf.scene);
+          this.add(mesh);
+
+        }
       },
       // called while loading is progressing
       (xhr: ProgressEvent) => {

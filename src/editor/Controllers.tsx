@@ -42,6 +42,7 @@ function getMovableMeshes(scene: THREE.Scene) {
   const objs = scene.children.filter((item: THREE.Object3D) => {
     return item instanceof DSEObject && item.name !== 'displayRoom'
   });
+  
   const meshes: any[] = [];
   objs.forEach(element => {
     const elementMeshes = element.children.filter(item => (item instanceof Mesh));
@@ -57,6 +58,7 @@ function getMovableMeshes(scene: THREE.Scene) {
       meshes.push(...subMeshes);
     })
   });
+  console.log('ray cast meshes:', meshes)
   return meshes;
 }
 
