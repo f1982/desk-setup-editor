@@ -7,18 +7,6 @@ function findType(scene: THREE.Group, type: string, name: string) {
   return scene.children.find((child) => (child.type === type && child.name === name));
 }
 
-function getMovableMeshes(scene: THREE.Scene) {
-  const objs = scene.children.filter((item: THREE.Object3D) => {
-    return item instanceof DSEObject && item.name !== 'displayRoom'
-  });
-  const meshes: any[] = [];
-  objs.forEach(element => {
-    const elementMeshes = element.children.filter(item => (item instanceof THREE.Mesh));
-    meshes.push(...elementMeshes)
-  });
-  return meshes;
-}
-
 // Use FileSaver.js 'saveAs' function to save the string
 async function saveSTL(scene: THREE.Object3D, name: string) {
   const { STLExporter } = await import('three/examples/jsm/exporters/STLExporter');
@@ -34,6 +22,5 @@ async function saveSTL(scene: THREE.Object3D, name: string) {
 
 export {
   findType,
-  saveSTL,
-  getMovableMeshes
+  saveSTL
 }

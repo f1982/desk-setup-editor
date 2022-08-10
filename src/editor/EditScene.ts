@@ -6,16 +6,17 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // import theme from 'utils/theme';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { vertex as basicVertex, fragment as basicFragment } from '../../shaders/index';
-import { getCamera, getGirds, getGUIPanel, getLights, getRenderer, getScene, getStats } from '../../SceneElements';
-import GlobalController, { addControl, addDragAndDrop } from '../../Controllers';
-import SimpleDesk from '../../models/SimpleDesk';
+import { vertex as basicVertex, fragment as basicFragment } from '../shaders/index';
+import { getCamera, getGirds, getGUIPanel, getLights, getOrthographicCamera, getRenderer, getScene, getStats } from './SceneElements';
+import GlobalController, { addControl, addDragAndDrop } from './Controllers';
+import SimpleDesk from '../models/SimpleDesk';
 import Stats from 'stats.js';
-import { getCubeGroup, loadScene } from '../../models';
+import { getCubeGroup, loadScene } from '../models';
 import GUI from 'lil-gui';
-import DisplayRoom from '../../models/DisplayRoom';
-import Mug from '../../models/Mug';
-import DSEObject from '../../models/DSEObject';
+import DisplayRoom from '../models/DisplayRoom';
+import Mug from '../models/Mug';
+import DSEObject from '../models/DSEObject';
+import SetupObjects from './SetupObjects';
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -26,20 +27,23 @@ interface IOptions {
 }
 
 class ThreeCanvas {
-  // @ts-ignore
+
   public scene: THREE.Scene;
-  // @ts-ignore
-  private camera: THREE.PerspectiveCamera;
-  // @ts-ignore
   private renderer: THREE.WebGLRenderer;
-  // @ts-ignore
+
   private composer: EffectComposer;
-  // @ts-ignore
   private clock: THREE.Clock;
+
+  private camera: THREE.Camera;
+  private perspectiveCamera: THREE.PerspectiveCamera;
+  private orthographicCamera: THREE.OrthographicCamera;
+
   // @ts-ignore
   private stats: Stats;
 
   private gui: GUI;
+
+  private setupObjects: SetupObjects;
 
   public movableObjects: DSEObject[] = [];
 
@@ -48,6 +52,30 @@ class ThreeCanvas {
     this.initTools();
     this.initElements();
     this.initControl();
+  }
+
+  public dispose() {
+    console.log('dispose renderer!')
+    this.renderer.dispose();
+    this.gui.destroy();
+    this.stats.dom.remove();
+    // document.body.append()
+
+
+    this.scene.traverse((object:THREE.Object3D) => {
+      console.log('object', object);
+      // if (!object.isMesh) return
+
+      // console.log('dispose geometry!')
+      // object.geometry.dispose()
+
+      // if (object.material.isMaterial) {
+      //   cleanMaterial(object.material)
+      // } else {
+      //   // an array of materials
+      //   for (const material of object.material) cleanMaterial(material)
+      // }
+    })
   }
 
   public switchToSTLScene() {
@@ -65,7 +93,11 @@ class ThreeCanvas {
     this.clock = new THREE.Clock();
     // scene
     this.scene = getScene();
-    this.camera = getCamera(width, height);
+
+    this.perspectiveCamera = getCamera(width, height);
+    this.orthographicCamera = getOrthographicCamera(width, height);
+
+    this.camera = this.perspectiveCamera;
 
     const lights = getLights(this.scene);
 
@@ -90,54 +122,18 @@ class ThreeCanvas {
 
     this.gui = getGUIPanel();
 
-
     this.stats = getStats();
     document.body.append(this.stats.dom)
   }
 
   initElements() {
-    // this.scene.add(getCubeGroup());
+    this.setupObjects = new SetupObjects(this.scene, this.gui);
 
-    // loadScene((obj: THREE.Group) => {
-    //   this.scene.add(obj);
-    // });
-
-    const mug = new Mug();
-    this.scene.add(mug);
-    this.movableObjects.push(mug);
-
-    const desk = new SimpleDesk();
-    desk.setGUI(this.gui);
-    desk.addEventListener('layout-change', () => {
-      const { min, max } = desk.getContainerBox();
-      mug.updateRestrictArea(min, max);
-    });
-    desk.position.set(1,0,1);
-    this.scene.add(desk);
-    this.movableObjects.push(desk);
-
-    // init state to set mug on the desk
-    const { min, max } = desk.getContainerBox();
-    mug.updateRestrictArea(min, max);
-
-    const room = new DisplayRoom();
-    room.addEventListener('layout-change', () => {
-      const { min, max } = room.getContainerBox()
-      desk.updateRestrictArea(min, max);
-    })
-    room.setGUI(this.gui);
-    this.scene.add(room);
-
-    // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);
-    const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
-    // ctrl.attachObject(desk);
-    ctrl.attachObject(mug);
   }
 
   initControl() {
     // addControl(this.camera, this.renderer.domElement);
-
-
+    const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
   }
 
   resizeRendererToDisplaySize() {
@@ -167,12 +163,16 @@ class ThreeCanvas {
     // check if we need to resize the canvas and re-setup the camera
     if (this.resizeRendererToDisplaySize()) {
       const canvas = this.renderer.domElement;
-      this.camera.aspect = canvas.clientWidth / canvas.clientHeight;
-      // @ts-ignore
-      this.camera.updateProjectionMatrix();
+
+      if (this.camera === this.perspectiveCamera) {
+        this.perspectiveCamera.aspect = canvas.clientWidth / canvas.clientHeight;
+        this.perspectiveCamera.updateProjectionMatrix();
+      } else {
+        this.orthographicCamera.updateProjectionMatrix();
+      }
+      this.composer.render();
+      this.stats.end();
     }
-    this.composer.render();
-    this.stats.end();
   }
 }
 

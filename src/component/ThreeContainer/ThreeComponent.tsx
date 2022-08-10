@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ThreeCanvas from '../ThreeCanvas';
-import './ThreeComponent.scss';
-import * as THREE from 'three'
 import { saveSTL } from '../../utils/threeUtils';
+import ThreeCanvas from '../../editor/EditScene';
+import './ThreeComponent.scss';
 
 
 const ThreeComp: React.FC = () => {
@@ -33,6 +32,9 @@ const ThreeComp: React.FC = () => {
       }
     }
     return ()=>{
+      if (threeSceneRef.current){
+        threeSceneRef.current.dispose();
+      }
       if (canvasRef.current){
         const child = canvasRef.current.firstChild;
         canvasRef.current.removeChild(child!);

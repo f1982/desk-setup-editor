@@ -9,9 +9,18 @@ export const getScene = () => {
 }
 
 export const getCamera = (width: number, height: number) => {
-  const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
+  // const camera = new THREE.OrthographicCamera(75, width / height, 0.1, 1000);
   camera.position.set(3, 2, -3);
   camera.rotation.set(0, 0, 0)
+  return camera;
+}
+export const getOrthographicCamera = (width: number, height: number) => {
+  // const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+  const camera = new THREE.OrthographicCamera(width / - 2, width / 2, height / 2, height / - 2, 0.1, 1000);
+  // camera.far= 10
+  // camera.position.set(30, 0, 0);
+  // camera.rotation.set(0, 0, 0)
   return camera;
 }
 
@@ -20,7 +29,7 @@ export const getLights = (scene: THREE.Scene) => {
   ambientLight.position.set(0, 3, 0);
   scene.add(ambientLight);
 
-  const directionLight = new THREE.DirectionalLight(0xffffff, 1);
+  const directionLight = new THREE.DirectionalLight(0xffffff, 0.8);
   directionLight.position.set(13.5, 15, -12.5);
   scene.add(directionLight);
 
