@@ -40,7 +40,7 @@ jobs:
       #     start: yarn start
 
       - name: Build the website
-        run: yarn export && touch ./build/.nojekyll
+        run: yarn build && touch ./build/.nojekyll
         # This below is used to build storybook static site with whole site together
         # run: npm run export-with-storybook && touch ./out/.nojekyll
 
