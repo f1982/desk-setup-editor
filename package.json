@@ -2,7 +2,7 @@
   "name": "desk-setup-editor",
   "homepage": "https://f1982.github.io/desk-setup-editor",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "file-saver": "^2.0.5",
     "gsap": "^3.10.4",
