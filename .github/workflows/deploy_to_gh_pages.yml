@@ -40,7 +40,7 @@ jobs:
       #     start: yarn start
 
       - name: Build the website
-        run: yarn export && touch ./out/.nojekyll
+        run: yarn build && touch ./build/.nojekyll
         # This below is used to build storybook static site with whole site together
         # run: npm run export-with-storybook && touch ./out/.nojekyll
 
@@ -48,5 +48,5 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages # The branch the action should deploy to.
-          folder: out # The folder the action should deploy.
+          folder: build # The folder the action should deploy.
 

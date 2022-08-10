@@ -1,5 +1,6 @@
 {
   "name": "desk-setup-editor",
+  "homepage": "https://f1982.github.io/desk-setup-editor",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
