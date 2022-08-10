@@ -54,6 +54,30 @@ class ThreeCanvas {
     this.initControl();
   }
 
+  public dispose() {
+    console.log('dispose renderer!')
+    this.renderer.dispose();
+    this.gui.destroy();
+    this.stats.dom.remove();
+    // document.body.append()
+
+
+    this.scene.traverse((object:THREE.Object3D) => {
+      console.log('object', object);
+      // if (!object.isMesh) return
+
+      // console.log('dispose geometry!')
+      // object.geometry.dispose()
+
+      // if (object.material.isMaterial) {
+      //   cleanMaterial(object.material)
+      // } else {
+      //   // an array of materials
+      //   for (const material of object.material) cleanMaterial(material)
+      // }
+    })
+  }
+
   public switchToSTLScene() {
     // remove controller from scene
     // controller.removeTransformController()

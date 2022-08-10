@@ -9,9 +9,10 @@ function App() {
       <ThreeComponent />
       <div className='tool-container'>
         <div className="left-bar"></div>
-        <div className="right"> <Link to="/">Home</Link></div>
+        <div className="right">
+          <Link to="/">Home</Link>
+        </div>
       </div>
-      
     </div>
   );
 }

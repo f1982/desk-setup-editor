@@ -32,6 +32,9 @@ const ThreeComp: React.FC = () => {
       }
     }
     return ()=>{
+      if (threeSceneRef.current){
+        threeSceneRef.current.dispose();
+      }
       if (canvasRef.current){
         const child = canvasRef.current.firstChild;
         canvasRef.current.removeChild(child!);

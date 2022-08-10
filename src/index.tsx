@@ -1,14 +1,15 @@
-import ReactDOM from 'react-dom/client';
-import './index.scss';
-import reportWebVitals from './reportWebVitals';
 import React from 'react'
+import ReactDOM from 'react-dom/client';
 import {
   BrowserRouter, Route, Routes
 } from "react-router-dom";
+import reportWebVitals from './reportWebVitals';
 
 import About from './pages/About';
 import Editor from './pages/Editor';
-import Intro from './pages/Intro';
+import Home from './pages/Home';
+
+import './global.scss';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -16,15 +17,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Intro />}>
-        
-        {/* <Route path="/">
-          <Intro />
-        </Route>
-        <Route path="/about">
-          <About />
-        </Route> */}
-      </Route>
+      <Route path="/" element={<Home />} />
       <Route path="/editor" element={<Editor />} />
       <Route path="/about" element={<About />} />
     </Routes>
