@@ -37,12 +37,28 @@ export const addDragAndDrop = (
   });
 }
 
+function moveCameraToObject(camera: THREE.Camera, object: THREE.Object3D, offset: Vector3 = new Vector3(0, 5, -5)) {
+  const cameraOffset = offset; // NOTE Constant offset between the camera and the target
+
+  // NOTE Assuming the camera is direct child of the Scene
+  const objectPosition = new Vector3();
+  object.getWorldPosition(objectPosition);
+
+  camera.position.copy(objectPosition).add(cameraOffset);
+
+  camera.lookAt(objectPosition);
+  // const rotationOffset = new Vector3(Math.PI/4,0,0);
+  const cr = camera.rotation;
+  console.log('cr', cr);
+  camera.rotation.set(cr.x-0.3, cr.y, cr.z);
+}
+
 
 function getMovableMeshes(scene: THREE.Scene) {
   const objs = scene.children.filter((item: THREE.Object3D) => {
     return item instanceof DSEObject && item.name !== 'displayRoom'
   });
-  
+
   const meshes: any[] = [];
   objs.forEach(element => {
     const elementMeshes = element.children.filter(item => (item instanceof Mesh));
@@ -67,6 +83,10 @@ function getDSEObjects(scene: THREE.Scene) {
     return item instanceof DSEObject && item.name !== 'displayRoom'
   });
   return objs;
+}
+
+function getDSEObject(scene: THREE.Scene, name: string) {
+  return scene.children.find((item: THREE.Object3D) => item instanceof DSEObject && item.name === name);
 }
 
 class GlobalController {
@@ -97,6 +117,8 @@ class GlobalController {
 
     this.initOrbit();
     // this.initTransformControls();
+
+    this.initKeyboard();
 
     this.initDragDrop();
     //test to drag the desk
@@ -143,6 +165,27 @@ class GlobalController {
     // this will affect save STL, when trying to save STL, you need to remove this controller from scene
     this.scene.add(control);
     this.control = control;
+  }
+
+  initKeyboard() {
+    document.addEventListener('keydown', (event) => {
+      var name = event.key;
+      var code = event.code;
+      // Alert the key name and key code on keydown
+      // alert(`Key pressed ${name} \r\n Key code value: ${code}`);
+      // console.log(getDSEObjects(this.scene));
+      if (code === 'KeyA') {
+        moveCameraToObject(this.camera, getDSEObjects(this.scene)[0], new Vector3(0, 2, -2))
+      } else if (code === "Escape") {
+        const displayRoom = getDSEObject(this.scene, 'displayRoom');
+        console.log('displayRoom', displayRoom);
+        if (displayRoom) {
+          moveCameraToObject(this.camera, displayRoom)
+        }
+
+
+      }
+    }, false);
   }
 
 
@@ -208,13 +251,13 @@ class GlobalController {
 
       // check it's click action or not
       if (!this.dragMoved) {
-        if (this.selectedObj){
+        if (this.selectedObj) {
           this.dragClick(this.selectedObj);
         }
       }
       this.dragMoved = false;
     });
-    
+
     this.dragControl = controls
   }
 
