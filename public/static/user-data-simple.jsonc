@@ -1,0 +1,92 @@
+// user's editing data file
+{
+  "user": {
+    "info": {
+      "name": "andy",
+      "avatar": "avatar.png",
+      "email": "andycao@gmail.com"
+    },
+    "role": "normal",
+    "project-max": 3
+  },
+  "projects": [
+    {
+      "uuid": "ef397ffb-bb34-463b-92cf-ccb7d054f58e",
+      "name": "my dream setups",
+      "description": "",
+      "analysis": {
+        "like": 12,
+        "view": 12,
+        "shard": 100
+      },
+      "items": [
+        {
+          "id": "002",
+          "name": "ikea-desk",
+          // attached object id
+          "attached": {
+            "object": "0023",
+            "area": "desk"
+          },
+          "color": "",
+          "material": "",
+          "transform": {
+            "position": {
+              "x": 1,
+              "y": 2,
+              "z": 3
+            },
+            "rotation": {
+              "x": 1,
+              "y": 2,
+              "z": 3
+            },
+            "scale": {
+              "x": 1,
+              "y": 2,
+              "z": 3
+            }
+          }
+        },
+        {
+          "id": "002",
+          "name": "lg-monitor",
+          // attached object id
+          "attached": {
+            "object": "002",
+            "area": "desktop"
+          },
+          "transform": {
+            "position": {
+              "x": 1,
+              "y": 2,
+              "z": 3
+            },
+            "rotation": {
+              "x": 1,
+              "y": 2,
+              "z": 3
+            },
+            "scale": {
+              "x": 1,
+              "y": 2,
+              "z": 3
+            }
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "ef397ffb-bb34-463b-92cf-ccb7d054f58e",
+      "name": "my dream setups",
+      "description": "",
+      "analysis": {
+        "like": 12,
+        "view": 12,
+        "shard": 100
+      },
+      "items": []
+    }
+  ],
+  "uploaded": []
+}
