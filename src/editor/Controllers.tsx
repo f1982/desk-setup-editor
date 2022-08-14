@@ -2,6 +2,7 @@ import { Camera, Group, Mesh, MeshLambertMaterial, Object3D, Raycaster, Renderer
 import { DragControls, OrbitControls, TransformControls } from "three-stdlib";
 import DSEObject from "../models/DSEObject";
 import KeyboardController, { DSEKeyboardEvents } from "./controllers/KeyboardController";
+import RayCasterControl, { SelectObjectEvent } from "./controllers/RayCasterControl";
 
 export const addControl = (camera: THREE.Camera, domElement: HTMLElement) => {
   const controls = new OrbitControls(camera, domElement);
@@ -54,31 +55,6 @@ function moveCameraToObject(camera: THREE.Camera, object: THREE.Object3D, offset
   camera.rotation.set(cr.x - 0.3, cr.y, cr.z);
 }
 
-
-function getMovableMeshes(scene: THREE.Scene) {
-  const objs = scene.children.filter((item: THREE.Object3D) => {
-    return item instanceof DSEObject && item.name !== 'displayRoom'
-  });
-
-  const meshes: any[] = [];
-  objs.forEach(element => {
-    const elementMeshes = element.children.filter(item => (item instanceof Mesh));
-    meshes.push(...elementMeshes);
-
-    // get dse object list inside des object
-    const subObjs = element.children.filter(item => (item instanceof DSEObject));
-    // console.log('subObjs', subObjs);
-    subObjs.forEach(subObj => {
-      //meshes inside des
-      const subMeshes = subObj.children.filter(subItem => (subItem instanceof Mesh));
-      // console.log('subMeshes', subMeshes);
-      meshes.push(...subMeshes);
-    })
-  });
-  console.log('ray cast meshes:', meshes)
-  return meshes;
-}
-
 function getDSEObjects(scene: THREE.Scene) {
   const objs = scene.children.filter((item: THREE.Object3D) => {
     return item instanceof DSEObject && item.name !== 'displayRoom'
@@ -105,8 +81,8 @@ class GlobalController {
 
   keyboardController?: KeyboardController;
 
-  rayCaster: Raycaster;
-  rayPointer: Vector2 = new Vector2();
+  rayControl?: RayCasterControl;
+
   selectedObj: DSEObject | null = null;
 
   movableObject: DSEObject;
@@ -167,7 +143,7 @@ class GlobalController {
       scene: this.scene,
       camera: this.camera
     });
-    
+
     this.keyboardController.addEventListener(
       DSEKeyboardEvents.OBJECT_MODE_EVENT,
       (event) => {
@@ -190,35 +166,15 @@ class GlobalController {
 
 
   initRayCaster() {
-    const rayCaster = new Raycaster();
-
-    // when user point down
-    this.renderer.domElement.addEventListener('pointerdown', (event) => {
-
-      // update ray caster pointer
-      const domElement = this.renderer.domElement;
-      const rect = domElement.getBoundingClientRect();
-      this.rayPointer.x = (event.clientX - rect.left) / rect.width * 2 - 1;
-      this.rayPointer.y = - (event.clientY - rect.top) / rect.height * 2 + 1;
-      rayCaster.setFromCamera(this.rayPointer, this.camera);
-
-      // get and set the object can be interacted with
-      const selectableElements = getMovableMeshes(this.scene);
-      const intersects = rayCaster.intersectObjects<Object3D>(selectableElements, true);
-
-      if (
-        intersects.length > 0 &&
-        intersects[0].object.parent instanceof DSEObject
-      ) {
-        this.updateDragObject(intersects[0].object.parent);
-
-      } else {
-        // click on blank area, unselect objects
-        this.updateDragObject(null);
-      }
+    this.rayControl = new RayCasterControl({
+      scene: this.scene,
+      camera: this.camera,
+      renderer: this.renderer,
     });
-
-    this.rayCaster = rayCaster;
+    this.rayControl.addEventListener(SelectObjectEvent, (event) => {
+      console.log('SelectObjectEvent event', event);
+      this.updateDragObject(event.selected);
+    });
   }
 
   initDragDrop() {
@@ -283,6 +239,11 @@ class GlobalController {
     if (this.keyboardController) {
       this.keyboardController.dispose();
       this.keyboardController = undefined;
+    }
+
+    if(this.rayControl){
+      this.rayControl.dispose();
+      this.rayControl = undefined;
     }
 
   }
