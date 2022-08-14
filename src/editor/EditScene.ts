@@ -6,10 +6,9 @@ import Stats from 'stats.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import DSEObject from '../models/DSEObject';
-import GlobalController from './Controllers';
+import GlobalController from './controllers/Controls';
 import { getCamera, getGirds, getGUIPanel, getLights, getOrthographicCamera, getRenderer, getScene, getStats } from './SceneElements';
 import SetupObjects from './SetupObjects';
-import { Vector3 } from 'three';
 
 
 // use this tool to help you to locate the position of the light and cameras
@@ -39,7 +38,8 @@ class ThreeCanvas {
 
   private setupObjects: SetupObjects;
 
-  public movableObjects: DSEObject[] = [];
+
+  private controls?: GlobalController;
 
   constructor(options: IOptions) {
     this.initScene(options);
@@ -54,6 +54,12 @@ class ThreeCanvas {
     this.gui.destroy();
     this.stats.dom.remove();
     // document.body.append()
+
+    if (this.controls){
+      this.controls.dispose();
+      this.controls = undefined;
+
+    }
 
 
     this.scene.traverse((object: THREE.Object3D) => {
@@ -126,8 +132,7 @@ class ThreeCanvas {
   }
 
   initControl() {
-    // addControl(this.camera, this.renderer.domElement);
-    const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
+    this.controls = new GlobalController(this.scene, this.camera, this.renderer);
   }
 
   resizeRendererToDisplaySize() {
