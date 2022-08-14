@@ -1,6 +1,7 @@
 import { Camera, Group, Mesh, MeshLambertMaterial, Object3D, Raycaster, Renderer, Scene, Vector2, Vector3 } from "three";
 import { DragControls, OrbitControls, TransformControls } from "three-stdlib";
 import DSEObject from "../models/DSEObject";
+import KeyboardController, { DSEKeyboardEvents } from "./controllers/KeyboardController";
 
 export const addControl = (camera: THREE.Camera, domElement: HTMLElement) => {
   const controls = new OrbitControls(camera, domElement);
@@ -50,7 +51,7 @@ function moveCameraToObject(camera: THREE.Camera, object: THREE.Object3D, offset
   // const rotationOffset = new Vector3(Math.PI/4,0,0);
   const cr = camera.rotation;
   console.log('cr', cr);
-  camera.rotation.set(cr.x-0.3, cr.y, cr.z);
+  camera.rotation.set(cr.x - 0.3, cr.y, cr.z);
 }
 
 
@@ -102,6 +103,8 @@ class GlobalController {
   dragGroup: THREE.Group = new Group();
   dragMoved = false;
 
+  keyboardController?: KeyboardController;
+
   rayCaster: Raycaster;
   rayPointer: Vector2 = new Vector2();
   selectedObj: DSEObject | null = null;
@@ -126,15 +129,6 @@ class GlobalController {
 
 
   };
-
-  // public attachObject(obj: DSEObject) {
-  //   if (this.movableObject) {
-  //     this.control.detach();
-  //   }
-
-  //   this.movableObject = obj;
-  //   this.control.attach(this.movableObject);
-  // }
 
   initOrbit() {
     const orbit = new OrbitControls(this.camera, this.renderer.domElement);
@@ -168,24 +162,30 @@ class GlobalController {
   }
 
   initKeyboard() {
-    document.addEventListener('keydown', (event) => {
-      var name = event.key;
-      var code = event.code;
-      // Alert the key name and key code on keydown
-      // alert(`Key pressed ${name} \r\n Key code value: ${code}`);
-      // console.log(getDSEObjects(this.scene));
-      if (code === 'KeyA') {
-        moveCameraToObject(this.camera, getDSEObjects(this.scene)[0], new Vector3(0, 2, -2))
-      } else if (code === "Escape") {
+    console.log('initKeyboard');
+    this.keyboardController = new KeyboardController({
+      scene: this.scene,
+      camera: this.camera
+    });
+    
+    this.keyboardController.addEventListener(
+      DSEKeyboardEvents.OBJECT_MODE_EVENT,
+      (event) => {
+        console.log('OVERVIEW_MODE_EVENT', event)
+        const desk = getDSEObjects(this.scene)[0];
+        moveCameraToObject(this.camera, desk, new Vector3(0, 2, -1))
+      })
+
+    this.keyboardController.addEventListener(
+      DSEKeyboardEvents.OVERVIEW_MODE_EVENT,
+      () => {
+        console.log('OVERVIEW_MODE_EVENT')
         const displayRoom = getDSEObject(this.scene, 'displayRoom');
         console.log('displayRoom', displayRoom);
         if (displayRoom) {
           moveCameraToObject(this.camera, displayRoom)
         }
-
-
-      }
-    }, false);
+      })
   }
 
 
@@ -277,6 +277,14 @@ class GlobalController {
 
   render(event: any) {
     // console.log('event', event);
+  }
+
+  dispose() {
+    if (this.keyboardController) {
+      this.keyboardController.dispose();
+      this.keyboardController = undefined;
+    }
+
   }
 }
 
