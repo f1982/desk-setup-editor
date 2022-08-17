@@ -1,6 +1,5 @@
-import GUI from 'lil-gui';
 import { BoxGeometry, Mesh, MeshLambertMaterial, Vector3 } from 'three';
-import { GLTF, GLTFLoader, OBJLoader } from 'three-stdlib';
+import { GLTF, GLTFLoader } from 'three-stdlib';
 import DSEObject from './DSEObject';
 import * as THREE from 'three'
 

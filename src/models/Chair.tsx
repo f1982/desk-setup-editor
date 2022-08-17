@@ -12,6 +12,7 @@ class Chair extends DSEObject {
   constructor() {
     super();
 
+    this.name = 'chair'
     this.loadGLTF()
     this.layout();
   }

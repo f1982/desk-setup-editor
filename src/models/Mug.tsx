@@ -1,4 +1,3 @@
-import GUI from 'lil-gui';
 import { BoxGeometry, Mesh, MeshLambertMaterial, Vector3 } from 'three';
 import DSEObject from './DSEObject';
 

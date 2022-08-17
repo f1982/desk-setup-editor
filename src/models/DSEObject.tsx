@@ -8,7 +8,7 @@ export enum ObjectCategory {
   None = "",
 }
 
-type ObjTypes = '' | 'MovableObject' | 'StaticObject';
+// type ObjTypes = '' | 'MovableObject' | 'StaticObject';
 
 class DSEObject extends THREE.Group {
 
@@ -16,10 +16,6 @@ class DSEObject extends THREE.Group {
 
   protected restrictMin: Vector3 = new Vector3(-2, -2, -2);
   protected restrictMax: Vector3 = new Vector3(2, 2, 2);
-
-  constructor() {
-    super();
-  }
 
   public setGUI(gui: GUI) { 
   }

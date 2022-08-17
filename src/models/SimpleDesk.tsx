@@ -21,6 +21,7 @@ class SimpleDesk extends DSEObject {
 
   constructor() {
     super();
+    this.name="desk"
 
     this.initDesktop();
     this.initLegs();

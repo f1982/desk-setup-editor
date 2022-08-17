@@ -1,5 +1,5 @@
 import { Camera, EventDispatcher, Renderer, Scene } from 'three';
-import { OrbitControls, TransformControls } from "three-stdlib";
+import { TransformControls } from "three-stdlib";
 import DSEObject from '../../models/DSEObject';
 
 class TransformControl extends EventDispatcher {

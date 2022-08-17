@@ -3,18 +3,24 @@ import React from 'react'
 import { Link } from 'react-router-dom';
 import './Editor.scss'
 
-function App() {
+const ToolBar = () => {
+  return (
+    <div className='tool-container'>
+      <div className="left-bar"></div>
+      <div className="right">
+        <Link to="/">Home</Link>
+      </div>
+    </div>
+  )
+}
+
+function EditorPage() {
   return (
     <div className="App">
       <ThreeComponent />
-      <div className='tool-container'>
-        <div className="left-bar"></div>
-        <div className="right">
-          <Link to="/">Home</Link>
-        </div>
-      </div>
+      <ToolBar />
     </div>
   );
 }
 
-export default App;
+export default EditorPage;

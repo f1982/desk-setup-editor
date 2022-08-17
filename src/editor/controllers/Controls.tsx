@@ -1,4 +1,4 @@
-import { Camera, Euler, Quaternion, Renderer, Scene, Vector3 } from "three";
+import { Camera, Renderer, Scene, Vector3 } from "three";
 import { OrbitControls } from "three-stdlib";
 import DSEObject from "../../models/DSEObject";
 import DragControl from "./DragControl";
@@ -6,17 +6,9 @@ import KeyboardController, { DSEKeyboardEvents } from "./KeyboardControl";
 import RayCasterControl, { SelectObjectEvent } from "./RayCasterControl";
 import TransformControl from "./TransformControl";
 import gsap from 'gsap'
+import { getDSEObject, getDSEObjects } from "../../utils/threeUtils";
 
-function getDSEObjects(scene: THREE.Scene) {
-  const objs = scene.children.filter((item: THREE.Object3D) => {
-    return item instanceof DSEObject && item.name !== 'displayRoom'
-  });
-  return objs;
-}
 
-function getDSEObject(scene: THREE.Scene, name: string) {
-  return scene.children.find((item: THREE.Object3D) => item instanceof DSEObject && item.name === name);
-}
 
 class GlobalController {
 
@@ -70,6 +62,7 @@ class GlobalController {
       camera: this.camera
     });
 
+    // TODO: remove listeners
     this.keyboardController.addEventListener(DSEKeyboardEvents.OBJECT_MODE_EVENT, (event) => {
       const desk = getDSEObjects(this.scene)[0];
       this.moveCameraToObject(this.camera, desk, new Vector3(0, 3, -1))
@@ -90,6 +83,7 @@ class GlobalController {
       renderer: this.renderer,
     });
 
+    // TODO: remove listeners
     this.rayControl.addEventListener(SelectObjectEvent, (evt) => {
       // should only use one control to move object
       if (this.dragControl) {
@@ -108,6 +102,7 @@ class GlobalController {
       renderer: this.renderer,
     });
 
+    // TODO: remove listeners
     this.dragControl.addEventListener('dragcontrolstart', () => {
       this.orbit!.enabled = false;
     });
@@ -121,6 +116,13 @@ class GlobalController {
     });
   }
 
+  /**
+   * Move camera to look at an object with animation
+   * 
+   * @param camera 
+   * @param target the object want to be focus by camera
+   * @param offset specify a distance between object and the camera
+   */
   moveCameraToObject(
     camera: THREE.Camera,
     target: THREE.Object3D,
@@ -132,20 +134,22 @@ class GlobalController {
     // camera end position
     const endPosition = targetPosition.add(offset);
 
-    //stop orbit control
+    // stop orbit control
     this.orbit!.enabled = false;
 
+    // move camera
     gsap.to(camera.position, {
       duration: 1,
       x: endPosition.x,
       y: endPosition.y,
       z: endPosition.z,
       onUpdate: () => {
+        // keep camera facing to the target object
         camera.lookAt(target.getWorldPosition(targetPosition));
       },
       onComplete: () => {
         console.log('move end');
-        // camera.lookAt(target.getWorldPosition(targetPosition));
+
         // resume orbit control
         this.orbit!.enabled = true;
       }

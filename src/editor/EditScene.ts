@@ -5,10 +5,11 @@ import GUI from 'lil-gui';
 import Stats from 'stats.js';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import DSEObject from '../models/DSEObject';
 import GlobalController from './controllers/Controls';
 import { getCamera, getGirds, getGUIPanel, getLights, getOrthographicCamera, getRenderer, getScene, getStats } from './SceneElements';
 import SetupObjects from './SetupObjects';
+import { getDSEObject, getDSEObjects, moveCameraToObject } from '../utils/threeUtils';
+import { Vector3 } from 'three';
 
 
 // use this tool to help you to locate the position of the light and cameras
@@ -45,7 +46,6 @@ class ThreeCanvas {
     this.initScene(options);
     this.initTools();
     this.initElements();
-    this.initControl();
   }
 
   public dispose() {
@@ -55,12 +55,11 @@ class ThreeCanvas {
     this.stats.dom.remove();
     // document.body.append()
 
-    if (this.controls){
+    if (this.controls) {
       this.controls.dispose();
       this.controls = undefined;
 
     }
-
 
     this.scene.traverse((object: THREE.Object3D) => {
       console.log('object', object);
@@ -76,6 +75,28 @@ class ThreeCanvas {
       //   for (const material of object.material) cleanMaterial(material)
       // }
     })
+  }
+
+  public resetView() {
+    // this.controls.
+    console.log('reset view');
+    const displayRoom = getDSEObject(this.scene, 'displayRoom');
+    if (displayRoom) {
+      moveCameraToObject(this.camera, displayRoom)
+    }
+  }
+
+  public focusObject() {
+    // const desk = getDSEObjects(this.scene)[0];
+    const desk = this.setupObjects.findItemInRoom('desk');
+
+    desk && moveCameraToObject(this.camera, desk, new Vector3(0, 3, -1))
+  }
+
+  public focusChair() {
+    const chair = this.setupObjects.findItemInRoom('chair');
+    chair && moveCameraToObject(this.camera, chair, new Vector3(0, 3, -1))
+
   }
 
   public switchToSTLScene() {
@@ -99,7 +120,7 @@ class ThreeCanvas {
 
     this.camera = this.perspectiveCamera;
 
-    const lights = getLights(this.scene);
+    getLights(this.scene);
 
     this.renderer = getRenderer(width, height);
 
@@ -126,12 +147,8 @@ class ThreeCanvas {
     document.body.append(this.stats.dom)
   }
 
-  initElements() {
+  private initElements() {
     this.setupObjects = new SetupObjects(this.scene, this.gui);
-
-  }
-
-  initControl() {
     this.controls = new GlobalController(this.scene, this.camera, this.renderer);
   }
 
@@ -173,6 +190,7 @@ class ThreeCanvas {
       this.stats.end();
     }
   }
+
 }
 
 export default ThreeCanvas;
