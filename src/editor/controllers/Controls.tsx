@@ -1,26 +1,11 @@
-import { Camera, Renderer, Scene, Vector3 } from "three";
+import { Camera, Euler, Quaternion, Renderer, Scene, Vector3 } from "three";
 import { OrbitControls } from "three-stdlib";
 import DSEObject from "../../models/DSEObject";
 import DragControl from "./DragControl";
 import KeyboardController, { DSEKeyboardEvents } from "./KeyboardControl";
 import RayCasterControl, { SelectObjectEvent } from "./RayCasterControl";
 import TransformControl from "./TransformControl";
-
-function moveCameraToObject(camera: THREE.Camera, object: THREE.Object3D, offset: Vector3 = new Vector3(0, 5, -5)) {
-  const cameraOffset = offset; // NOTE Constant offset between the camera and the target
-
-  // NOTE Assuming the camera is direct child of the Scene
-  const objectPosition = new Vector3();
-  object.getWorldPosition(objectPosition);
-
-  camera.position.copy(objectPosition).add(cameraOffset);
-
-  camera.lookAt(objectPosition);
-  // const rotationOffset = new Vector3(Math.PI/4,0,0);
-  const cr = camera.rotation;
-  console.log('cr', cr);
-  camera.rotation.set(cr.x - 0.3, cr.y, cr.z);
-}
+import gsap from 'gsap'
 
 function getDSEObjects(scene: THREE.Scene) {
   const objs = scene.children.filter((item: THREE.Object3D) => {
@@ -87,13 +72,13 @@ class GlobalController {
 
     this.keyboardController.addEventListener(DSEKeyboardEvents.OBJECT_MODE_EVENT, (event) => {
       const desk = getDSEObjects(this.scene)[0];
-      moveCameraToObject(this.camera, desk, new Vector3(0, 2, -1))
+      this.moveCameraToObject(this.camera, desk, new Vector3(0, 3, -1))
     });
 
     this.keyboardController.addEventListener(DSEKeyboardEvents.OVERVIEW_MODE_EVENT, () => {
       const displayRoom = getDSEObject(this.scene, 'displayRoom');
       if (displayRoom) {
-        moveCameraToObject(this.camera, displayRoom)
+        this.moveCameraToObject(this.camera, displayRoom)
       }
     });
   }
@@ -133,6 +118,37 @@ class GlobalController {
 
     this.dragControl.addEventListener('dragcontrolclick', (evt) => {
       console.log('click on object', evt.object);
+    });
+  }
+
+  moveCameraToObject(
+    camera: THREE.Camera,
+    target: THREE.Object3D,
+    offset: Vector3 = new Vector3(0, 5, -5)
+  ) {
+    const targetPosition = new Vector3();
+    target.getWorldPosition(targetPosition);
+
+    // camera end position
+    const endPosition = targetPosition.add(offset);
+
+    //stop orbit control
+    this.orbit!.enabled = false;
+
+    gsap.to(camera.position, {
+      duration: 1,
+      x: endPosition.x,
+      y: endPosition.y,
+      z: endPosition.z,
+      onUpdate: () => {
+        camera.lookAt(target.getWorldPosition(targetPosition));
+      },
+      onComplete: () => {
+        console.log('move end');
+        // camera.lookAt(target.getWorldPosition(targetPosition));
+        // resume orbit control
+        this.orbit!.enabled = true;
+      }
     });
   }
 
