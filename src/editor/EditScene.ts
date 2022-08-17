@@ -90,12 +90,12 @@ class ThreeCanvas {
     // const desk = getDSEObjects(this.scene)[0];
     const desk = this.setupObjects.findItemInRoom('desk');
 
-    desk && moveCameraToObject(this.camera, desk, new Vector3(0, 3, -1))
+    desk && moveCameraToObject(this.camera, desk, new Vector3(0, 3, -3))
   }
 
   public focusChair() {
     const chair = this.setupObjects.findItemInRoom('chair');
-    chair && moveCameraToObject(this.camera, chair, new Vector3(0, 3, -1))
+    chair && moveCameraToObject(this.camera, chair, new Vector3(0, 3, -3))
 
   }
 

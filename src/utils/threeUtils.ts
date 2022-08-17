@@ -1,7 +1,7 @@
 
 import { saveAs } from 'file-saver';
 import * as THREE from 'three';
-import { Vector3 } from 'three';
+import { Euler, Quaternion, Vector3 } from 'three';
 import gsap from 'gsap';
 import DSEObject from '../models/DSEObject';
 
@@ -46,30 +46,76 @@ function moveCameraToObject(
   offset: Vector3 = new Vector3(0, 5, -5),
   callback?: () => void
 ) {
+  // camera position
   const targetPosition = new Vector3();
   target.getWorldPosition(targetPosition);
 
-  // camera end position
-  const endPosition = targetPosition.add(offset);
 
-  // stop orbit control
-  // this.orbit!.enabled = false;
+  // camera  position
+  const startPosition = new Vector3().copy(camera.position);
+  // const endPosition = targetPosition.add(offset);
+  const endPosition = new Vector3().copy(targetPosition).add(offset);
 
-  // move camera
-  gsap.to(camera.position, {
+  const startQuaternion = new THREE.Quaternion().copy(camera.quaternion);
+
+  camera.position.copy(endPosition);
+  // either
+  camera.lookAt(targetPosition);
+  // camera.lookAt(target.position);
+  //or
+  // let wp = new Vector3();
+  // target.getWorldPosition(wp);
+  // camera.lookAt(wp); 
+
+  const endQuaternion = new THREE.Quaternion().copy(camera.quaternion);
+  
+  camera.quaternion.copy(startQuaternion);
+  camera.position.copy(startPosition);
+
+  
+  const time = { t: 0 };
+
+  // move time
+  gsap.to(time, {
     duration: 1,
-    x: endPosition.x,
-    y: endPosition.y,
-    z: endPosition.z,
+    t: 1,
     onUpdate: () => {
-      // keep camera facing to the target object
-      camera.lookAt(target.getWorldPosition(targetPosition));
+      
+      // position
+      const p = new Vector3();
+      p.lerpVectors(startPosition, endPosition, time.t);
+      camera.position.copy(p);
+
+      // rotation
+      const qm = new Quaternion();
+      qm.slerpQuaternions(startQuaternion, endQuaternion, time.t);
+      camera.quaternion.copy(qm);
+      
     },
     onComplete: () => {
       console.log('move end');
       callback?.();
     }
   });
+
+  // // move camera
+  // gsap.to(camera.position, {
+  //   duration: 1,
+  //   x: endPosition.x,
+  //   y: endPosition.y,
+  //   z: endPosition.z,
+  //   onUpdate: () => {
+  //     // keep camera facing to the target object
+  //     // camera.lookAt(target.getWorldPosition(targetPosition));
+  //     const qm = new THREE.Quaternion();
+  //     qm.slerpQuaternions(startQuaternion, endQuaternion, time.t);
+  //     camera.quaternion.copy(qm);
+  //   },
+  //   onComplete: () => {
+  //     console.log('move end');
+  //     callback?.();
+  //   }
+  // });
 }
 
 export {
