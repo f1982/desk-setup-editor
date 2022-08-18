@@ -1,22 +1,16 @@
 // @ts-ignore
 import * as THREE from 'three';
-import gsap from 'gsap';
-import { DragControls } from 'three/examples/jsm/controls/DragControls';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // import theme from 'utils/theme';
+import GUI from 'lil-gui';
+import Stats from 'stats.js';
+import { Vector3 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
-import { vertex as basicVertex, fragment as basicFragment } from '../shaders/index';
+import { getDSEObject, moveCameraToObject } from '../utils/threeUtils';
+import GlobalController from './controllers/Controls';
 import { getCamera, getGirds, getGUIPanel, getLights, getOrthographicCamera, getRenderer, getScene, getStats } from './SceneElements';
-import GlobalController, { addControl, addDragAndDrop } from './Controllers';
-import SimpleDesk from '../models/SimpleDesk';
-import Stats from 'stats.js';
-import { getCubeGroup, loadScene } from '../models';
-import GUI from 'lil-gui';
-import DisplayRoom from '../models/DisplayRoom';
-import Mug from '../models/Mug';
-import DSEObject from '../models/DSEObject';
 import SetupObjects from './SetupObjects';
+
 
 // use this tool to help you to locate the position of the light and cameras
 // https://threejs.org/editor/
@@ -45,13 +39,12 @@ class ThreeCanvas {
 
   private setupObjects: SetupObjects;
 
-  public movableObjects: DSEObject[] = [];
+  private controls?: GlobalController;
 
   constructor(options: IOptions) {
     this.initScene(options);
     this.initTools();
     this.initElements();
-    this.initControl();
   }
 
   public dispose() {
@@ -61,8 +54,13 @@ class ThreeCanvas {
     this.stats.dom.remove();
     // document.body.append()
 
+    if (this.controls) {
+      this.controls.dispose();
+      this.controls = undefined;
 
-    this.scene.traverse((object:THREE.Object3D) => {
+    }
+
+    this.scene.traverse((object: THREE.Object3D) => {
       console.log('object', object);
       // if (!object.isMesh) return
 
@@ -76,6 +74,32 @@ class ThreeCanvas {
       //   for (const material of object.material) cleanMaterial(material)
       // }
     })
+  }
+
+  public getAllObjects() {
+    console.log('this.setupObjects.allObjects', this.setupObjects.allObjects);
+  }
+
+  public resetView() {
+    // this.controls.
+    console.log('reset view');
+    const displayRoom = getDSEObject(this.scene, 'displayRoom');
+    if (displayRoom) {
+      moveCameraToObject(this.camera, displayRoom)
+    }
+  }
+
+  public focusObject() {
+    // const desk = getDSEObjects(this.scene)[0];
+    const desk = this.setupObjects.findItemInRoom('desk');
+
+    desk && moveCameraToObject(this.camera, desk, new Vector3(0, 3, -3))
+  }
+
+  public focusChair() {
+    const chair = this.setupObjects.findItemInRoom('chair');
+    chair && moveCameraToObject(this.camera, chair, new Vector3(0, 3, -3))
+
   }
 
   public switchToSTLScene() {
@@ -99,7 +123,7 @@ class ThreeCanvas {
 
     this.camera = this.perspectiveCamera;
 
-    const lights = getLights(this.scene);
+    getLights(this.scene);
 
     this.renderer = getRenderer(width, height);
 
@@ -126,14 +150,16 @@ class ThreeCanvas {
     document.body.append(this.stats.dom)
   }
 
-  initElements() {
+  private initElements() {
     this.setupObjects = new SetupObjects(this.scene, this.gui);
-
-  }
-
-  initControl() {
-    // addControl(this.camera, this.renderer.domElement);
-    const ctrl = new GlobalController(this.scene, this.camera, this.renderer);
+    this.controls = new GlobalController(this.scene, this.camera, this.renderer);
+    this.controls.addEventListener('unselect_all',()=>{
+      console.log(this, 'unselect_all');
+      this.setupObjects.unselectAll();
+    });
+    this.controls.addEventListener('objectSelected',({object})=>{
+      console.log('objectSelected: ', object);
+    });
   }
 
   resizeRendererToDisplaySize() {
@@ -174,6 +200,7 @@ class ThreeCanvas {
       this.stats.end();
     }
   }
+
 }
 
 export default ThreeCanvas;

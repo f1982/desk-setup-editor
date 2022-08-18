@@ -6,10 +6,10 @@ function Intro() {
     <div className="page">
       <div className="intro">This is Setup Editor</div>
       <div>
-        <Link to="/editor">Editor</Link>
+        <Link to="/editor">Editor111</Link>
       </div>
       <div>
-        <Link to="/about">About</Link>
+        <Link to="/about">About</Link> 
       </div>
     </div>
   );

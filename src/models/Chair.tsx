@@ -12,6 +12,7 @@ class Chair extends DSEObject {
   constructor() {
     super();
 
+    this.name = 'chair'
     this.loadGLTF()
     this.layout();
   }
@@ -60,7 +61,7 @@ class Chair extends DSEObject {
         if (mesh){
 
           this.add(mesh);
-
+          this.addBoxHelper();
         }
       },
       // called while loading is progressing
