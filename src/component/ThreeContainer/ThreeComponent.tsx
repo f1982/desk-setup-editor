@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { saveSTL } from '../../utils/threeUtils';
 import ThreeCanvas from '../../editor/EditScene';
-import './ThreeComponent.scss';
 import BottomTools, { ButtonIds } from '../../editor/toolbars/BottomTools';
+import './ThreeComponent.scss';
 
 
 const ThreeComp: React.FC = () => {
@@ -41,7 +40,7 @@ const ThreeComp: React.FC = () => {
       //   canvasRef.current.removeChild(child!);
       // } 
     // }
-  }, []);
+  }, [initialized]);
 
   const handleButtonClick = (buttonId: string) => {
     switch (buttonId) {
