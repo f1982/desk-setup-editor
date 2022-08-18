@@ -24,7 +24,12 @@
 				"amatiasq.sort-imports",
 				"RobbOwen.synthwave-vscode",
 				"wooodhead.vscode-wrap-console-log-simple",
-				"redhat.vscode-yaml"
+				"redhat.vscode-yaml",
+				"albert.TabOut",
+				"eamodio.gitlens",
+				"mhutchie.git-graph",
+				"wix.vscode-import-cost",
+				"aaron-bond.better-comments"
 			]
 		}
 	},
