@@ -61,7 +61,7 @@ class Chair extends DSEObject {
         if (mesh){
 
           this.add(mesh);
-
+          this.addBoxHelper();
         }
       },
       // called while loading is progressing

@@ -23,6 +23,8 @@ class GlobalController extends EventDispatcher {
   dragControl?: DragControl;
   transformControl?: TransformControl;
 
+  selected: DSEObject;
+
   constructor(scene: Scene, camera: Camera, renderer: Renderer) {
     super();
 
@@ -76,6 +78,32 @@ class GlobalController extends EventDispatcher {
         this.moveCameraToObject(this.camera, displayRoom)
       }
     });
+
+    const ms = 0.02;
+
+    this.keyboardController.addEventListener(DSEKeyboardEvents.MOVE_X_INCREASE, () => {
+      const { min, max } = this.selected?.getRestrictArea()
+      this.selected?.position.set(this.selected.position.x - ms, this.selected.position.y, this.selected.position.z);
+      this.selected?.position.clamp(min, max);
+    })
+    this.keyboardController.addEventListener(DSEKeyboardEvents.MOVE_X_DECREASE, () => {
+      const { min, max } = this.selected?.getRestrictArea()
+
+      this.selected?.position.set(this.selected.position.x + ms, this.selected.position.y, this.selected.position.z);
+      this.selected?.position.clamp(min, max);
+    })
+    this.keyboardController.addEventListener(DSEKeyboardEvents.MOVE_Z_INCREASE, () => {
+      const { min, max } = this.selected?.getRestrictArea()
+
+      this.selected?.position.set(this.selected.position.x, this.selected.position.y, this.selected.position.z + ms);
+      this.selected?.position.clamp(min, max);
+    })
+    this.keyboardController.addEventListener(DSEKeyboardEvents.MOVE_Z_DECREASE, () => {
+      const { min, max } = this.selected?.getRestrictArea()
+
+      this.selected?.position.set(this.selected.position.x, this.selected.position.y, this.selected.position.z - ms);
+      this.selected?.position.clamp(min, max);
+    })
   }
 
   initRayCaster() {
@@ -89,6 +117,8 @@ class GlobalController extends EventDispatcher {
     this.rayControl.addEventListener(SelectObjectEvent, (evt) => {
       this.dispatchEvent({ type: 'unselect_all' })
       const selectedObject: DSEObject = evt.selected;
+      this.selected = selectedObject;
+
       if (!selectedObject) {
         return
       }

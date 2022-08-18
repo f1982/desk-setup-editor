@@ -25,28 +25,6 @@ class SetupObjects {
     this.initRoom();
     this.initInRoomObjects();
     this.initOnDeskObjects();
-
-    // const loader = new GLTFLoader();
-
-    // loader.load(
-    //   // resource URL
-    //   'https://raw.githubusercontent.com/f1982/planet-of-images/main/img/my-room-v0.69.gltf',
-    //   // called when the resource is loaded
-    //   (gltf: GLTF) => {
-    //     // this.body = gltf.scene;
-    //     // console.log('this.body ', this.body);
-    //     // this.add(this.body);
-    //     this.scene.add(gltf.scene);
-    //   },
-    //   // called while loading is progressing
-    //   (xhr: ProgressEvent) => {
-    //     console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
-    //   },
-    //   // called when loading has errors
-    //   (error) => {
-    //     console.log('An error  happened');
-    //   },
-    // );
   }
 
   public dispose() {
@@ -99,6 +77,15 @@ class SetupObjects {
     this.inRoomObjects.push(chair);
     this.scene!.add(chair);
 
+    const monitor = new MonitorSample()
+    this.inRoomObjects.push(monitor);
+    this.scene?.add(monitor);
+
+    const mug = new Mug();
+    this.scene?.add(mug);
+    this.inRoomObjects.push(mug);
+
+    
     this.updateInRoomObjectsRestrictArea();
   }
 

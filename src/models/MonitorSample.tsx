@@ -14,7 +14,7 @@ class MonitorSample extends DSEObject {
     super();
 
     this.loadMonitor()
-    this.layout();
+   
   }
 
   /**
@@ -38,14 +38,12 @@ class MonitorSample extends DSEObject {
   }
 
   private loadMonitor() {
-
     const geo = new BoxGeometry(1, 1, 1);
     const material = new MeshLambertMaterial({ color: 0xff0000, wireframe: true });
     const mesh = new Mesh(geo, material);
     mesh.scale.set(0.3, 0.1, 0.3);
     this.add(mesh);
     this.handle = mesh;
-
 
     const url = process.env.PUBLIC_URL + '/static/models/monitor-34.gltf';
 
@@ -58,9 +56,10 @@ class MonitorSample extends DSEObject {
       // called when the resource is loaded
       (gltf: GLTF) => {
         const monitorMesh = gltf.scene;
-        console.log('this.monitorMesh ', monitorMesh);
 
         this.add(monitorMesh);
+        // this.layout();
+        // this.addBoxHelper();
       },
       // called while loading is progressing
       (xhr: ProgressEvent) => {

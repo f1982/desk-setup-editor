@@ -3,21 +3,26 @@ import DSEObject from '../../models/DSEObject';
 
 
 function getMovableMeshes(scene: THREE.Scene) {
-  const objs = scene.children.filter((item: THREE.Object3D) => {
+  const dseObjects = scene.children.filter((item: THREE.Object3D) => {
     return item instanceof DSEObject && item.name !== 'displayRoom'
   });
 
   const meshes: any[] = [];
-  objs.forEach(element => {
+  dseObjects.forEach(element => {
+    // put all mesh inside dse object into list
     const elementMeshes = element.children.filter(item => (item instanceof Mesh));
     meshes.push(...elementMeshes);
 
-    const subObjs = element.children.filter(item => (item instanceof DSEObject));
-    subObjs.forEach(subObj => {
-      //meshes inside des
-      const subMeshes = subObj.children.filter(subItem => (subItem instanceof Mesh));
-      meshes.push(...subMeshes);
-    })
+    // if the dse object has container
+    if ((element as DSEObject).container){
+      // find all the sub dse object inside the container
+      const subObjs = (element as DSEObject).container.children.filter(item => (item instanceof DSEObject));
+      // put all the sub dse object meshes into mesh list
+      subObjs.forEach((item) => {
+          const subMeshes = item.children.filter(subItem => (subItem instanceof Mesh));
+          meshes.push(...subMeshes);
+      })
+    }
   });
   console.log('ray cast meshes:', meshes)
   return meshes;
@@ -90,7 +95,7 @@ class RayCasterControl extends EventDispatcher {
 
   dispose() {
     this.renderer!.domElement.removeEventListener('pointerdown', this.handlePointerDown.bind(this));
-    
+
     this.scene = undefined;
     this.camera = undefined;
     this.renderer = undefined;
