@@ -1,14 +1,11 @@
 import { Camera, EventDispatcher, Renderer, Scene, Vector3 } from "three";
 import { OrbitControls } from "three-stdlib";
 import DSEObject from "../../models/DSEObject";
+import { getDSEObject, getDSEObjects, moveCameraToObject } from "../../utils/threeUtils";
 import DragControl from "./DragControl";
 import KeyboardController, { DSEKeyboardEvents } from "./KeyboardControl";
 import RayCasterControl, { SelectObjectEvent } from "./RayCasterControl";
 import TransformControl from "./TransformControl";
-import gsap from 'gsap'
-import { getDSEObject, getDSEObjects } from "../../utils/threeUtils";
-
-
 
 class GlobalController extends EventDispatcher {
 
@@ -69,16 +66,18 @@ class GlobalController extends EventDispatcher {
     // TODO: remove listeners
     this.keyboardController.addEventListener(DSEKeyboardEvents.OBJECT_MODE_EVENT, (event) => {
       const desk = getDSEObjects(this.scene)[0];
-      this.moveCameraToObject(this.camera, desk, new Vector3(0, 3, -1))
+      moveCameraToObject(this.camera, desk, new Vector3(0, 3, -1))
     });
 
     this.keyboardController.addEventListener(DSEKeyboardEvents.OVERVIEW_MODE_EVENT, () => {
       const displayRoom = getDSEObject(this.scene, 'displayRoom');
       if (displayRoom) {
-        this.moveCameraToObject(this.camera, displayRoom)
+        moveCameraToObject(this.camera, displayRoom)
       }
     });
 
+    // TODO: move this to keyboard controller, only set selected object to the controller
+    // The speed of moving object
     const ms = 0.02;
 
     this.keyboardController.addEventListener(DSEKeyboardEvents.MOVE_X_INCREASE, () => {
@@ -115,15 +114,19 @@ class GlobalController extends EventDispatcher {
 
     // TODO: remove listeners
     this.rayControl.addEventListener(SelectObjectEvent, (evt) => {
-      this.dispatchEvent({ type: 'unselect_all' })
-      const selectedObject: DSEObject = evt.selected;
-      this.selected = selectedObject;
 
-      if (!selectedObject) {
+      this.dispatchEvent({ type: 'unselect_all' })
+
+      if (this.selected !== evt.selected) {
+        this.selected = evt.selected;
+        this.dispatchEvent({ type: 'objectSelected', object: this.selected })
+      }
+
+      if (!this.selected) {
         return
       }
 
-      selectedObject.select();
+      this.selected.select();
 
       // should only use one control to move object
       if (this.dragControl) {
@@ -153,46 +156,6 @@ class GlobalController extends EventDispatcher {
 
     this.dragControl.addEventListener('dragcontrolclick', (evt) => {
       console.log('click on object', evt.object);
-    });
-  }
-
-  /**
-   * Move camera to look at an object with animation
-   * 
-   * @param camera 
-   * @param target the object want to be focus by camera
-   * @param offset specify a distance between object and the camera
-   */
-  moveCameraToObject(
-    camera: THREE.Camera,
-    target: THREE.Object3D,
-    offset: Vector3 = new Vector3(0, 5, -5)
-  ) {
-    const targetPosition = new Vector3();
-    target.getWorldPosition(targetPosition);
-
-    // camera end position
-    const endPosition = targetPosition.add(offset);
-
-    // stop orbit control
-    this.orbit!.enabled = false;
-
-    // move camera
-    gsap.to(camera.position, {
-      duration: 1,
-      x: endPosition.x,
-      y: endPosition.y,
-      z: endPosition.z,
-      onUpdate: () => {
-        // keep camera facing to the target object
-        camera.lookAt(target.getWorldPosition(targetPosition));
-      },
-      onComplete: () => {
-        console.log('move end');
-
-        // resume orbit control
-        this.orbit!.enabled = true;
-      }
     });
   }
 

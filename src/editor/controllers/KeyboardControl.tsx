@@ -33,7 +33,6 @@ class KeyboardController extends EventDispatcher {
   }
 
   handleKeydown(event: KeyboardEvent) {
-    console.log('event', event);
     switch (event.code) {
       case ShortcutKeys.SWITCH_OBJECT_KEY_CODE: {
         this.dispatchEvent({ type: DSEKeyboardEvents.OBJECT_MODE_EVENT });

@@ -3,13 +3,13 @@ import * as THREE from 'three';
 // import theme from 'utils/theme';
 import GUI from 'lil-gui';
 import Stats from 'stats.js';
+import { Vector3 } from 'three';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
+import { getDSEObject, moveCameraToObject } from '../utils/threeUtils';
 import GlobalController from './controllers/Controls';
 import { getCamera, getGirds, getGUIPanel, getLights, getOrthographicCamera, getRenderer, getScene, getStats } from './SceneElements';
 import SetupObjects from './SetupObjects';
-import { getDSEObject, getDSEObjects, moveCameraToObject } from '../utils/threeUtils';
-import { Vector3 } from 'three';
 
 
 // use this tool to help you to locate the position of the light and cameras
@@ -156,7 +156,10 @@ class ThreeCanvas {
     this.controls.addEventListener('unselect_all',()=>{
       console.log(this, 'unselect_all');
       this.setupObjects.unselectAll();
-    })
+    });
+    this.controls.addEventListener('objectSelected',({object})=>{
+      console.log('objectSelected: ', object);
+    });
   }
 
   resizeRendererToDisplaySize() {
