@@ -32,19 +32,22 @@ const ThreeComp: React.FC = () => {
         setInitialized(true);
       }
     }
-    return () => {
-      if (threeSceneRef.current) {
-        threeSceneRef.current.dispose();
-      }
-      if (canvasRef.current) {
-        const child = canvasRef.current.firstChild;
-        canvasRef.current.removeChild(child!);
-      }
-    }
+    // return () => {
+      // if (threeSceneRef.current) {
+      //   threeSceneRef.current.dispose();
+      // }
+      // if (canvasRef.current) {
+      //   const child = canvasRef.current.firstChild;
+      //   canvasRef.current.removeChild(child!);
+      // } 
+    // }
   }, []);
 
   const handleButtonClick = (buttonId: string) => {
     switch (buttonId) {
+      case 'allObjects':
+        threeSceneRef.current?.getAllObjects();
+        break;
       case ButtonIds.Reset:
         threeSceneRef.current?.resetView();
         break;

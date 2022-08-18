@@ -58,6 +58,20 @@ class SetupObjects {
     return this.inRoomObjects.find(item => item.name === name);
   }
 
+  public get allObjects() {
+    return [...this.inRoomObjects, ...this.onTableObjects]
+  }
+
+  public findObject(name: string) {
+    this.allObjects.find(item => item.name === name)
+  }
+
+  public unselectAll() {
+    this.allObjects.forEach(object=>{
+      object.unselect();
+    })
+  }
+
   private initRoom() {
     const room = new DisplayRoom();
     //TODO: remove event listener

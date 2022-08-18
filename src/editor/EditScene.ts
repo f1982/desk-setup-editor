@@ -39,7 +39,6 @@ class ThreeCanvas {
 
   private setupObjects: SetupObjects;
 
-
   private controls?: GlobalController;
 
   constructor(options: IOptions) {
@@ -75,6 +74,10 @@ class ThreeCanvas {
       //   for (const material of object.material) cleanMaterial(material)
       // }
     })
+  }
+
+  public getAllObjects() {
+    console.log('this.setupObjects.allObjects', this.setupObjects.allObjects);
   }
 
   public resetView() {
@@ -150,6 +153,10 @@ class ThreeCanvas {
   private initElements() {
     this.setupObjects = new SetupObjects(this.scene, this.gui);
     this.controls = new GlobalController(this.scene, this.camera, this.renderer);
+    this.controls.addEventListener('unselect_all',()=>{
+      console.log(this, 'unselect_all');
+      this.setupObjects.unselectAll();
+    })
   }
 
   resizeRendererToDisplaySize() {

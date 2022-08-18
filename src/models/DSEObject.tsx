@@ -1,6 +1,7 @@
 import GUI from 'lil-gui';
 import * as THREE from 'three'
-import { Vector3 } from 'three';
+import { BoxGeometry, Mesh, MeshLambertMaterial, Vector3 } from 'three';
+import gsap from 'gsap'
 
 export enum ObjectCategory {
   Movable = "Movable",
@@ -17,7 +18,22 @@ class DSEObject extends THREE.Group {
   protected restrictMin: Vector3 = new Vector3(-2, -2, -2);
   protected restrictMax: Vector3 = new Vector3(2, 2, 2);
 
-  public setGUI(gui: GUI) { 
+  protected selectedIndicator: Mesh;
+
+  constructor() {
+    super();
+
+    this.initSelectedIndicator();
+  }
+
+  public setGUI(gui: GUI) {
+  }
+
+  protected initSelectedIndicator() {
+    const geo = new BoxGeometry(0.1, 0.1, 0.1);
+    const material = new MeshLambertMaterial({ color: 0xff0000 });
+    this.selectedIndicator = new Mesh(geo, material);
+    this.selectedIndicator.position.set(0,1,0);
   }
 
   /**
@@ -46,8 +62,21 @@ class DSEObject extends THREE.Group {
    * 
    * @returns {min, max}
    */
-  public getContainerBox () {
+  public getContainerBox() {
     return { min: new Vector3(), max: new Vector3() }
+  }
+
+  public select() {
+    console.log('object select')
+    this.add(this.selectedIndicator);
+    gsap.to(this.selectedIndicator.rotation, { duration: 10, y: Math.PI * 2, repeat: -1, ease: "none" });
+  }
+
+  public unselect() {
+    console.log('object unselected')
+
+
+    this.remove(this.selectedIndicator)
   }
 }
 

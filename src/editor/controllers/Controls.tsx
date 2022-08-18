@@ -1,4 +1,4 @@
-import { Camera, Renderer, Scene, Vector3 } from "three";
+import { Camera, EventDispatcher, Renderer, Scene, Vector3 } from "three";
 import { OrbitControls } from "three-stdlib";
 import DSEObject from "../../models/DSEObject";
 import DragControl from "./DragControl";
@@ -10,7 +10,7 @@ import { getDSEObject, getDSEObjects } from "../../utils/threeUtils";
 
 
 
-class GlobalController {
+class GlobalController extends EventDispatcher {
 
   camera;
   renderer;
@@ -24,6 +24,8 @@ class GlobalController {
   transformControl?: TransformControl;
 
   constructor(scene: Scene, camera: Camera, renderer: Renderer) {
+    super();
+
     this.camera = camera;
     this.renderer = renderer;
     this.scene = scene;
@@ -85,6 +87,14 @@ class GlobalController {
 
     // TODO: remove listeners
     this.rayControl.addEventListener(SelectObjectEvent, (evt) => {
+      this.dispatchEvent({ type: 'unselect_all' })
+      const selectedObject: DSEObject = evt.selected;
+      if (!selectedObject) {
+        return
+      }
+
+      selectedObject.select();
+
       // should only use one control to move object
       if (this.dragControl) {
         this.dragControl.setDragObject(evt.selected)
