@@ -1,4 +1,5 @@
-import { Camera, EventDispatcher, Scene } from 'three'
+import { Camera, EventDispatcher, Scene, Vector3 } from 'three'
+import DSEObject from '../../models/DSEObject';
 
 enum ShortcutKeys {
   SWITCH_OBJECT_KEY_CODE = "KeyA",
@@ -19,12 +20,20 @@ class KeyboardController extends EventDispatcher {
   scene: Scene | null;
   camera: Camera | null;
 
+  selected?: DSEObject;
+
+  movingStep: number = 0.04;
+
   constructor({ scene, camera }: { scene: Scene, camera: Camera }) {
     super();
     this.scene = scene;
     this.camera = camera;
 
     this.initKeyboard();
+  }
+
+  public setSelectedObject(object: DSEObject) {
+    this.selected = object;
   }
 
   initKeyboard() {
@@ -43,27 +52,37 @@ class KeyboardController extends EventDispatcher {
         break;
       }
       case "ArrowLeft": {
-        this.dispatchEvent({ type: DSEKeyboardEvents.MOVE_X_DECREASE });
+        this.moveObject(new Vector3(this.movingStep, 0, 0));
         break;
       }
       case "ArrowRight": {
-        this.dispatchEvent({ type: DSEKeyboardEvents.MOVE_X_INCREASE });
+        this.moveObject(new Vector3(-this.movingStep, 0, 0));
         break;
       }
       case "ArrowUp": {
-        this.dispatchEvent({ type: DSEKeyboardEvents.MOVE_Z_INCREASE });
+        this.moveObject(new Vector3(0, 0, this.movingStep));
         break;
       }
       case "ArrowDown": {
-        this.dispatchEvent({ type: DSEKeyboardEvents.MOVE_Z_DECREASE });
+        this.moveObject(new Vector3(0, 0, -this.movingStep));
         break;
       }
-
     }
   }
 
   handleKeyup(event: KeyboardEvent) {
 
+  }
+
+  moveObject(step: Vector3) {
+    if (this.selected) {
+      const { min, max } = this.selected.getRestrictArea()
+      const newPos = new Vector3()
+      newPos.copy(this.selected.position).add(step);
+
+      this.selected?.position.copy(newPos);
+      this.selected?.position.clamp(min, max);
+    }
   }
 
   public dispose() {
