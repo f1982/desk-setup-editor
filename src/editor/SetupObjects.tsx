@@ -40,6 +40,11 @@ class SetupObjects {
     return [...this.inRoomObjects, ...this.onTableObjects]
   }
 
+  public get randomObject() {
+    const all = this.allObjects;
+    return all[Math.floor(Math.random() * all.length)];
+  }
+
   public findObject(name: string) {
     this.allObjects.find(item => item.name === name)
   }

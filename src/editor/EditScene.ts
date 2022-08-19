@@ -89,11 +89,8 @@ class ThreeCanvas {
     }
   }
 
-  public focusObject() {
-    // const desk = getDSEObjects(this.scene)[0];
-    const desk = this.setupObjects.findItemInRoom('desk');
-
-    desk && moveCameraToObject(this.camera, desk, new Vector3(0, 3, -3))
+  public focusRandomObject() {
+    moveCameraToObject(this.camera, this.setupObjects.randomObject, new Vector3(0, 3, -3))
   }
 
   public focusChair() {

@@ -51,7 +51,7 @@ const ThreeComp: React.FC = () => {
         threeSceneRef.current?.resetView();
         break;
       case ButtonIds.FocusDesk:
-        threeSceneRef.current?.focusObject();
+        threeSceneRef.current?.focusRandomObject();
         break;
       case ButtonIds.FocusMonitor:
         threeSceneRef.current?.focusChair();
