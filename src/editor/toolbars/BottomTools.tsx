@@ -3,7 +3,7 @@ import './BottomTools.scss';
 
 export enum ButtonIds {
   Reset = 'Reset',
-  FocusDesk = 'FocusDesk',
+  FocusRandom = 'FocusRandom',
   FocusMonitor = 'FocusMonitor'
 }
 
@@ -18,10 +18,10 @@ const BottomTools: React.FC<BottomToolsProps> = ({ callback }) => {
   return (
     <div className='wrapper'>
       <button onClick={() => handleClick('allObjects')}>All Objects</button>
-      <button onClick={() => handleClick('saveSTL')}>Save STL111</button>
+      {/* <button onClick={() => handleClick('saveSTL')}>Save STL111</button> */}
       <button onClick={() => handleClick(ButtonIds.Reset)}>Reset</button>
-      <button onClick={() => handleClick(ButtonIds.FocusDesk)}>Focus Desk</button>
-      <button onClick={() => handleClick(ButtonIds.FocusMonitor)}>Focus Monitor</button>
+      <button onClick={() => handleClick(ButtonIds.FocusRandom)}>Focus Random</button>
+      {/* <button onClick={() => handleClick(ButtonIds.FocusMonitor)}>Focus Monitor</button> */}
     </div>
   )
 }
