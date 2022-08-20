@@ -10,6 +10,7 @@ import { getDSEObject, moveCameraToObject } from '../utils/threeUtils';
 import GlobalController from './controllers/Controls';
 import { getCamera, getGirds, getGUIPanel, getLights, getOrthographicCamera, getRenderer, getScene, getStats } from './SceneElements';
 import SetupObjects from './SetupObjects';
+import DSEObject from '../models/DSEObject';
 
 
 // use this tool to help you to locate the position of the light and cameras
@@ -37,7 +38,7 @@ class ThreeCanvas {
 
   private gui: GUI;
 
-  private setupObjects: SetupObjects;
+  public setupObjects: SetupObjects;
 
   private controls?: GlobalController;
 
@@ -59,21 +60,6 @@ class ThreeCanvas {
       this.controls = undefined;
 
     }
-
-    this.scene.traverse((object: THREE.Object3D) => {
-      console.log('object', object);
-      // if (!object.isMesh) return
-
-      // console.log('dispose geometry!')
-      // object.geometry.dispose()
-
-      // if (object.material.isMaterial) {
-      //   cleanMaterial(object.material)
-      // } else {
-      //   // an array of materials
-      //   for (const material of object.material) cleanMaterial(material)
-      // }
-    })
   }
 
   public getAllObjects() {
@@ -149,13 +135,17 @@ class ThreeCanvas {
 
   private initElements() {
     this.setupObjects = new SetupObjects(this.scene, this.gui);
+
     this.controls = new GlobalController(this.scene, this.camera, this.renderer);
-    this.controls.addEventListener('unselect_all',()=>{
+    this.controls.addEventListener('unselect_all', () => {
       console.log(this, 'unselect_all');
       this.setupObjects.unselectAll();
     });
-    this.controls.addEventListener('objectSelected',({object})=>{
+    this.controls.addEventListener('objectSelected', ({ object }) => {
       console.log('objectSelected: ', object);
+      if(object){
+        object.setGUI(this.gui)
+      }
     });
   }
 

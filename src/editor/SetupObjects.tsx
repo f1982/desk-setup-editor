@@ -1,5 +1,5 @@
 import GUI from "lil-gui";
-import { Scene } from "three";
+import { MathUtils, Scene } from "three";
 import Chair from "../models/Chair";
 import DisplayRoom from "../models/DisplayRoom";
 import DSEObject from "../models/DSEObject";
@@ -49,10 +49,32 @@ class SetupObjects {
     this.allObjects.find(item => item.name === name)
   }
 
+  public addRandomToRoom() {
+    const ObjClasses = [Chair, Mug, MonitorSample];
+    const ObjClass = ObjClasses[MathUtils.randInt(0, ObjClasses.length - 1)];
+    const obj = new ObjClass();
+    this.addToRoom(obj);
+  }
+
+  public addToRoom(obj: DSEObject) {
+    // const chair = new Chair();
+    this.inRoomObjects.push(obj);
+    this.scene?.add(obj);
+    const { min, max } = this.room.getContainerBox();
+    obj.updateRestrictArea(min, max);
+
+    obj.position.copy(obj.getRandomPosition());
+    return obj;
+  }
+
   public unselectAll() {
     this.allObjects.forEach(object => {
       object.unselect();
-    })
+      object.removeGUI();
+    });
+
+    // this.gui?.hide
+
   }
 
   private initRoom() {
@@ -68,29 +90,18 @@ class SetupObjects {
   }
 
   private initInRoomObjects() {
-    const desk = new SimpleDesk();
-    desk.setGUI(this.gui!);
+    const desk = this.addToRoom(new SimpleDesk())
     //TODO: remove event listener
     desk.addEventListener('layout-change', () => {
       this.updateOnTableObjectRestrictArea();
     });
-    this.scene!.add(desk);
-    this.inRoomObjects.push(desk);
-    this.desk = desk;
+    desk.setGUI(this.gui!);
 
-    const chair = new Chair();
-    this.inRoomObjects.push(chair);
-    chair.position.set(0, 0, 1)
-    this.scene!.add(chair);
+    this.desk = desk as SimpleDesk;
 
-    const monitor = new MonitorSample()
-    this.inRoomObjects.push(monitor);
-    this.scene?.add(monitor);
-
-    const mug = new Mug();
-    this.scene?.add(mug);
-    mug.position.set(2, 0, -1)
-    this.inRoomObjects.push(mug);
+    this.addRandomToRoom();
+    this.addRandomToRoom();
+    this.addRandomToRoom();
 
 
     this.updateInRoomObjectsRestrictArea();
@@ -111,9 +122,9 @@ class SetupObjects {
     this.onTableObjects.push(mug);
 
 
-    const monitor = new MonitorSample()
-    this.desk.addSub(monitor);
-    this.onTableObjects.push(monitor);
+    // const monitor = new MonitorSample()
+    // this.desk.addSub(monitor);
+    // this.onTableObjects.push(monitor);
 
 
     // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);

@@ -1,7 +1,7 @@
 import React from 'react'
 import AddIcon from '../../component/icons/AddIcon';
 import BugIcon from '../../component/icons/BugIcon';
-import CameraNextIcon from '../../component/icons/CameraResetIcon';
+import CameraNextIcon from '../../component/icons/CameraNextIcon';
 import ResetCameraIcon from '../../component/icons/CameraResetIcon';
 import './BottomTools.scss';
 
@@ -24,7 +24,7 @@ const BottomTools: React.FC<BottomToolsProps> = ({ callback }) => {
       <button onClick={() => handleClick('allObjects')}>
         <BugIcon />
       </button>
-      <button onClick={() => handleClick('saveSTL')}>
+      <button onClick={() => handleClick('AddNewObj')}>
         <AddIcon />
       </button>
       <button onClick={() => handleClick(ButtonIds.Reset)}>

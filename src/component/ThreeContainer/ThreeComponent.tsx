@@ -47,6 +47,9 @@ const ThreeComp: React.FC = () => {
       case 'allObjects':
         threeSceneRef.current?.getAllObjects();
         break;
+      case 'AddNewObj':
+        threeSceneRef.current?.setupObjects.addRandomToRoom();
+        break;
       case ButtonIds.Reset:
         threeSceneRef.current?.resetView();
         break;

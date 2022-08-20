@@ -81,7 +81,8 @@ class KeyboardController extends EventDispatcher {
       newPos.copy(this.selected.position).add(step);
 
       this.selected?.position.copy(newPos);
-      this.selected?.position.clamp(min, max);
+      // this.selected?.position.clamp(min, max);
+      this.selected?.position.clamp(max, min);
     }
   }
 

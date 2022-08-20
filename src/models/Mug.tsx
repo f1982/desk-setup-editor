@@ -24,12 +24,12 @@ class Mug extends DSEObject {
    */
   public getRestrictArea() {
     return {
-      min: new Vector3(
+      max: new Vector3(
         this.restrictMin.x + this.mugWidth / 2,
         this.restrictMin.y,
         this.restrictMin.z + this.mugWidth / 2,
       ),
-      max: new Vector3(
+      min: new Vector3(
         this.restrictMax.x - this.mugWidth / 2,
         this.restrictMax.y,
         this.restrictMax.z - this.mugWidth / 2,
