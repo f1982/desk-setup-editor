@@ -50,7 +50,7 @@ class SetupObjects {
   }
 
   public unselectAll() {
-    this.allObjects.forEach(object=>{
+    this.allObjects.forEach(object => {
       object.unselect();
     })
   }
@@ -80,6 +80,7 @@ class SetupObjects {
 
     const chair = new Chair();
     this.inRoomObjects.push(chair);
+    chair.position.set(0, 0, 1)
     this.scene!.add(chair);
 
     const monitor = new MonitorSample()
@@ -88,9 +89,10 @@ class SetupObjects {
 
     const mug = new Mug();
     this.scene?.add(mug);
+    mug.position.set(2, 0, -1)
     this.inRoomObjects.push(mug);
 
-    
+
     this.updateInRoomObjectsRestrictArea();
   }
 

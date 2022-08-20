@@ -1,4 +1,8 @@
 import React from 'react'
+import AddIcon from '../../component/icons/AddIcon';
+import BugIcon from '../../component/icons/BugIcon';
+import CameraNextIcon from '../../component/icons/CameraResetIcon';
+import ResetCameraIcon from '../../component/icons/CameraResetIcon';
 import './BottomTools.scss';
 
 export enum ButtonIds {
@@ -17,10 +21,18 @@ const BottomTools: React.FC<BottomToolsProps> = ({ callback }) => {
   }
   return (
     <div className='wrapper'>
-      <button onClick={() => handleClick('allObjects')}>All Objects</button>
-      {/* <button onClick={() => handleClick('saveSTL')}>Save STL111</button> */}
-      <button onClick={() => handleClick(ButtonIds.Reset)}>Reset</button>
-      <button onClick={() => handleClick(ButtonIds.FocusRandom)}>Focus Random</button>
+      <button onClick={() => handleClick('allObjects')}>
+        <BugIcon />
+      </button>
+      <button onClick={() => handleClick('saveSTL')}>
+        <AddIcon />
+      </button>
+      <button onClick={() => handleClick(ButtonIds.Reset)}>
+        <ResetCameraIcon />
+      </button>
+      <button onClick={() => handleClick(ButtonIds.FocusRandom)}>
+        <CameraNextIcon />
+      </button>
       {/* <button onClick={() => handleClick(ButtonIds.FocusMonitor)}>Focus Monitor</button> */}
     </div>
   )
