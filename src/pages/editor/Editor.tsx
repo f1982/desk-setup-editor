@@ -1,4 +1,4 @@
-import ThreeComponent from '../component/ThreeContainer/ThreeComponent';
+import ThreeComponent from '../../component/ThreeContainer/ThreeComponent';
 import React from 'react'
 import { Link } from 'react-router-dom';
 import './Editor.scss'

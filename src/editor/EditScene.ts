@@ -10,7 +10,6 @@ import { getDSEObject, moveCameraToObject } from '../utils/threeUtils';
 import GlobalController from './controllers/Controls';
 import { getCamera, getGirds, getGUIPanel, getLights, getOrthographicCamera, getRenderer, getScene, getStats } from './SceneElements';
 import SetupObjects from './SetupObjects';
-import DSEObject from '../models/DSEObject';
 
 
 // use this tool to help you to locate the position of the light and cameras
