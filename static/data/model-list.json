@@ -1,0 +1,176 @@
+{
+  "name": "setup editor models list",
+  "description": "this is the list of all items",
+  "items": {
+    "desk": {
+      "uuid": "001",
+      "label": "Desk",
+      "description": "This is a desk list",
+      "config": {},
+      "list": [
+        {
+          "uuid": 1,
+          "file": "good-desk.gltf",
+          "preview": "good-desk.png",
+          "name": "good desk",
+          "link": "",
+          "attachable": [
+            "room_ground"
+          ],
+          "specs": [
+            {
+              "key": "size",
+              "value": "120x30x34mm"
+            },
+            {
+              "key": "weight",
+              "value": "26kg"
+            }
+          ]
+        },
+        {
+          "uuid": 2,
+          "file": "wider-desk.gltf",
+          "preview": "good-desk.png",
+          "name": "good desk",
+          "link": "",
+          "attachable": [
+            "room_ground"
+          ],
+          "specs": [
+            {
+              "key": "size",
+              "value": "120x30x34mm"
+            },
+            {
+              "key": "weight",
+              "value": "26kg"
+            },
+            {
+              "key": "Brand",
+              "value": "IKEA"
+            }
+          ]
+        }
+      ]
+    },
+    "monitor": {
+      "uuid": "002",
+      "label": "Monitor",
+      "description": "This is a monitor list",
+      "config": {},
+      "list": [
+        {
+          "uuid": "12",
+          "file": "lg-monitor-34.gltf",
+          "preview": "lg-monitor-34.png",
+          "name": "LG 34 monitor",
+          "link": "",
+          "specs": [
+            {
+              "key": "size",
+              "value": "120x30x34mm"
+            },
+            {
+              "key": "color",
+              "value": "black"
+            }
+          ],
+          "attachable": [
+            "desktop",
+            "monitor-stand"
+          ]
+        }
+      ]
+    },
+    "keyboard": {
+      "uuid": "003",
+      "label": "Keyboard",
+      "description": "This is a keyboard list",
+      "config": {
+        "attachable": [
+          "desk"
+        ]
+      },
+      "list": [
+        {
+          "uuid": "12",
+          "file": "logitech-mx-master.gltf",
+          "preview": "logitech-mx-master.png",
+          "name": "Logitech MX Master",
+          "link": "",
+          "specs": [
+            {
+              "key": "size",
+              "value": "120x30x34mm"
+            }
+          ]
+        }
+      ]
+    },
+    "lamp": {
+      "uuid": "004",
+      "label": "Lamp",
+      "description": "This is a keyboard list",
+      "config": {},
+      "list": [
+        {
+          "uuid": "12",
+          "file": "benq-lamp.gltf",
+          "preview": "benq-lamp.png",
+          "name": "BenQ lamp",
+          "link": "",
+          "specs": [
+            {
+              "key": "size",
+              "value": "120x30x34mm"
+            }
+          ],
+          "attachable": [
+            "desk"
+          ]
+        },
+        {
+          "uuid": "13",
+          "file": "xiaomi-monitor-lamp.gltf",
+          "preview": "xiaomi-monitor-lamp.png",
+          "name": "Xiaomi Monitor Lamp",
+          "link": "",
+          "specs": [
+            {
+              "key": "size",
+              "value": "120x30x34mm"
+            }
+          ],
+          "attachable": [
+            "monitor-top"
+          ]
+        }
+      ]
+    },
+    "mouse": {
+      "uuid": "004",
+      "label": "Mouse",
+      "description": "This is a mouse list",
+      "config": {},
+      "list": []
+    },
+    "charger": {
+      "uuid": "005",
+      "label": "charger",
+      "description": "This is a charger list",
+      "config": {},
+      "list": []
+    },
+    "computer":{},
+    "phone&tablet":{},
+    "laptop":{},
+    "decor":{},
+    "mug":{},
+    "pad":{},
+    "stationary":{},
+    "timer":{},
+    "photo":{},
+    "plants":{}
+  }
+}
