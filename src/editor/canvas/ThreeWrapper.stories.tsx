@@ -1,12 +1,12 @@
-import ThreeComponent from './ThreeComponent';
+import ThreeWrapper from './ThreeWrapper';
 
 export default {
   title: 'Experiment/ThreeComponent',
-  component: ThreeComponent,
+  component: ThreeWrapper,
 };
 
 export const Demos = () => (
   <div>
-    <ThreeComponent />
+    <ThreeWrapper />
   </div>
 );

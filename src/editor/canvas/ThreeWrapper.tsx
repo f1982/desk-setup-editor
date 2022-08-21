@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import ThreeCanvas from '../../editor/EditScene';
-import BottomTools, { ButtonIds } from '../../editor/toolbars/BottomTools';
-import './ThreeComponent.scss';
+import ThreeCanvas from '../EditScene';
+import BottomTools, { ButtonIds } from '../toolbars/BottomTools';
+import LeftToolBar from '../toolbars/LeftToolBar';
+import './ThreeWrapper.scss';
 
 
-const ThreeComp: React.FC = () => {
+const ThreeWrapper: React.FC = () => {
   const [initialized, setInitialized] = useState<boolean>(false);
   const canvasRef = useRef<HTMLDivElement>(null);
   const threeSceneRef = useRef<ThreeCanvas | null>(null);
@@ -32,13 +33,13 @@ const ThreeComp: React.FC = () => {
       }
     }
     // return () => {
-      // if (threeSceneRef.current) {
-      //   threeSceneRef.current.dispose();
-      // }
-      // if (canvasRef.current) {
-      //   const child = canvasRef.current.firstChild;
-      //   canvasRef.current.removeChild(child!);
-      // } 
+    // if (threeSceneRef.current) {
+    //   threeSceneRef.current.dispose();
+    // }
+    // if (canvasRef.current) {
+    //   const child = canvasRef.current.firstChild;
+    //   canvasRef.current.removeChild(child!);
+    // } 
     // }
   }, [initialized]);
 
@@ -64,12 +65,17 @@ const ThreeComp: React.FC = () => {
     }
   }
 
+  const handleLeftToolBarCallback = () => {
+    console.log('handleLeftToolBarCallback');
+  }
+  
   return (
     <div className="container" data-test={initialized}>
       <div className="visualizationMount" ref={canvasRef} />
       <BottomTools callback={handleButtonClick} />
+      <LeftToolBar callback={handleLeftToolBarCallback} />
     </div>
   );
 };
 
-export default ThreeComp;
+export default ThreeWrapper;
