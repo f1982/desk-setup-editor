@@ -10,6 +10,7 @@
     "build": "react-scripts build",
     "analyze": "node scripts/analyze.js",
     "test": "react-scripts test",
+    "clean": "rm -rf node_modules/",
     "eject": "react-scripts eject"
   },
   "dependencies": {
