@@ -24,12 +24,12 @@ class Chair extends DSEObject {
    */
   public getRestrictArea() {
     return {
-      min: new Vector3(
+      max: new Vector3(
         this.restrictMin.x + this.mugWidth / 2,
         0,
         this.restrictMin.z + this.mugWidth / 2,
       ),
-      max: new Vector3(
+      min: new Vector3(
         this.restrictMax.x - this.mugWidth / 2,
         0,
         this.restrictMax.z - this.mugWidth / 2,
@@ -61,7 +61,7 @@ class Chair extends DSEObject {
         if (mesh){
 
           this.add(mesh);
-          this.addBoxHelper();
+          // this.addBoxHelper();
         }
       },
       // called while loading is progressing

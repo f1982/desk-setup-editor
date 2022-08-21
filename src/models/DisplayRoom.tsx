@@ -44,7 +44,8 @@ class DisplayRoom extends DSEObject {
     folder.add(this, 'showWalls', 0, 3, 1).onChange((value: number) => {
       this.showWalls = value;
       this.layout();
-    })
+    });
+    this._guiFolder = folder;
   }
 
   public getContainerBox() {

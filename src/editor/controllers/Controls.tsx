@@ -75,34 +75,6 @@ class GlobalController extends EventDispatcher {
         moveCameraToObject(this.camera, displayRoom)
       }
     });
-
-    // TODO: move this to keyboard controller, only set selected object to the controller
-    // The speed of moving object
-    const ms = 0.02;
-
-    this.keyboardController.addEventListener(DSEKeyboardEvents.MOVE_X_INCREASE, () => {
-      const { min, max } = this.selected?.getRestrictArea()
-      this.selected?.position.set(this.selected.position.x - ms, this.selected.position.y, this.selected.position.z);
-      this.selected?.position.clamp(min, max);
-    })
-    this.keyboardController.addEventListener(DSEKeyboardEvents.MOVE_X_DECREASE, () => {
-      const { min, max } = this.selected?.getRestrictArea()
-
-      this.selected?.position.set(this.selected.position.x + ms, this.selected.position.y, this.selected.position.z);
-      this.selected?.position.clamp(min, max);
-    })
-    this.keyboardController.addEventListener(DSEKeyboardEvents.MOVE_Z_INCREASE, () => {
-      const { min, max } = this.selected?.getRestrictArea()
-
-      this.selected?.position.set(this.selected.position.x, this.selected.position.y, this.selected.position.z + ms);
-      this.selected?.position.clamp(min, max);
-    })
-    this.keyboardController.addEventListener(DSEKeyboardEvents.MOVE_Z_DECREASE, () => {
-      const { min, max } = this.selected?.getRestrictArea()
-
-      this.selected?.position.set(this.selected.position.x, this.selected.position.y, this.selected.position.z - ms);
-      this.selected?.position.clamp(min, max);
-    })
   }
 
   initRayCaster() {
@@ -129,12 +101,9 @@ class GlobalController extends EventDispatcher {
       this.selected.select();
 
       // should only use one control to move object
-      if (this.dragControl) {
-        this.dragControl.setDragObject(evt.selected)
-      }
-      if (this.transformControl) {
-        this.transformControl.setTransformObject(evt.selected);
-      }
+      this.dragControl?.setDragObject(evt.selected)
+      this.transformControl?.setTransformObject(evt.selected);
+      this.keyboardController?.setSelectedObject(evt.selected);
     });
   }
 

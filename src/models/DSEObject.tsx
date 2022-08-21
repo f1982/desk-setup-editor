@@ -1,5 +1,5 @@
 import GUI from 'lil-gui';
-import { Box3, BoxHelper, Group } from 'three'
+import { Box3, BoxHelper, Group, MathUtils } from 'three'
 import { BoxGeometry, Mesh, MeshLambertMaterial, Vector3 } from 'three';
 import gsap from 'gsap'
 
@@ -22,6 +22,8 @@ class DSEObject extends Group {
   protected selectedIndicator: Mesh;
   protected _gsapTween?: GSAPTween;
 
+  protected _guiFolder?:GUI;
+
   constructor() {
     super();
 
@@ -38,6 +40,10 @@ class DSEObject extends Group {
   }
 
   public setGUI(gui: GUI) {
+  }
+
+  public removeGUI(){
+    this._guiFolder?.destroy();
   }
 
   protected initSelectedIndicator() {
@@ -57,6 +63,18 @@ class DSEObject extends Group {
   public updateRestrictArea(min: Vector3, max: Vector3) {
     this.restrictMin = min;
     this.restrictMax = max;
+  }
+
+  public getRandomPosition() {
+    const { min, max } = this.getRestrictArea();
+    return new Vector3(
+      MathUtils.randInt(min.x, max.x),
+      MathUtils.randInt(min.y, max.y),
+      MathUtils.randInt(min.z, max.z)
+      // MathUtils.randInt(max.x, min.x),
+      // MathUtils.randInt(max.y, min.y),
+      // MathUtils.randInt(max.z, min.z)
+    )
   }
 
   /**
@@ -90,7 +108,9 @@ class DSEObject extends Group {
   }
 
   public select() {
-    console.log('object select')
+    // console.log('object select')
+    // this.setGUI();
+
     const bbox = new Box3().setFromObject(this);
     this.add(this.selectedIndicator);
     this.selectedIndicator.position.set(0, bbox.max.y, 0);

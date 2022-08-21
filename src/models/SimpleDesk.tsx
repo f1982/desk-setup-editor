@@ -57,6 +57,7 @@ class SimpleDesk extends DSEObject {
       this.padding = value;
       this.layout();
     })
+    this._guiFolder = folder;
   }
 
   /**
@@ -66,12 +67,12 @@ class SimpleDesk extends DSEObject {
    */
   public getRestrictArea() {
     return {
-      min: new Vector3(
+      max: new Vector3(
         this.restrictMin.x + this.desktopWidth / 2,
         0,
         this.restrictMin.z + this.desktopDepth / 2,
       ),
-      max: new Vector3(
+      min: new Vector3(
         this.restrictMax.x - this.desktopWidth / 2,
         0,
         this.restrictMax.z - this.desktopDepth / 2,

@@ -1,8 +1,8 @@
 
 import { saveAs } from 'file-saver';
-import * as THREE from 'three';
-import { Euler, Quaternion, Vector3 } from 'three';
 import gsap from 'gsap';
+import * as THREE from 'three';
+import { Quaternion, Vector3 } from 'three';
 import DSEObject from '../models/DSEObject';
 
 function findType(scene: THREE.Group, type: string, name: string) {

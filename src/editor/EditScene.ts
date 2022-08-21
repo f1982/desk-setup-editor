@@ -37,7 +37,7 @@ class ThreeCanvas {
 
   private gui: GUI;
 
-  private setupObjects: SetupObjects;
+  public setupObjects: SetupObjects;
 
   private controls?: GlobalController;
 
@@ -59,21 +59,6 @@ class ThreeCanvas {
       this.controls = undefined;
 
     }
-
-    this.scene.traverse((object: THREE.Object3D) => {
-      console.log('object', object);
-      // if (!object.isMesh) return
-
-      // console.log('dispose geometry!')
-      // object.geometry.dispose()
-
-      // if (object.material.isMaterial) {
-      //   cleanMaterial(object.material)
-      // } else {
-      //   // an array of materials
-      //   for (const material of object.material) cleanMaterial(material)
-      // }
-    })
   }
 
   public getAllObjects() {
@@ -89,11 +74,8 @@ class ThreeCanvas {
     }
   }
 
-  public focusObject() {
-    // const desk = getDSEObjects(this.scene)[0];
-    const desk = this.setupObjects.findItemInRoom('desk');
-
-    desk && moveCameraToObject(this.camera, desk, new Vector3(0, 3, -3))
+  public focusRandomObject() {
+    moveCameraToObject(this.camera, this.setupObjects.randomObject, new Vector3(0, 3, -3))
   }
 
   public focusChair() {
@@ -152,13 +134,17 @@ class ThreeCanvas {
 
   private initElements() {
     this.setupObjects = new SetupObjects(this.scene, this.gui);
+
     this.controls = new GlobalController(this.scene, this.camera, this.renderer);
-    this.controls.addEventListener('unselect_all',()=>{
+    this.controls.addEventListener('unselect_all', () => {
       console.log(this, 'unselect_all');
       this.setupObjects.unselectAll();
     });
-    this.controls.addEventListener('objectSelected',({object})=>{
+    this.controls.addEventListener('objectSelected', ({ object }) => {
       console.log('objectSelected: ', object);
+      if(object){
+        object.setGUI(this.gui)
+      }
     });
   }
 
