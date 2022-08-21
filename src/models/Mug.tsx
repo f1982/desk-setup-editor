@@ -1,4 +1,3 @@
-import GUI from 'lil-gui';
 import { BoxGeometry, Mesh, MeshLambertMaterial, Vector3 } from 'three';
 import DSEObject from './DSEObject';
 
@@ -13,6 +12,9 @@ class Mug extends DSEObject {
 
     this.initMug()
     this.layout();
+
+    // this.addBoxHelper();
+
   }
 
   /**
@@ -22,14 +24,14 @@ class Mug extends DSEObject {
    */
   public getRestrictArea() {
     return {
-      min: new Vector3(
+      max: new Vector3(
         this.restrictMin.x + this.mugWidth / 2,
-        this.restrictMin.y + this.mugWidth / 2,
+        this.restrictMin.y,
         this.restrictMin.z + this.mugWidth / 2,
       ),
-      max: new Vector3(
+      min: new Vector3(
         this.restrictMax.x - this.mugWidth / 2,
-        this.restrictMax.y + this.mugWidth / 2,
+        this.restrictMax.y,
         this.restrictMax.z - this.mugWidth / 2,
       )
     }
@@ -45,6 +47,7 @@ class Mug extends DSEObject {
 
   private layout() {
     this.body.scale.set(this.mugWidth, this.mugWidth, this.mugWidth)
+    this.body.position.set(0, this.mugWidth/2, 0)
   }
 }
 

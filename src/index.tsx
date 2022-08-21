@@ -1,13 +1,13 @@
-import React from 'react'
 import ReactDOM from 'react-dom/client';
 import {
-  BrowserRouter, HashRouter, Route, Routes
+  HashRouter, Route, Routes
 } from "react-router-dom";
 import reportWebVitals from './reportWebVitals';
 
-import About from './pages/About';
-import Editor from './pages/Editor';
-import Home from './pages/Home';
+import AboutPage from './pages/about/About';
+import Editor from './pages/editor/Editor';
+import HelpPage from './pages/help/Help';
+import Home from './pages/home/Home';
 
 import './global.scss';
 
@@ -19,7 +19,8 @@ root.render(
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/editor" element={<Editor />} />
-      <Route path="/about" element={<About />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/help" element={<HelpPage />} />
     </Routes>
   </HashRouter>
 

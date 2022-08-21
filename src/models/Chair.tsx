@@ -12,6 +12,7 @@ class Chair extends DSEObject {
   constructor() {
     super();
 
+    this.name = 'chair'
     this.loadGLTF()
     this.layout();
   }
@@ -23,12 +24,12 @@ class Chair extends DSEObject {
    */
   public getRestrictArea() {
     return {
-      min: new Vector3(
+      max: new Vector3(
         this.restrictMin.x + this.mugWidth / 2,
         0,
         this.restrictMin.z + this.mugWidth / 2,
       ),
-      max: new Vector3(
+      min: new Vector3(
         this.restrictMax.x - this.mugWidth / 2,
         0,
         this.restrictMax.z - this.mugWidth / 2,
@@ -38,11 +39,12 @@ class Chair extends DSEObject {
 
   private loadGLTF() {
 
+    //handle & placeholder
     const geo = new BoxGeometry(1, 1, 1);
     const material = new MeshLambertMaterial({ color: 0xff0000, wireframe: true });
     const mesh = new Mesh(geo, material);
-    mesh.scale.set(1.2, 0.45, 0.1);
-
+    mesh.scale.set(this.mugWidth, this.chairHeight, this.mugWidth);
+    mesh.position.set(0, this.chairHeight/2, 0);
     this.add(mesh);
 
     const url = process.env.PUBLIC_URL + '/static/models/chair.gltf';
@@ -53,10 +55,14 @@ class Chair extends DSEObject {
     loader.load(
       // resource URL
       url,
-      // called when the resource is loaded
       (gltf: GLTF) => {
+      console.log('gltf', gltf);
+        const mesh = gltf.scene.children.find((child) => (child.name === 'chair-seat001'));
+        if (mesh){
 
-        this.add(gltf.scene);
+          this.add(mesh);
+          // this.addBoxHelper();
+        }
       },
       // called while loading is progressing
       (xhr: ProgressEvent) => {
@@ -68,9 +74,6 @@ class Chair extends DSEObject {
       },
     );
   }
-
-
-
 
   private layout() {
     // this.body.scale.set(this.mugWidth, this.chairHeight, this.mugWidth);

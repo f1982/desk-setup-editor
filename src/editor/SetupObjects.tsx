@@ -1,6 +1,5 @@
 import GUI from "lil-gui";
-import { Scene } from "three";
-import { GLTF, GLTFLoader } from "three-stdlib";
+import { MathUtils, Scene } from "three";
 import Chair from "../models/Chair";
 import DisplayRoom from "../models/DisplayRoom";
 import DSEObject from "../models/DSEObject";
@@ -9,8 +8,8 @@ import Mug from "../models/Mug";
 import SimpleDesk from "../models/SimpleDesk";
 
 class SetupObjects {
-  private scene: Scene;
-  private gui: GUI;
+  private scene?: Scene;
+  private gui?: GUI;
 
 
   private room: DisplayRoom;
@@ -26,54 +25,84 @@ class SetupObjects {
     this.initRoom();
     this.initInRoomObjects();
     this.initOnDeskObjects();
+  }
 
-    // const loader = new GLTFLoader();
+  public dispose() {
+    this.scene = undefined;
+    this.gui = undefined;
+  }
 
-    // loader.load(
-    //   // resource URL
-    //   'https://raw.githubusercontent.com/f1982/planet-of-images/main/img/my-room-v0.69.gltf',
-    //   // called when the resource is loaded
-    //   (gltf: GLTF) => {
-    //     // this.body = gltf.scene;
-    //     // console.log('this.body ', this.body);
-    //     // this.add(this.body);
-    //     this.scene.add(gltf.scene);
-    //   },
-    //   // called while loading is progressing
-    //   (xhr: ProgressEvent) => {
-    //     console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
-    //   },
-    //   // called when loading has errors
-    //   (error) => {
-    //     console.log('An error  happened');
-    //   },
-    // );
+  public findItemInRoom(name: string) {
+    return this.inRoomObjects.find(item => item.name === name);
+  }
+
+  public get allObjects() {
+    return [...this.inRoomObjects, ...this.onTableObjects]
+  }
+
+  public get randomObject() {
+    const all = this.allObjects;
+    return all[Math.floor(Math.random() * all.length)];
+  }
+
+  public findObject(name: string) {
+    this.allObjects.find(item => item.name === name)
+  }
+
+  public addRandomToRoom() {
+    const ObjClasses = [Chair, Mug, MonitorSample];
+    const ObjClass = ObjClasses[MathUtils.randInt(0, ObjClasses.length - 1)];
+    const obj = new ObjClass();
+    this.addToRoom(obj);
+  }
+
+  public addToRoom(obj: DSEObject) {
+    // const chair = new Chair();
+    this.inRoomObjects.push(obj);
+    this.scene?.add(obj);
+    const { min, max } = this.room.getContainerBox();
+    obj.updateRestrictArea(min, max);
+
+    obj.position.copy(obj.getRandomPosition());
+    return obj;
+  }
+
+  public unselectAll() {
+    this.allObjects.forEach(object => {
+      object.unselect();
+      object.removeGUI();
+    });
+
+    // this.gui?.hide
+
   }
 
   private initRoom() {
     const room = new DisplayRoom();
+    //TODO: remove event listener
     room.addEventListener('layout-change', () => {
       this.updateInRoomObjectsRestrictArea();
     })
 
-    room.setGUI(this.gui);
-    this.scene.add(room);
+    room.setGUI(this.gui!);
+    this.scene!.add(room);
     this.room = room;
   }
 
   private initInRoomObjects() {
-    const desk = new SimpleDesk();
-    desk.setGUI(this.gui);
+    const desk = this.addToRoom(new SimpleDesk())
+    //TODO: remove event listener
     desk.addEventListener('layout-change', () => {
       this.updateOnTableObjectRestrictArea();
     });
-    this.scene.add(desk);
-    this.inRoomObjects.push(desk);
-    this.desk = desk;
+    desk.setGUI(this.gui!);
 
-    const chair = new Chair();
-    this.inRoomObjects.push(chair);
-    this.scene.add(chair);
+    this.desk = desk as SimpleDesk;
+
+    this.addRandomToRoom();
+    this.addRandomToRoom();
+    this.addRandomToRoom();
+
 
     this.updateInRoomObjectsRestrictArea();
   }
@@ -88,15 +117,14 @@ class SetupObjects {
 
   private initOnDeskObjects() {
 
-
     const mug = new Mug();
     this.desk.addSub(mug);
     this.onTableObjects.push(mug);
 
 
-    const monitor = new MonitorSample()
-    this.desk.addSub(monitor);
-    this.onTableObjects.push(monitor);
+    // const monitor = new MonitorSample()
+    // this.desk.addSub(monitor);
+    // this.onTableObjects.push(monitor);
 
 
     // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);

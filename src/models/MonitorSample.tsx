@@ -1,13 +1,12 @@
-import GUI from 'lil-gui';
 import { BoxGeometry, Mesh, MeshLambertMaterial, Vector3 } from 'three';
-import { GLTF, GLTFLoader, OBJLoader } from 'three-stdlib';
+import { GLTF, GLTFLoader } from 'three-stdlib';
 import DSEObject from './DSEObject';
 import * as THREE from 'three'
 
 
 class MonitorSample extends DSEObject {
 
-  body: THREE.Group;
+  handle: THREE.Object3D;
 
   mugWidth: number = 0.2
 
@@ -15,7 +14,7 @@ class MonitorSample extends DSEObject {
     super();
 
     this.loadMonitor()
-    this.layout();
+   
   }
 
   /**
@@ -25,12 +24,12 @@ class MonitorSample extends DSEObject {
    */
   public getRestrictArea() {
     return {
-      min: new Vector3(
+      max: new Vector3(
         this.restrictMin.x + this.mugWidth / 2,
         this.restrictMin.y,
         this.restrictMin.z + this.mugWidth / 2,
       ),
-      max: new Vector3(
+      min: new Vector3(
         this.restrictMax.x - this.mugWidth / 2,
         this.restrictMax.y,
         this.restrictMax.z - this.mugWidth / 2,
@@ -39,13 +38,12 @@ class MonitorSample extends DSEObject {
   }
 
   private loadMonitor() {
-
     const geo = new BoxGeometry(1, 1, 1);
     const material = new MeshLambertMaterial({ color: 0xff0000, wireframe: true });
     const mesh = new Mesh(geo, material);
-    mesh.scale.set(1.2, 0.45, 0.1);
-
+    mesh.scale.set(0.3, 0.1, 0.3);
     this.add(mesh);
+    this.handle = mesh;
 
     const url = process.env.PUBLIC_URL + '/static/models/monitor-34.gltf';
 
@@ -57,10 +55,11 @@ class MonitorSample extends DSEObject {
       url,
       // called when the resource is loaded
       (gltf: GLTF) => {
-        this.body = gltf.scene;
-        console.log('this.body ', this.body);
+        const monitorMesh = gltf.scene;
 
-        this.add(this.body);
+        this.add(monitorMesh);
+        // this.layout();
+        // this.addBoxHelper();
       },
       // called while loading is progressing
       (xhr: ProgressEvent) => {
@@ -76,7 +75,8 @@ class MonitorSample extends DSEObject {
 
 
   private layout() {
-    // this.body.scale.set(this.mugWidth, this.mugWidth, this.mugWidth)
+    this.handle.scale.set(0.3, 0.1, 0.3);
+    this.handle.position.set(0, 0.05, 0);
   }
 }
 

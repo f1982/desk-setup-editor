@@ -1,6 +1,6 @@
 import GUI from 'lil-gui';
 import * as THREE from 'three'
-import { Vector3 } from 'three';
+import { Group, Mesh, Vector3 } from 'three';
 import DSEObject from './DSEObject';
 
 class SimpleDesk extends DSEObject {
@@ -16,14 +16,17 @@ class SimpleDesk extends DSEObject {
   private boardColor = 0xC26910;
   private legsColor = 0x000000;
 
-  private desktop: THREE.Mesh;
-  private legs: THREE.Mesh[] = [];
+  private topContainer: Group
+  private desktop: Mesh;
+  private legs: Mesh[] = [];
 
   constructor() {
     super();
+    this.name = "desk"
 
     this.initDesktop();
     this.initLegs();
+    this.initContainer();
 
     this.layout();
   }
@@ -54,6 +57,7 @@ class SimpleDesk extends DSEObject {
       this.padding = value;
       this.layout();
     })
+    this._guiFolder = folder;
   }
 
   /**
@@ -63,12 +67,12 @@ class SimpleDesk extends DSEObject {
    */
   public getRestrictArea() {
     return {
-      min: new Vector3(
+      max: new Vector3(
         this.restrictMin.x + this.desktopWidth / 2,
         0,
         this.restrictMin.z + this.desktopDepth / 2,
       ),
-      max: new Vector3(
+      min: new Vector3(
         this.restrictMax.x - this.desktopWidth / 2,
         0,
         this.restrictMax.z - this.desktopDepth / 2,
@@ -83,16 +87,15 @@ class SimpleDesk extends DSEObject {
    * @returns {min, max}
    */
   public getContainerBox() {
-    const topSurface = this.legHeight + this.desktopHeight;
     return {
       min: new Vector3(
         this.position.x - this.desktopWidth / 2,
-        topSurface,
+        0,
         this.position.z - this.desktopDepth / 2
       ),
       max: new Vector3(
         this.position.x + this.desktopWidth / 2,
-        topSurface,
+        0,
         this.position.z + this.desktopDepth / 2
       )
     }
@@ -109,12 +112,11 @@ class SimpleDesk extends DSEObject {
   }
 
   public addSub(child: THREE.Object3D) {
-    const box = new THREE.Box3().setFromObject(child);
-
-    // console.log('box', box);
-    child.position.set(0, this.legHeight + this.desktopHeight + box.max.y, 0)
-    this.add(child);
-    console.log('desk children:',this.children);
+    // const box = new THREE.Box3().setFromObject(child);
+    // child.position.set(0, this.legHeight + this.desktopHeight + box.max.y, 0)
+    // this.add(child);
+    this._container.add(child);
+    console.log('desk children:', this.children);
   }
 
   private initDesktop() {
@@ -150,6 +152,8 @@ class SimpleDesk extends DSEObject {
     this.legs.forEach((leg: THREE.Mesh) => {
       leg.scale.set(this.legWidth, this.legWidth, this.legHeight);
     });
+
+    this._container.position.set(0, this.legHeight + this.desktopHeight, 0);
 
     // set positions of the legs
     this.legs[0].position.set(
