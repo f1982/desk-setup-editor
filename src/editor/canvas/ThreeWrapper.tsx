@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ThreeCanvas from '../EditScene';
 import BottomTools, { ButtonIds } from '../toolbars/BottomTools';
 import LeftToolBar from '../toolbars/LeftToolBar';
@@ -6,7 +6,6 @@ import './ThreeWrapper.scss';
 
 
 const ThreeWrapper: React.FC = () => {
-  const [initialized, setInitialized] = useState<boolean>(false);
   const canvasRef = useRef<HTMLDivElement>(null);
   const threeSceneRef = useRef<ThreeCanvas | null>(null);
 
@@ -19,8 +18,8 @@ const ThreeWrapper: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!initialized) {
       if (canvasRef.current) {
+        console.log('init three canvas')
         const { clientWidth, clientHeight } = canvasRef.current;
         const threeScene = new ThreeCanvas({
           mountPoint: canvasRef.current,
@@ -29,19 +28,8 @@ const ThreeWrapper: React.FC = () => {
         });
         threeSceneRef.current = threeScene;
         startDrawing(threeScene);
-        setInitialized(true);
       }
-    }
-    // return () => {
-    // if (threeSceneRef.current) {
-    //   threeSceneRef.current.dispose();
-    // }
-    // if (canvasRef.current) {
-    //   const child = canvasRef.current.firstChild;
-    //   canvasRef.current.removeChild(child!);
-    // } 
-    // }
-  }, [initialized]);
+  });
 
   const handleButtonClick = (buttonId: string) => {
     switch (buttonId) {
@@ -70,7 +58,7 @@ const ThreeWrapper: React.FC = () => {
   }
   
   return (
-    <div className="container" data-test={initialized}>
+    <div className="container">
       <div className="visualizationMount" ref={canvasRef} />
       <BottomTools callback={handleButtonClick} />
       <LeftToolBar callback={handleLeftToolBarCallback} />

@@ -22,7 +22,7 @@ class KeyboardController extends EventDispatcher {
 
   selected?: DSEObject;
 
-  movingStep: number = 0.04;
+  movingStep: number = 0.04; // 1 stand for 1 meter, so 0.04 means 4cm per press
 
   constructor({ scene, camera }: { scene: Scene, camera: Camera }) {
     super();

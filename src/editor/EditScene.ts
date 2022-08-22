@@ -57,7 +57,6 @@ class ThreeCanvas {
     if (this.controls) {
       this.controls.dispose();
       this.controls = undefined;
-
     }
   }
 
