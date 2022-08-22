@@ -150,7 +150,7 @@ class ThreeCanvas {
       }
     });
 
-    this.controls.dragControl?.addEventListener('dragcontrolmoving', ({ object }) => {
+    this.controls.addEventListener('moveObject', ({ object }) => {
       if (object) {
         this.setupObjects.moveIndicator(object);
       }

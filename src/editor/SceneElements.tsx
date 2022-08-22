@@ -11,7 +11,7 @@ export const getScene = () => {
 export const getCamera = (width: number, height: number) => {
   const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
   // const camera = new THREE.OrthographicCamera(75, width / height, 0.1, 1000);
-  camera.position.set(3, 2, -3);
+  camera.position.set(2, 5, -6);
   camera.rotation.set(0, 0, 0)
   return camera;
 }

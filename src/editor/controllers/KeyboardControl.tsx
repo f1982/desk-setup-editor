@@ -68,6 +68,15 @@ class KeyboardController extends EventDispatcher {
         break;
       }
     }
+
+    if (
+      event.code === 'ArrowLeft' ||
+      event.code === 'ArrowRight' ||
+      event.code === 'ArrowUp' ||
+      event.code === 'ArrowDown'
+    ) {
+      this.dispatchEvent({ type: 'keyboardMove', object: this.selected })
+    }
   }
 
   handleKeyup(event: KeyboardEvent) {
