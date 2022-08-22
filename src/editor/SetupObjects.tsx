@@ -1,16 +1,18 @@
 import GUI from "lil-gui";
-import { MathUtils, Scene } from "three";
+import { MathUtils, Mesh, Scene } from "three";
 import Chair from "../models/Chair";
 import DisplayRoom from "../models/DisplayRoom";
 import DSEObject from "../models/DSEObject";
 import MonitorSample from "../models/MonitorSample";
 import Mug from "../models/Mug";
 import SimpleDesk from "../models/SimpleDesk";
+import SelectedIndicator from "./SelectedIndicator";
 
 class SetupObjects {
   private scene?: Scene;
   private gui?: GUI;
 
+  private indicator: SelectedIndicator;
 
   private room: DisplayRoom;
   private desk: SimpleDesk;
@@ -21,6 +23,7 @@ class SetupObjects {
   constructor(scene: Scene, gui: GUI) {
     this.scene = scene;
     this.gui = gui;
+
 
     this.initRoom();
     this.initInRoomObjects();
@@ -87,6 +90,11 @@ class SetupObjects {
     room.setGUI(this.gui!);
     this.scene!.add(room);
     this.room = room;
+
+    this.indicator = new SelectedIndicator();
+    this.scene!.add(this.indicator); 
+
+    this.indicator.show(); 
   }
 
   private initInRoomObjects() {
