@@ -17,7 +17,7 @@ class GlobalController extends EventDispatcher {
 
   keyboardController?: KeyboardController;
   rayControl?: RayCasterControl;
-  dragControl?: DragControl;
+  public dragControl?: DragControl;
   transformControl?: TransformControl;
 
   selected: DSEObject;

@@ -1,5 +1,5 @@
-import { Box3, BoxGeometry, Mesh, MeshLambertMaterial, Object3D } from 'three';
-import gsap from 'gsap'
+import gsap from 'gsap';
+import { BoxGeometry, Mesh, MeshLambertMaterial, Object3D, Vector3 } from 'three';
 
 class SelectedIndicator extends Object3D {
 
@@ -24,8 +24,9 @@ class SelectedIndicator extends Object3D {
   /**
    * Move indicator to a specific object in the room
    */
-  public moveTo() {
-
+  public moveTo(obj: Object3D) {
+    const wp = obj.getWorldPosition(new Vector3(0, 0, 0));
+    this.position.copy(wp);
   }
 
   public hide() {
@@ -37,7 +38,7 @@ class SelectedIndicator extends Object3D {
     const geo = new BoxGeometry(0.1, 0.1, 0.1);
     const material = new MeshLambertMaterial({ color: 0xff0000 });
     this._indicator = new Mesh(geo, material);
-    this._indicator.position.set(0, 0, 0);   
+    this._indicator.position.set(0, 0, 0);
     this._gsap = gsap.to(this._indicator.rotation, { duration: 1, y: Math.PI * 2, repeat: -1, ease: "none" });
     this._gsap.pause();
   }

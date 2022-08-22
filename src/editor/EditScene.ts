@@ -143,10 +143,18 @@ class ThreeCanvas {
     });
     this.controls.addEventListener('objectSelected', ({ object }) => {
       console.log('objectSelected: ', object);
-      if(object){
-        object.setGUI(this.gui)
+      if (object) {
+        object.setGUI(this.gui);
+
+        this.setupObjects.moveIndicator(object);
       }
     });
+
+    this.controls.dragControl?.addEventListener('dragcontrolmoving', ({ object }) => {
+      if (object) {
+        this.setupObjects.moveIndicator(object);
+      }
+    })
   }
 
   resizeRendererToDisplaySize() {

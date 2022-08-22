@@ -1,5 +1,5 @@
 import GUI from "lil-gui";
-import { MathUtils, Mesh, Scene } from "three";
+import { MathUtils, Object3D, Scene } from "three";
 import Chair from "../models/Chair";
 import DisplayRoom from "../models/DisplayRoom";
 import DSEObject from "../models/DSEObject";
@@ -75,9 +75,10 @@ class SetupObjects {
       object.unselect();
       object.removeGUI();
     });
+  }
 
-    // this.gui?.hide
-
+  public moveIndicator(obj: Object3D) {
+    this.indicator.moveTo(obj);
   }
 
   private initRoom() {
@@ -92,9 +93,9 @@ class SetupObjects {
     this.room = room;
 
     this.indicator = new SelectedIndicator();
-    this.scene!.add(this.indicator); 
+    this.scene!.add(this.indicator);
 
-    this.indicator.show(); 
+    this.indicator.show();
   }
 
   private initInRoomObjects() {
