@@ -112,11 +112,7 @@ class SimpleDesk extends DSEObject {
   }
 
   public addSub(child: THREE.Object3D) {
-    // const box = new THREE.Box3().setFromObject(child);
-    // child.position.set(0, this.legHeight + this.desktopHeight + box.max.y, 0)
-    // this.add(child);
     this._container.add(child);
-    console.log('desk children:', this.children);
   }
 
   private initDesktop() {

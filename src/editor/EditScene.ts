@@ -138,15 +138,15 @@ class ThreeCanvas {
 
     this.controls = new GlobalController(this.scene, this.camera, this.renderer);
     this.controls.addEventListener('unselect_all', () => {
-      console.log(this, 'unselect_all');
+      // console.log(this, 'unselect_all');
       this.setupObjects.unselectAll();
     });
     this.controls.addEventListener('objectSelected', ({ object }) => {
-      console.log('objectSelected: ', object);
       if (object) {
         object.setGUI(this.gui);
 
-        this.setupObjects.moveIndicator(object);
+        this.setupObjects.indicator.show();
+        this.setupObjects.indicator.moveTo(object);
       }
     });
 
@@ -180,11 +180,9 @@ class ThreeCanvas {
 
   render() {
     this.stats.begin();
-
     // check if we need to resize the canvas and re-setup the camera
     if (this.resizeRendererToDisplaySize()) {
       const canvas = this.renderer.domElement;
-
       if (this.camera === this.perspectiveCamera) {
         this.perspectiveCamera.aspect = canvas.clientWidth / canvas.clientHeight;
         this.perspectiveCamera.updateProjectionMatrix();

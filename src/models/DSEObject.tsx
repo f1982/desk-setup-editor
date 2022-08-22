@@ -1,15 +1,11 @@
 import GUI from 'lil-gui';
-import { Box3, BoxHelper, Group, MathUtils } from 'three'
-import { BoxGeometry, Mesh, MeshLambertMaterial, Vector3 } from 'three';
-import gsap from 'gsap'
+import { BoxHelper, Group, MathUtils, Mesh, Vector3 } from 'three';
 
 export enum ObjectCategory {
   Movable = "Movable",
   Static = "Static",
   None = "",
 }
-
-// type ObjTypes = '' | 'MovableObject' | 'StaticObject';
 
 class DSEObject extends Group {
 
@@ -20,15 +16,8 @@ class DSEObject extends Group {
 
   protected _container: Group;
   protected selectedIndicator: Mesh;
-  protected _gsapTween?: GSAPTween;
 
   protected _guiFolder?:GUI;
-
-  constructor() {
-    super();
-
-    this.initSelectedIndicator();
-  }
 
   public get container() {
     return this._container
@@ -45,16 +34,7 @@ class DSEObject extends Group {
   public removeGUI(){
     this._guiFolder?.destroy();
   }
-
-  protected initSelectedIndicator() {
-    const geo = new BoxGeometry(0.1, 0.1, 0.1);
-    const material = new MeshLambertMaterial({ color: 0xff0000 });
-    this.selectedIndicator = new Mesh(geo, material);
-    this.selectedIndicator.position.set(0, 1, 0);
-    this._gsapTween = gsap.to(this.selectedIndicator.rotation, { duration: 1, y: Math.PI * 2, repeat: -1, ease: "none" });
-    this._gsapTween.pause();
-  }
-
+  
   /**
    * Update the container size
    * @param max 
@@ -71,9 +51,6 @@ class DSEObject extends Group {
       MathUtils.randInt(min.x, max.x),
       MathUtils.randInt(min.y, max.y),
       MathUtils.randInt(min.z, max.z)
-      // MathUtils.randInt(max.x, min.x),
-      // MathUtils.randInt(max.y, min.y),
-      // MathUtils.randInt(max.z, min.z)
     )
   }
 
@@ -105,26 +82,6 @@ class DSEObject extends Group {
     helper.update();
     // If you want a visible bounding box
     this.add(helper);
-  }
-
-  public select() {
-    // console.log('object select')
-    // this.setGUI();
-
-    const bbox = new Box3().setFromObject(this);
-    this.add(this.selectedIndicator);
-    this.selectedIndicator.position.set(0, bbox.max.y, 0);
-
-    this._gsapTween?.play();
-  }
-
-  public unselect() {
-    console.log('object unselected')
-    this._gsapTween?.pause();
-    // this._gsapTween = undefined;
-    // gsap.killTweensOf(this.selectedIndicator.rotation)
-
-    this.remove(this.selectedIndicator)
   }
 }
 

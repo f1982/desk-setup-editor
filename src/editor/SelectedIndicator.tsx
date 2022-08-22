@@ -1,6 +1,8 @@
 import gsap from 'gsap';
 import { Box3, BoxGeometry, Mesh, MeshLambertMaterial, Object3D, Vector3 } from 'three';
 
+const Y_GAP = 0.2;
+
 class SelectedIndicator extends Object3D {
 
   protected _indicator: Mesh;
@@ -29,7 +31,7 @@ class SelectedIndicator extends Object3D {
     // get object bbox
     const bbox = new Box3().setFromObject(obj);
     // move the indicator to top of the obj
-    wp.add(new Vector3(0, bbox.max.y, 0));
+    wp.add(new Vector3(0, bbox.max.y + Y_GAP, 0));
     this.position.copy(wp);
   }
 

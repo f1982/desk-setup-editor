@@ -12,7 +12,7 @@ class SetupObjects {
   private scene?: Scene;
   private gui?: GUI;
 
-  private indicator: SelectedIndicator;
+  public indicator: SelectedIndicator;
 
   private room: DisplayRoom;
   private desk: SimpleDesk;
@@ -72,9 +72,9 @@ class SetupObjects {
 
   public unselectAll() {
     this.allObjects.forEach(object => {
-      object.unselect();
       object.removeGUI();
     });
+    this.indicator.hide();
   }
 
   public moveIndicator(obj: Object3D) {
@@ -88,7 +88,7 @@ class SetupObjects {
       this.updateInRoomObjectsRestrictArea();
     })
 
-    room.setGUI(this.gui!);
+    // room.setGUI(this.gui!);
     this.scene!.add(room);
     this.room = room;
 
@@ -104,14 +104,13 @@ class SetupObjects {
     desk.addEventListener('layout-change', () => {
       this.updateOnTableObjectRestrictArea();
     });
-    desk.setGUI(this.gui!);
+    // desk.setGUI(this.gui!);
 
     this.desk = desk as SimpleDesk;
 
     this.addRandomToRoom();
     this.addRandomToRoom();
     this.addRandomToRoom();
-
 
     this.updateInRoomObjectsRestrictArea();
   }

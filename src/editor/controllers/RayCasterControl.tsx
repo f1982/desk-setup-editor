@@ -1,11 +1,18 @@
 import { Camera, EventDispatcher, Mesh, Object3D, Raycaster, Renderer, Scene, Vector2 } from 'three'
 import DSEObject from '../../models/DSEObject';
 
-
+/**
+ * Get all the meshes that can be interacted with 
+ * 
+ * @param scene current scene
+ * @returns mesh array
+ */
 function getMovableMeshes(scene: THREE.Scene) {
-  const dseObjects = scene.children.filter((item: THREE.Object3D) => {
-    return item instanceof DSEObject && item.name !== 'displayRoom'
-  });
+  // const dseObjects = scene.children.filter((item: THREE.Object3D) => {
+  //   return item instanceof DSEObject && item.name !== 'displayRoom'
+  // });
+
+  const dseObjects = scene.children.filter((item: THREE.Object3D) => item instanceof DSEObject);
 
   const meshes: any[] = [];
   dseObjects.forEach(element => {
@@ -14,17 +21,16 @@ function getMovableMeshes(scene: THREE.Scene) {
     meshes.push(...elementMeshes);
 
     // if the dse object has container
-    if ((element as DSEObject).container){
+    if ((element as DSEObject).container) {
       // find all the sub dse object inside the container
       const subObjs = (element as DSEObject).container.children.filter(item => (item instanceof DSEObject));
       // put all the sub dse object meshes into mesh list
       subObjs.forEach((item) => {
-          const subMeshes = item.children.filter(subItem => (subItem instanceof Mesh));
-          meshes.push(...subMeshes);
+        const subMeshes = item.children.filter(subItem => (subItem instanceof Mesh));
+        meshes.push(...subMeshes);
       })
     }
   });
-  console.log('ray cast meshes:', meshes)
   return meshes;
 }
 
@@ -58,14 +64,11 @@ class RayCasterControl extends EventDispatcher {
 
   init() {
     const rayCaster = new Raycaster();
-
-    // when user point down
     this.renderer!.domElement.addEventListener('pointerdown', this.handlePointerDown.bind(this))
     this.rayCaster = rayCaster;
   }
 
   handlePointerDown(event: PointerEvent) {
-
     // update ray caster pointer
     const domElement = this.renderer!.domElement;
     const rect = domElement.getBoundingClientRect();
@@ -82,13 +85,11 @@ class RayCasterControl extends EventDispatcher {
       intersects.length > 0 &&
       intersects[0].object.parent instanceof DSEObject
     ) {
-      // this.updateDragObject(intersects[0].object.parent);
+
       const selected = intersects[0].object.parent;
       this.dispatchEvent({ type: SelectObjectEvent, selected: selected });
 
     } else {
-      // click on blank area, unselect objects
-      // this.updateDragObject(null);
       this.dispatchEvent({ type: SelectObjectEvent, selected: null });
     }
   }
