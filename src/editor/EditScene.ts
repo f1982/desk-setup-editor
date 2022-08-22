@@ -49,6 +49,8 @@ class ThreeCanvas {
 
   public dispose() {
     console.log('dispose renderer!')
+    // without this line, auto reload doesn't work
+    this.renderer.domElement.remove()
     this.renderer.dispose();
     this.gui.destroy();
     this.stats.dom.remove();

@@ -18,17 +18,21 @@ const ThreeWrapper: React.FC = () => {
   };
 
   useEffect(() => {
-      if (canvasRef.current) {
-        console.log('init three canvas')
-        const { clientWidth, clientHeight } = canvasRef.current;
-        const threeScene = new ThreeCanvas({
-          mountPoint: canvasRef.current,
-          width: clientWidth,
-          height: clientHeight,
-        });
-        threeSceneRef.current = threeScene;
-        startDrawing(threeScene);
-      }
+    if (canvasRef.current) {
+      console.log('init three canvas')
+      const { clientWidth, clientHeight } = canvasRef.current;
+      const threeScene = new ThreeCanvas({
+        mountPoint: canvasRef.current,
+        width: clientWidth,
+        height: clientHeight,
+      });
+      threeSceneRef.current = threeScene;
+      startDrawing(threeScene);
+    }
+    return () => {
+      console.log('dispose canvas')
+      threeSceneRef.current?.dispose();
+    }
   });
 
   const handleButtonClick = (buttonId: string) => {
@@ -56,7 +60,7 @@ const ThreeWrapper: React.FC = () => {
   const handleLeftToolBarCallback = () => {
     console.log('handleLeftToolBarCallback');
   }
-  
+
   return (
     <div className="container">
       <div className="visualizationMount" ref={canvasRef} />
