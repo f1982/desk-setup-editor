@@ -8,7 +8,7 @@ import Mug from "../models/Mug";
 import SimpleDesk from "../models/SimpleDesk";
 import SelectedIndicator from "./SelectedIndicator";
 
-class SetupObjects {
+class ObjectManager {
   private scene?: Scene;
   private gui?: GUI;
 
@@ -152,4 +152,4 @@ class SetupObjects {
 }
 
 
-export default SetupObjects;
+export default ObjectManager;
