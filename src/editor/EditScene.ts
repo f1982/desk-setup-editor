@@ -49,6 +49,8 @@ class ThreeCanvas {
 
   public dispose() {
     console.log('dispose renderer!')
+    // without this line, auto reload doesn't work
+    this.renderer.domElement.remove()
     this.renderer.dispose();
     this.gui.destroy();
     this.stats.dom.remove();
@@ -57,7 +59,6 @@ class ThreeCanvas {
     if (this.controls) {
       this.controls.dispose();
       this.controls = undefined;
-
     }
   }
 
@@ -137,15 +138,23 @@ class ThreeCanvas {
 
     this.controls = new GlobalController(this.scene, this.camera, this.renderer);
     this.controls.addEventListener('unselect_all', () => {
-      console.log(this, 'unselect_all');
+      // console.log(this, 'unselect_all');
       this.setupObjects.unselectAll();
     });
     this.controls.addEventListener('objectSelected', ({ object }) => {
-      console.log('objectSelected: ', object);
-      if(object){
-        object.setGUI(this.gui)
+      if (object) {
+        object.setGUI(this.gui);
+
+        this.setupObjects.indicator.show();
+        this.setupObjects.indicator.moveTo(object);
       }
     });
+
+    this.controls.addEventListener('moveObject', ({ object }) => {
+      if (object) {
+        this.setupObjects.moveIndicator(object);
+      }
+    })
   }
 
   resizeRendererToDisplaySize() {
@@ -171,11 +180,9 @@ class ThreeCanvas {
 
   render() {
     this.stats.begin();
-
     // check if we need to resize the canvas and re-setup the camera
     if (this.resizeRendererToDisplaySize()) {
       const canvas = this.renderer.domElement;
-
       if (this.camera === this.perspectiveCamera) {
         this.perspectiveCamera.aspect = canvas.clientWidth / canvas.clientHeight;
         this.perspectiveCamera.updateProjectionMatrix();

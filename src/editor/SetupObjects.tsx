@@ -1,16 +1,18 @@
 import GUI from "lil-gui";
-import { MathUtils, Scene } from "three";
+import { MathUtils, Object3D, Scene } from "three";
 import Chair from "../models/Chair";
 import DisplayRoom from "../models/DisplayRoom";
 import DSEObject from "../models/DSEObject";
 import MonitorSample from "../models/MonitorSample";
 import Mug from "../models/Mug";
 import SimpleDesk from "../models/SimpleDesk";
+import SelectedIndicator from "./SelectedIndicator";
 
 class SetupObjects {
   private scene?: Scene;
   private gui?: GUI;
 
+  public indicator: SelectedIndicator;
 
   private room: DisplayRoom;
   private desk: SimpleDesk;
@@ -21,6 +23,7 @@ class SetupObjects {
   constructor(scene: Scene, gui: GUI) {
     this.scene = scene;
     this.gui = gui;
+
 
     this.initRoom();
     this.initInRoomObjects();
@@ -69,12 +72,13 @@ class SetupObjects {
 
   public unselectAll() {
     this.allObjects.forEach(object => {
-      object.unselect();
       object.removeGUI();
     });
+    this.indicator.hide();
+  }
 
-    // this.gui?.hide
-
+  public moveIndicator(obj: Object3D) {
+    this.indicator.moveTo(obj);
   }
 
   private initRoom() {
@@ -84,9 +88,14 @@ class SetupObjects {
       this.updateInRoomObjectsRestrictArea();
     })
 
-    room.setGUI(this.gui!);
+    // room.setGUI(this.gui!);
     this.scene!.add(room);
     this.room = room;
+
+    this.indicator = new SelectedIndicator();
+    this.scene!.add(this.indicator);
+
+    this.indicator.show();
   }
 
   private initInRoomObjects() {
@@ -95,14 +104,13 @@ class SetupObjects {
     desk.addEventListener('layout-change', () => {
       this.updateOnTableObjectRestrictArea();
     });
-    desk.setGUI(this.gui!);
+    // desk.setGUI(this.gui!);
 
     this.desk = desk as SimpleDesk;
 
     this.addRandomToRoom();
     this.addRandomToRoom();
     this.addRandomToRoom();
-
 
     this.updateInRoomObjectsRestrictArea();
   }

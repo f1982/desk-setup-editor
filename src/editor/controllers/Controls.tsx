@@ -17,7 +17,7 @@ class GlobalController extends EventDispatcher {
 
   keyboardController?: KeyboardController;
   rayControl?: RayCasterControl;
-  dragControl?: DragControl;
+  public dragControl?: DragControl;
   transformControl?: TransformControl;
 
   selected: DSEObject;
@@ -75,6 +75,10 @@ class GlobalController extends EventDispatcher {
         moveCameraToObject(this.camera, displayRoom)
       }
     });
+
+    this.keyboardController.addEventListener('keyboardMove', ({ object }) => {
+      this.dispatchEvent({ type: 'moveObject', object: this.selected });
+    })
   }
 
   initRayCaster() {
@@ -87,9 +91,13 @@ class GlobalController extends EventDispatcher {
     // TODO: remove listeners
     this.rayControl.addEventListener(SelectObjectEvent, (evt) => {
 
-      this.dispatchEvent({ type: 'unselect_all' })
+      // this.dispatchEvent({ type: 'unselect_all' })
 
       if (this.selected !== evt.selected) {
+        if (this.selected) {
+          this.selected.removeGUI();
+        }
+
         this.selected = evt.selected;
         this.dispatchEvent({ type: 'objectSelected', object: this.selected })
       }
@@ -98,7 +106,7 @@ class GlobalController extends EventDispatcher {
         return
       }
 
-      this.selected.select();
+      // this.selected.select();
 
       // should only use one control to move object
       this.dragControl?.setDragObject(evt.selected)
@@ -121,6 +129,10 @@ class GlobalController extends EventDispatcher {
 
     this.dragControl.addEventListener('dragcontrolend', () => {
       this.orbit!.enabled = true;
+    });
+
+    this.dragControl.addEventListener('dragcontrolmoving', () => {
+      this.dispatchEvent({ type: 'moveObject', object: this.selected });
     });
 
     this.dragControl.addEventListener('dragcontrolclick', (evt) => {

@@ -48,6 +48,7 @@ class DragControl extends EventDispatcher {
         const { min, max } = this.selectedObj.getRestrictArea()
         // this.selectedObj.position.clamp(min, max);
         this.selectedObj.position.clamp(max, min);
+        this.dispatchEvent({ type: 'dragcontrolmoving', object: this.selectedObj })
       }
     });
 
@@ -76,8 +77,8 @@ class DragControl extends EventDispatcher {
     }
   }
 
-  public dispose () {
-    if (this.dragControl){
+  public dispose() {
+    if (this.dragControl) {
       this.dragControl.dispose();
       this.dragControl = undefined;
     }

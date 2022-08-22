@@ -20,6 +20,9 @@ function getDSEObject(scene: THREE.Scene, name: string) {
   return scene.children.find((item: THREE.Object3D) => item instanceof DSEObject && item.name === name);
 }
 
+
+const VecZero = () => new Vector3(0, 0, 0);
+
 // Use FileSaver.js 'saveAs' function to save the string
 async function saveSTL(scene: THREE.Object3D, name: string) {
   const { STLExporter } = await import('three/examples/jsm/exporters/STLExporter');
@@ -68,11 +71,11 @@ function moveCameraToObject(
   // camera.lookAt(wp); 
 
   const endQuaternion = new THREE.Quaternion().copy(camera.quaternion);
-  
+
   camera.quaternion.copy(startQuaternion);
   camera.position.copy(startPosition);
 
-  
+
   const time = { t: 0 };
 
   // move time
@@ -80,7 +83,7 @@ function moveCameraToObject(
     duration: 1,
     t: 1,
     onUpdate: () => {
-      
+
       // position
       const p = new Vector3();
       p.lerpVectors(startPosition, endPosition, time.t);
@@ -90,7 +93,7 @@ function moveCameraToObject(
       const qm = new Quaternion();
       qm.slerpQuaternions(startQuaternion, endQuaternion, time.t);
       camera.quaternion.copy(qm);
-      
+
     },
     onComplete: () => {
       console.log('move end');
@@ -123,6 +126,7 @@ export {
   getDSEObject,
   findType,
   saveSTL,
-  moveCameraToObject
+  moveCameraToObject,
+  VecZero
 };
 
