@@ -48,9 +48,9 @@ class DSEObject extends Group {
   public getRandomPosition() {
     const { min, max } = this.getRestrictArea();
     return new Vector3(
-      MathUtils.randInt(min.x, max.x),
-      MathUtils.randInt(min.y, max.y),
-      MathUtils.randInt(min.z, max.z)
+      MathUtils.randFloat(min.x, max.x),
+      MathUtils.randFloat(min.y, max.y),
+      MathUtils.randFloat(min.z, max.z)
     )
   }
 
