@@ -1,5 +1,5 @@
 import gsap from 'gsap';
-import { BoxGeometry, Mesh, MeshLambertMaterial, Object3D, Vector3 } from 'three';
+import { Box3, BoxGeometry, Mesh, MeshLambertMaterial, Object3D, Vector3 } from 'three';
 
 class SelectedIndicator extends Object3D {
 
@@ -26,6 +26,10 @@ class SelectedIndicator extends Object3D {
    */
   public moveTo(obj: Object3D) {
     const wp = obj.getWorldPosition(new Vector3(0, 0, 0));
+    // get object bbox
+    const bbox = new Box3().setFromObject(obj);
+    // move the indicator to top of the obj
+    wp.add(new Vector3(0, bbox.max.y, 0));
     this.position.copy(wp);
   }
 
