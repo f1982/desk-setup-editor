@@ -8,7 +8,7 @@ import Mug from "../models/Mug";
 import SimpleDesk from "../models/SimpleDesk";
 import SelectedIndicator from "./SelectedIndicator";
 
-class SetupObjects {
+class ObjectManager {
   private scene?: Scene;
   private gui?: GUI;
 
@@ -40,7 +40,17 @@ class SetupObjects {
   }
 
   public get allObjects() {
-    return [...this.inRoomObjects, ...this.onTableObjects]
+    // return [...this.inRoomObjects, ...this.onTableObjects]
+
+    const all: DSEObject[] = [];
+    all.push(...this.room.kids);
+
+    //sub kids
+    this.room.kids.forEach(item => {
+      item.kids && all.push(...item.kids)
+    })
+
+    return all;
   }
 
   public get randomObject() {
@@ -53,19 +63,23 @@ class SetupObjects {
   }
 
   public addRandomToRoom() {
-    const ObjClasses = [Chair, Mug, MonitorSample];
+    const ObjClasses = [Chair, MonitorSample];
     const ObjClass = ObjClasses[MathUtils.randInt(0, ObjClasses.length - 1)];
     const obj = new ObjClass();
-    this.addToRoom(obj);
+
+    this.addTo(obj);
   }
 
-  public addToRoom(obj: DSEObject) {
-    // const chair = new Chair();
-    this.inRoomObjects.push(obj);
-    this.scene?.add(obj);
-    const { min, max } = this.room.getContainerBox();
-    obj.updateRestrictArea(min, max);
+  public addRandomToDesk() {
+    const ObjClasses = [Mug, MonitorSample];
+    const ObjClass = ObjClasses[MathUtils.randInt(0, ObjClasses.length - 1)];
+    const obj = new ObjClass();
 
+    this.addTo(obj, this.desk);
+  }
+
+  public addTo(obj: DSEObject, parent: DSEObject = this.room) {
+    parent.addKid(obj);
     obj.position.copy(obj.getRandomPosition());
     return obj;
   }
@@ -83,73 +97,35 @@ class SetupObjects {
 
   private initRoom() {
     const room = new DisplayRoom();
-    //TODO: remove event listener
-    room.addEventListener('layout-change', () => {
-      this.updateInRoomObjectsRestrictArea();
-    })
-
-    // room.setGUI(this.gui!);
     this.scene!.add(room);
     this.room = room;
 
     this.indicator = new SelectedIndicator();
     this.scene!.add(this.indicator);
-
-    this.indicator.show();
   }
 
+  /**
+   * Load all the objects from config file
+   */
   private initInRoomObjects() {
-    const desk = this.addToRoom(new SimpleDesk())
-    //TODO: remove event listener
-    desk.addEventListener('layout-change', () => {
-      this.updateOnTableObjectRestrictArea();
-    });
-    // desk.setGUI(this.gui!);
-
+    const desk = this.addTo(new SimpleDesk())
     this.desk = desk as SimpleDesk;
 
     this.addRandomToRoom();
     this.addRandomToRoom();
     this.addRandomToRoom();
-
-    this.updateInRoomObjectsRestrictArea();
-  }
-
-  private updateInRoomObjectsRestrictArea() {
-    const { min, max } = this.room.getContainerBox();
-    // update all the object
-    this.inRoomObjects.forEach(obj => {
-      obj.updateRestrictArea(min, max);
-    });
   }
 
   private initOnDeskObjects() {
-
     const mug = new Mug();
-    this.desk.addSub(mug);
-    this.onTableObjects.push(mug);
+    this.desk.addKid(mug);
+    mug.position.copy(mug.getRandomPosition());
 
-
-    // const monitor = new MonitorSample()
-    // this.desk.addSub(monitor);
-    // this.onTableObjects.push(monitor);
-
-
-    // addDragAndDrop(this.camera, this.renderer.domElement, [desk]);
-    // ctrl.attachObject(desk);
-    // ctrl.attachObject(mug);
-
-    this.updateOnTableObjectRestrictArea();
+    const monitor = new MonitorSample()
+    this.desk.addKid(monitor);
+    monitor.position.copy(monitor.getRandomPosition());
   }
-
-  private updateOnTableObjectRestrictArea() {
-    const { min, max } = this.desk.getContainerBox();
-    this.onTableObjects.forEach(obj => {
-      obj.updateRestrictArea(min, max);
-    });
-  }
-
 }
 
 
-export default SetupObjects;
+export default ObjectManager;

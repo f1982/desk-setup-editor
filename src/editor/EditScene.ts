@@ -9,7 +9,7 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass';
 import { getDSEObject, moveCameraToObject } from '../utils/threeUtils';
 import GlobalController from './controllers/Controls';
 import { getCamera, getGirds, getGUIPanel, getLights, getOrthographicCamera, getRenderer, getScene, getStats } from './SceneElements';
-import SetupObjects from './SetupObjects';
+import ObjectManager from './ObjectManager';
 
 
 // use this tool to help you to locate the position of the light and cameras
@@ -37,7 +37,7 @@ class ThreeCanvas {
 
   private gui: GUI;
 
-  public setupObjects: SetupObjects;
+  public objectManager: ObjectManager;
 
   private controls?: GlobalController;
 
@@ -63,7 +63,7 @@ class ThreeCanvas {
   }
 
   public getAllObjects() {
-    console.log('this.setupObjects.allObjects', this.setupObjects.allObjects);
+    console.log('this.objectManager.allObjects', this.objectManager.allObjects);
   }
 
   public resetView() {
@@ -76,11 +76,11 @@ class ThreeCanvas {
   }
 
   public focusRandomObject() {
-    moveCameraToObject(this.camera, this.setupObjects.randomObject, new Vector3(0, 3, -3))
+    moveCameraToObject(this.camera, this.objectManager.randomObject, new Vector3(0, 3, -3))
   }
 
   public focusChair() {
-    const chair = this.setupObjects.findItemInRoom('chair');
+    const chair = this.objectManager.findItemInRoom('chair');
     chair && moveCameraToObject(this.camera, chair, new Vector3(0, 3, -3))
 
   }
@@ -134,25 +134,27 @@ class ThreeCanvas {
   }
 
   private initElements() {
-    this.setupObjects = new SetupObjects(this.scene, this.gui);
+    this.objectManager = new ObjectManager(this.scene, this.gui);
 
     this.controls = new GlobalController(this.scene, this.camera, this.renderer);
+    // this.controls.defaultSelected = this.objectManager.randomObject;
+
     this.controls.addEventListener('unselect_all', () => {
-      // console.log(this, 'unselect_all');
-      this.setupObjects.unselectAll();
+      this.objectManager.unselectAll();
     });
+    
     this.controls.addEventListener('objectSelected', ({ object }) => {
       if (object) {
         object.setGUI(this.gui);
 
-        this.setupObjects.indicator.show();
-        this.setupObjects.indicator.moveTo(object);
+        this.objectManager.indicator.show();
+        this.objectManager.indicator.moveTo(object);
       }
     });
 
     this.controls.addEventListener('moveObject', ({ object }) => {
       if (object) {
-        this.setupObjects.moveIndicator(object);
+        this.objectManager.moveIndicator(object);
       }
     })
   }

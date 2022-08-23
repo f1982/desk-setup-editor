@@ -74,7 +74,7 @@ class MonitorSample extends DSEObject {
 
 
 
-  private layout() {
+  protected layout() {
     this.handle.scale.set(0.3, 0.1, 0.3);
     this.handle.position.set(0, 0.05, 0);
   }

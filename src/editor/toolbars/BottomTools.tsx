@@ -27,6 +27,9 @@ const BottomTools: React.FC<BottomToolsProps> = ({ callback }) => {
       <button onClick={() => handleClick('AddNewObj')}>
         <AddIcon />
       </button>
+      <button onClick={() => handleClick('AddNewObjToDesk')}>
+        <AddIcon />
+      </button>
       <button onClick={() => handleClick(ButtonIds.Reset)}>
         <ResetCameraIcon />
       </button>

@@ -26,7 +26,6 @@ class SimpleDesk extends DSEObject {
 
     this.initDesktop();
     this.initLegs();
-    this.initContainer();
 
     this.layout();
   }
@@ -89,30 +88,29 @@ class SimpleDesk extends DSEObject {
   public getContainerBox() {
     return {
       min: new Vector3(
-        this.position.x - this.desktopWidth / 2,
-        0,
-        this.position.z - this.desktopDepth / 2
+        - this.desktopWidth / 2,
+        // 0,
+        this.legHeight + this.desktopHeight,
+        - this.desktopDepth / 2
       ),
       max: new Vector3(
-        this.position.x + this.desktopWidth / 2,
-        0,
-        this.position.z + this.desktopDepth / 2
+        + this.desktopWidth / 2,
+        // 0,
+        this.legHeight + this.desktopHeight,
+        + this.desktopDepth / 2
       )
     }
   }
 
   /**
-   * Get configuration object can be used for saving 
+   * TODO: Get configuration object can be used for saving 
+   * 
    * @returns desk object data
    */
   public getConfiguration() {
     return {
 
     }
-  }
-
-  public addSub(child: THREE.Object3D) {
-    this._container.add(child);
   }
 
   private initDesktop() {
@@ -135,7 +133,7 @@ class SimpleDesk extends DSEObject {
     }
   }
 
-  private layout() {
+  protected layout() {
     this.desktop.rotation.set(Math.PI / 2, 0, 0)
     // this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0)
 
@@ -148,8 +146,6 @@ class SimpleDesk extends DSEObject {
     this.legs.forEach((leg: THREE.Mesh) => {
       leg.scale.set(this.legWidth, this.legWidth, this.legHeight);
     });
-
-    this._container.position.set(0, this.legHeight + this.desktopHeight, 0);
 
     // set positions of the legs
     this.legs[0].position.set(
@@ -173,7 +169,7 @@ class SimpleDesk extends DSEObject {
       this.desktopDepth / 2 - this.padding - this.legWidth / 2
     );
 
-    this.dispatchEvent({ type: 'layout-change', message: 'desk changed' });
+    this.updateChildrenRestrictArea();
   }
 }
 

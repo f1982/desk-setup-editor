@@ -9,10 +9,6 @@ enum ShortcutKeys {
 export enum DSEKeyboardEvents {
   OBJECT_MODE_EVENT = "SwitchToObjectEvent",
   OVERVIEW_MODE_EVENT = "SwitchToOverviewEvent",
-  MOVE_X_INCREASE = "MoveXIncrease",
-  MOVE_X_DECREASE = "MoveXDecrease",
-  MOVE_Z_INCREASE = "MoveZIncrease",
-  MOVE_Z_DECREASE = "MoveZDecrease",
 }
 
 class KeyboardController extends EventDispatcher {
@@ -85,13 +81,11 @@ class KeyboardController extends EventDispatcher {
 
   moveObject(step: Vector3) {
     if (this.selected) {
-      const { min, max } = this.selected.getRestrictArea()
       const newPos = new Vector3()
       newPos.copy(this.selected.position).add(step);
-
       this.selected?.position.copy(newPos);
-      // this.selected?.position.clamp(min, max);
-      this.selected?.position.clamp(max, min);
+
+      this.selected?.clampIn();
     }
   }
 

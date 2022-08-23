@@ -84,7 +84,7 @@ class DisplayRoom extends DSEObject {
     }
   }
 
-  private layout() {
+  protected layout() {
     this.ground.rotation.set(Math.PI / 2, 0, 0);
     this.ground.scale.set(this.groundWidth, this.groundHeight, 0.5);
 
@@ -113,7 +113,8 @@ class DisplayRoom extends DSEObject {
       this.walls[2].position.set(-this.groundWidth / 2, this.wallHeight / 2, 0);
     }
 
-    this.dispatchEvent({ type: 'layout-change', message: 'room changed' });
+    // this.dispatchEvent({ type: 'layout-change', message: 'room changed' });
+    this.updateChildrenRestrictArea();
   }
 }
 

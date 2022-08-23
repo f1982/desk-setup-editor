@@ -45,11 +45,10 @@ class Mug extends DSEObject {
     this.add(this.body);
   }
 
-  private layout() {
+  protected layout() {
     this.body.scale.set(this.mugWidth, this.mugWidth, this.mugWidth)
     this.body.position.set(0, this.mugWidth/2, 0)
   }
 }
-
 
 export default Mug;
