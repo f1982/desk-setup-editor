@@ -30,9 +30,11 @@ class SelectedIndicator extends Object3D {
     const wp = obj.getWorldPosition(new Vector3(0, 0, 0));
     // get object bbox
     const bbox = new Box3().setFromObject(obj);
+    // console.log('bbox max: ', bbox);
     // move the indicator to top of the obj
-    wp.add(new Vector3(0, bbox.max.y + Y_GAP, 0));
-    this.position.copy(wp);
+    // wp.add(new Vector3(0, bbox.max.y + Y_GAP, 0));
+    // this.position.copy(wp);
+    this.position.set(wp.x, bbox.max.y + Y_GAP, wp.z);
   }
 
   public hide() {
