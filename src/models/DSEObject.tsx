@@ -43,7 +43,7 @@ class DSEObject extends Group {
   
   public addKid(kid: DSEObject) {
     this._kids.push(kid);
-    
+    this.add(kid);
     this.updateChildrenRestrictArea();
   }
 
@@ -107,6 +107,12 @@ class DSEObject extends Group {
       obj.updateRestrictArea(min, max);
     });
   }
+
+  // public move() {
+  //   this._kids.forEach(obj => {
+  //     // obj.position.copy(this.position.add())
+  //   });
+  // }
 }
 
 export default DSEObject;

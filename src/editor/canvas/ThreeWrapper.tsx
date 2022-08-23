@@ -43,6 +43,9 @@ const ThreeWrapper: React.FC = () => {
       case 'AddNewObj':
         threeSceneRef.current?.objectManager.addRandomToRoom();
         break;
+      case 'AddNewObjToDesk':
+        threeSceneRef.current?.objectManager.addRandomToDesk();
+        break;
       case ButtonIds.Reset:
         threeSceneRef.current?.resetView();
         break;

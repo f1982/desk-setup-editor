@@ -8,30 +8,29 @@ import DSEObject from '../../models/DSEObject';
  * @returns mesh array
  */
 function getMovableMeshes(scene: THREE.Scene) {
-  // const dseObjects = scene.children.filter((item: THREE.Object3D) => {
-  //   return item instanceof DSEObject && item.name !== 'displayRoom'
-  // });
+  //find in room objects
+  const interactiveMeshes: any[] = [];
 
-  const dseObjects = scene.children.filter((item: THREE.Object3D) => item instanceof DSEObject);
+  const room = scene.children.find((item: THREE.Object3D) => item.name === 'displayRoom');
+  const roomMeshes = room?.children.filter(item => (item instanceof Mesh));
+  if (roomMeshes){
+    interactiveMeshes.push(...roomMeshes);
+  }
 
-  const meshes: any[] = [];
-  dseObjects.forEach(element => {
+  (room as DSEObject).kids.forEach(inRoomObj => {
     // put all mesh inside dse object into list
-    const elementMeshes = element.children.filter(item => (item instanceof Mesh));
-    meshes.push(...elementMeshes);
+    const objInnerMeshes = inRoomObj.children.filter(item => (item instanceof Mesh));
+    interactiveMeshes.push(...objInnerMeshes);
 
-    // if the dse object has container
-    if ((element as DSEObject).container) {
-      // find all the sub dse object inside the container
-      const subObjs = (element as DSEObject).container.children.filter(item => (item instanceof DSEObject));
-      // put all the sub dse object meshes into mesh list
-      subObjs.forEach((item) => {
-        const subMeshes = item.children.filter(subItem => (subItem instanceof Mesh));
-        meshes.push(...subMeshes);
+    // in room dse object has kids
+    if ((inRoomObj as DSEObject).kids) {
+      (inRoomObj as DSEObject).kids.forEach((item) => {
+        const subObjMeshes = item.children.filter(subItem => (subItem instanceof Mesh));
+        interactiveMeshes.push(...subObjMeshes);
       })
     }
   });
-  return meshes;
+  return interactiveMeshes;
 }
 
 export const SelectObjectEvent = "selectObjectEvent";

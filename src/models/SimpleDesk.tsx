@@ -89,16 +89,16 @@ class SimpleDesk extends DSEObject {
   public getContainerBox() {
     return {
       min: new Vector3(
-        this.position.x - this.desktopWidth / 2,
+         - this.desktopWidth / 2,
         // 0,
         this.legHeight + this.desktopHeight ,
-        this.position.z - this.desktopDepth / 2
+         - this.desktopDepth / 2
       ),
       max: new Vector3(
-        this.position.x + this.desktopWidth / 2,
+         + this.desktopWidth / 2,
         // 0,
         this.legHeight + this.desktopHeight,
-        this.position.z + this.desktopDepth / 2
+         + this.desktopDepth / 2
       )
     }
   }
