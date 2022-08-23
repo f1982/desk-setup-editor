@@ -1,15 +1,13 @@
-import { Camera, EventDispatcher, Group, Renderer, Scene } from 'three';
-
+import { Camera, EventDispatcher, Renderer, Scene } from 'three';
 import { DragControls } from "three-stdlib";
 import DSEObject from '../../models/DSEObject';
 
 class DragControl extends EventDispatcher {
-
   scene?: Scene;
   camera?: Camera;
   renderer?: Renderer;
 
-  dragControl?: DragControls;
+  dragControl: DragControls;
   dragMoved = false;
 
   selectedObj?: DSEObject;
@@ -31,12 +29,9 @@ class DragControl extends EventDispatcher {
   }
 
   init() {
-    // this.scene!.add(this.dragGroup);
-
     const controls = new DragControls([], this.camera!, this.renderer!.domElement);
     controls.transformGroup = true;
 
-    // add event listener to highlight dragged objects
     controls.addEventListener('dragstart', (event) => {
       this.dispatchEvent({ type: 'dragcontrolstart' });
     });
@@ -44,15 +39,15 @@ class DragControl extends EventDispatcher {
     controls.addEventListener('drag', (event) => {
       this.dragMoved = true;
       if (this.selectedObj) {
-        const { min, max } = this.selectedObj.getRestrictArea()
-        // this.selectedObj.position.clamp(min, max);
-        this.selectedObj.position.clamp(max, min);
+        this.selectedObj.clampIn();
         this.dispatchEvent({ type: 'dragcontrolmoving', object: this.selectedObj })
       }
     });
 
     controls.addEventListener('dragend', (event) => {
       this.dispatchEvent({ type: 'dragcontrolend' });
+
+      // check is click or not
       if (!this.dragMoved && this.selectedObj) {
         this.dragClick(this.selectedObj);
       }
@@ -68,14 +63,17 @@ class DragControl extends EventDispatcher {
   }
 
   public setDragObject(item: DSEObject) {
-  console.log('item', item);
 
+    // clean drag objects
     const dragObjects = this.dragControl!.getObjects();
-    dragObjects.length = 0
+    dragObjects.length = 0;
+
+    this.dragControl.enabled = false;
 
     this.selectedObj = item;
-  
+
     if (this.selectedObj) {
+      this.dragControl.enabled=true;
       dragObjects.push(this.selectedObj);
     }
   }
@@ -83,7 +81,7 @@ class DragControl extends EventDispatcher {
   public dispose() {
     if (this.dragControl) {
       this.dragControl.dispose();
-      this.dragControl = undefined;
+      // this.dragControl = undefined;
     }
     //TODO: remove listeners
     this.scene = undefined;

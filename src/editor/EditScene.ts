@@ -137,10 +137,12 @@ class ThreeCanvas {
     this.objectManager = new ObjectManager(this.scene, this.gui);
 
     this.controls = new GlobalController(this.scene, this.camera, this.renderer);
+    // this.controls.defaultSelected = this.objectManager.randomObject;
+
     this.controls.addEventListener('unselect_all', () => {
-      // console.log(this, 'unselect_all');
       this.objectManager.unselectAll();
     });
+    
     this.controls.addEventListener('objectSelected', ({ object }) => {
       if (object) {
         object.setGUI(this.gui);

@@ -14,21 +14,10 @@ class DSEObject extends Group {
   protected restrictMin: Vector3 = new Vector3(-2, -2, -2);
   protected restrictMax: Vector3 = new Vector3(2, 2, 2);
 
-  protected _container: Group;
   protected selectedIndicator: Mesh;
-
   protected _guiFolder?: GUI;
-
   protected _kids: DSEObject[] = []
 
-  public get container() {
-    return this._container
-  }
-
-  protected initContainer() {
-    this._container = new Group();
-    this.add(this._container);
-  }
 
   public setGUI(gui: GUI) {
   }
@@ -48,17 +37,6 @@ class DSEObject extends Group {
   }
 
   /**
-   * Update the container size
-   * @param max 
-   * @param min 
-   */
-  public updateRestrictArea(min: Vector3, max: Vector3) {
-    // console.log(this,'updateRestrictArea', min, max);
-    this.restrictMin = min;
-    this.restrictMax = max;
-  }
-
-  /**
    * Get the min and max coordinates of the object can move in 
    * It will be override by specific model component
    * 
@@ -67,7 +45,20 @@ class DSEObject extends Group {
   public getRestrictArea(): { min: Vector3, max: Vector3 } {
     return { min: new Vector3(), max: new Vector3() }
   }
+  
+  /**
+   * clamp object inside the constraint area
+   */
+  public clampIn() {
+    const { min, max } = this.getRestrictArea()
+    this.position.clamp(max, min);
+  }
 
+  /**
+   * get random position inside constraint area
+   * 
+   * @returns Vector3 position
+   */
   public getRandomPosition() {
     const { min, max } = this.getRestrictArea();
     return new Vector3(
@@ -87,6 +78,28 @@ class DSEObject extends Group {
     return { min: new Vector3(), max: new Vector3() }
   }
 
+  
+  /**
+   * Update the container size
+   * @param max 
+   * @param min 
+   */
+  public updateRestrictedArea(min: Vector3, max: Vector3) {
+    this.restrictMin = min;
+    this.restrictMax = max;
+  }
+  
+  public updateChildrenRestrictArea() {
+    // console.log('updateChildrenRestrictArea');
+    if(this._kids.length<=0){
+      return;
+    }
+    const { min, max } = this.getContainerBox();
+    this._kids.forEach(obj => {
+      obj.updateRestrictedArea(min, max);
+    });
+  }
+
   /**
    * Add this box helper will increase the click area or drag area
    */
@@ -97,22 +110,6 @@ class DSEObject extends Group {
     this.add(helper);
   }
 
-  public updateChildrenRestrictArea() {
-    // console.log('updateChildrenRestrictArea');
-    if(this._kids.length<=0){
-      return;
-    }
-    const { min, max } = this.getContainerBox();
-    this._kids.forEach(obj => {
-      obj.updateRestrictArea(min, max);
-    });
-  }
-
-  // public move() {
-  //   this._kids.forEach(obj => {
-  //     // obj.position.copy(this.position.add())
-  //   });
-  // }
 }
 
 export default DSEObject;

@@ -22,6 +22,11 @@ class GlobalController extends EventDispatcher {
 
   selected: DSEObject;
 
+  // public set defaultSelected(obj:DSEObject) {
+  //   this.selected = obj;
+  //   this.dragControl?.setDragObject(this.selected);
+  // }
+
   constructor(scene: Scene, camera: Camera, renderer: Renderer) {
     super();
 
@@ -91,22 +96,16 @@ class GlobalController extends EventDispatcher {
     // TODO: remove listeners
     this.rayControl.addEventListener(SelectObjectEvent, (evt) => {
 
-      // this.dispatchEvent({ type: 'unselect_all' })
-
-      if (this.selected !== evt.selected) {
-        if (this.selected) {
-          this.selected.removeGUI();
-        }
-
-        this.selected = evt.selected;
-        this.dispatchEvent({ type: 'objectSelected', object: this.selected })
+      if (this.selected && this.selected !== evt.selected) {
+        this.selected.removeGUI();
       }
+
+      this.selected = evt.selected;
+      this.dispatchEvent({ type: 'objectSelected', object: this.selected })
 
       if (!this.selected) {
         return
       }
-
-      // this.selected.select();
 
       // should only use one control to move object
       this.dragControl?.setDragObject(evt.selected)

@@ -63,7 +63,8 @@ class RayCasterControl extends EventDispatcher {
 
   init() {
     const rayCaster = new Raycaster();
-    this.renderer!.domElement.addEventListener('pointerdown', this.handlePointerDown.bind(this))
+    // this.renderer!.domElement.addEventListener('pointerdown', this.handlePointerDown.bind(this))
+    this.renderer!.domElement.addEventListener('pointerup', this.handlePointerDown.bind(this))
     this.rayCaster = rayCaster;
   }
 
