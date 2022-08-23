@@ -97,7 +97,7 @@ class ObjectManager {
     this.indicator = new SelectedIndicator();
     this.scene!.add(this.indicator);
 
-    this.indicator.show();
+    // this.indicator.show();
   }
 
   /**
@@ -105,12 +105,6 @@ class ObjectManager {
    */
   private initInRoomObjects() {
     const desk = this.addToRoom(new SimpleDesk())
-    //TODO: remove event listener
-    // desk.addEventListener('layout-change', () => {
-    //   this.updateInRoomObjectsRestrictArea();
-    // });
-    // desk.setGUI(this.gui!);
-
     this.desk = desk as SimpleDesk;
 
     this.addRandomToRoom();
