@@ -17,7 +17,9 @@ class DSEObject extends Group {
   protected _container: Group;
   protected selectedIndicator: Mesh;
 
-  protected _guiFolder?:GUI;
+  protected _guiFolder?: GUI;
+
+  protected _kids: DSEObject[] = []
 
   public get container() {
     return this._container
@@ -31,27 +33,29 @@ class DSEObject extends Group {
   public setGUI(gui: GUI) {
   }
 
-  public removeGUI(){
+  public removeGUI() {
     this._guiFolder?.destroy();
   }
+
+  public get kids () {
+    return this._kids;
+  }
   
+  public addKid(kid: DSEObject) {
+    this._kids.push(kid);
+    
+    this.updateChildrenRestrictArea();
+  }
+
   /**
    * Update the container size
    * @param max 
    * @param min 
    */
   public updateRestrictArea(min: Vector3, max: Vector3) {
+    // console.log(this,'updateRestrictArea', min, max);
     this.restrictMin = min;
     this.restrictMax = max;
-  }
-
-  public getRandomPosition() {
-    const { min, max } = this.getRestrictArea();
-    return new Vector3(
-      MathUtils.randFloat(min.x, max.x),
-      MathUtils.randFloat(min.y, max.y),
-      MathUtils.randFloat(min.z, max.z)
-    )
   }
 
   /**
@@ -62,6 +66,15 @@ class DSEObject extends Group {
    */
   public getRestrictArea(): { min: Vector3, max: Vector3 } {
     return { min: new Vector3(), max: new Vector3() }
+  }
+
+  public getRandomPosition() {
+    const { min, max } = this.getRestrictArea();
+    return new Vector3(
+      MathUtils.randFloat(min.x, max.x),
+      MathUtils.randFloat(min.y, max.y),
+      MathUtils.randFloat(min.z, max.z)
+    )
   }
 
   /**
@@ -82,6 +95,17 @@ class DSEObject extends Group {
     helper.update();
     // If you want a visible bounding box
     this.add(helper);
+  }
+
+  public updateChildrenRestrictArea() {
+    // console.log('updateChildrenRestrictArea');
+    if(this._kids.length<=0){
+      return;
+    }
+    const { min, max } = this.getContainerBox();
+    this._kids.forEach(obj => {
+      obj.updateRestrictArea(min, max);
+    });
   }
 }
 

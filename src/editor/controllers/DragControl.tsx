@@ -48,6 +48,8 @@ class DragControl extends EventDispatcher {
         const { min, max } = this.selectedObj.getRestrictArea()
         // this.selectedObj.position.clamp(min, max);
         this.selectedObj.position.clamp(max, min);
+        this.selectedObj.updateChildrenRestrictArea();
+        
         this.dispatchEvent({ type: 'dragcontrolmoving', object: this.selectedObj })
       }
     });
@@ -74,6 +76,11 @@ class DragControl extends EventDispatcher {
     dragObjects.length = 0
     if (this.selectedObj) {
       dragObjects.push(this.selectedObj);
+      // if (this.selectedObj.kids.length > 0) {
+      //   this.dragControl!.transformGroup = true;
+      //   dragObjects.push(...this.selectedObj.kids);
+      // }
+      console.log('dragObjects', dragObjects);
     }
   }
 
