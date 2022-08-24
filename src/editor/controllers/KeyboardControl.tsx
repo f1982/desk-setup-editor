@@ -63,6 +63,10 @@ class KeyboardController extends EventDispatcher {
         this.moveObject(new Vector3(0, 0, -this.movingStep));
         break;
       }
+      case "KeyX": {
+        this.selected?.removeFromParent();
+        break;
+      }
     }
 
     if (

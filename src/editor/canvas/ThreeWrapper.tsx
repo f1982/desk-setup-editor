@@ -52,9 +52,6 @@ const ThreeWrapper: React.FC = () => {
       case ButtonIds.FocusRandom:
         threeSceneRef.current?.focusRandomObject();
         break;
-      case ButtonIds.FocusMonitor:
-        threeSceneRef.current?.focusChair();
-        break;
       default:
         break;
     }

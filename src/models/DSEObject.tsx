@@ -1,5 +1,6 @@
 import GUI from 'lil-gui';
 import { BoxHelper, Group, MathUtils, Mesh, Vector3 } from 'three';
+import { GLTF, GLTFLoader } from 'three-stdlib';
 
 export enum ObjectCategory {
   Movable = "Movable",
@@ -26,14 +27,22 @@ class DSEObject extends Group {
     this._guiFolder?.destroy();
   }
 
-  public get kids () {
+  public get kids() {
     return this._kids;
   }
-  
+
   public addKid(kid: DSEObject) {
     this._kids.push(kid);
     this.add(kid);
     this.updateChildrenRestrictArea();
+  }
+
+  public removeAllKids() {
+    if (this._kids.length < 1) return;
+    this._kids.forEach(item => {
+      this.remove(item);
+    })
+    this._kids.length = 0;
   }
 
   /**
@@ -45,7 +54,7 @@ class DSEObject extends Group {
   public getRestrictArea(): { min: Vector3, max: Vector3 } {
     return { min: new Vector3(), max: new Vector3() }
   }
-  
+
   /**
    * clamp object inside the constraint area
    */
@@ -78,7 +87,7 @@ class DSEObject extends Group {
     return { min: new Vector3(), max: new Vector3() }
   }
 
-  
+
   /**
    * Update the container size
    * @param max 
@@ -88,10 +97,10 @@ class DSEObject extends Group {
     this.restrictMin = min;
     this.restrictMax = max;
   }
-  
+
   public updateChildrenRestrictArea() {
     // console.log('updateChildrenRestrictArea');
-    if(this._kids.length<=0){
+    if (this._kids.length <= 0) {
       return;
     }
     const { min, max } = this.getContainerBox();
@@ -109,6 +118,36 @@ class DSEObject extends Group {
     // If you want a visible bounding box
     this.add(helper);
   }
+
+
+  protected loadGLTF(filename: string, callback?: () => void) {
+    const url = process.env.PUBLIC_URL + '/static/models/' + filename;
+
+    // Instantiate a loader
+    const loader = new GLTFLoader();
+    // Load a glTF resource
+    loader.load(
+      // resource URL
+      url,
+      // called when the resource is loaded
+      (gltf: GLTF) => {
+        this.add(...gltf.scene.children);
+        callback?.();
+
+        //TODO: move to somewhere else
+        this.position.copy(this.getRandomPosition());
+      },
+      // called while loading is progressing
+      (xhr: ProgressEvent) => {
+        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+      },
+      // called when loading has errors
+      (error) => {
+        console.log('An error  happened');
+      },
+    );
+  }
+
 
 }
 

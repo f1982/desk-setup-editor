@@ -79,12 +79,6 @@ class ThreeCanvas {
     moveCameraToObject(this.camera, this.objectManager.randomObject, new Vector3(0, 3, -3))
   }
 
-  public focusChair() {
-    const chair = this.objectManager.findItemInRoom('chair');
-    chair && moveCameraToObject(this.camera, chair, new Vector3(0, 3, -3))
-
-  }
-
   public switchToSTLScene() {
     // remove controller from scene
     // controller.removeTransformController()

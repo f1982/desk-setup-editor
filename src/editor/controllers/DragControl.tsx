@@ -63,7 +63,6 @@ class DragControl extends EventDispatcher {
   }
 
   public setDragObject(item: DSEObject) {
-
     // clean drag objects
     const dragObjects = this.dragControl!.getObjects();
     dragObjects.length = 0;

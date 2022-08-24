@@ -1,10 +1,8 @@
 import GUI from "lil-gui";
-import { MathUtils, Object3D, Scene } from "three";
-import Chair from "../models/Chair";
+import { Object3D, Scene } from "three";
+import { getInRoomObject, getOnTableObject } from "../models";
 import DisplayRoom from "../models/DisplayRoom";
 import DSEObject from "../models/DSEObject";
-import MonitorSample from "../models/MonitorSample";
-import Mug from "../models/Mug";
 import SimpleDesk from "../models/SimpleDesk";
 import SelectedIndicator from "./SelectedIndicator";
 
@@ -15,10 +13,11 @@ class ObjectManager {
   public indicator: SelectedIndicator;
 
   private room: DisplayRoom;
-  private desk: SimpleDesk;
+  private _desk: SimpleDesk;
 
-  private inRoomObjects: DSEObject[] = [];
-  private onTableObjects: DSEObject[] = [];
+  public get desk() {
+    return this._desk;
+  }
 
   constructor(scene: Scene, gui: GUI) {
     this.scene = scene;
@@ -36,12 +35,10 @@ class ObjectManager {
   }
 
   public findItemInRoom(name: string) {
-    return this.inRoomObjects.find(item => item.name === name);
+    return this.room.kids.find(item => item.name === name);
   }
 
   public get allObjects() {
-    // return [...this.inRoomObjects, ...this.onTableObjects]
-
     const all: DSEObject[] = [];
     all.push(...this.room.kids);
 
@@ -63,19 +60,11 @@ class ObjectManager {
   }
 
   public addRandomToRoom() {
-    const ObjClasses = [Chair, MonitorSample];
-    const ObjClass = ObjClasses[MathUtils.randInt(0, ObjClasses.length - 1)];
-    const obj = new ObjClass();
-
-    this.addTo(obj);
+    this.addTo(getInRoomObject());
   }
 
   public addRandomToDesk() {
-    const ObjClasses = [Mug, MonitorSample];
-    const ObjClass = ObjClasses[MathUtils.randInt(0, ObjClasses.length - 1)];
-    const obj = new ObjClass();
-
-    this.addTo(obj, this.desk);
+    this.addTo(getOnTableObject(), this._desk);
   }
 
   public addTo(obj: DSEObject, parent: DSEObject = this.room) {
@@ -90,6 +79,13 @@ class ObjectManager {
     });
     this.indicator.hide();
   }
+
+  // public remove(obj: DSEObject) {
+  //   if (obj && obj.parent) {
+  //     obj.removeAllKids();
+  //     obj.parent.remove(obj);
+  //   }
+  // }
 
   public moveIndicator(obj: Object3D) {
     this.indicator.moveTo(obj);
@@ -109,7 +105,7 @@ class ObjectManager {
    */
   private initInRoomObjects() {
     const desk = this.addTo(new SimpleDesk())
-    this.desk = desk as SimpleDesk;
+    this._desk = desk as SimpleDesk;
 
     this.addRandomToRoom();
     this.addRandomToRoom();
@@ -117,13 +113,9 @@ class ObjectManager {
   }
 
   private initOnDeskObjects() {
-    const mug = new Mug();
-    this.desk.addKid(mug);
-    mug.position.copy(mug.getRandomPosition());
-
-    const monitor = new MonitorSample()
-    this.desk.addKid(monitor);
-    monitor.position.copy(monitor.getRandomPosition());
+    this.addRandomToDesk();
+    this.addRandomToDesk();
+    this.addRandomToDesk();
   }
 }
 
