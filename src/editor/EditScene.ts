@@ -76,7 +76,8 @@ class ThreeCanvas {
   }
 
   public focusRandomObject() {
-    moveCameraToObject(this.camera, this.objectManager.randomObject, new Vector3(0, 3, -3))
+    // moveCameraToObject(this.camera, this.objectManager.randomObject, new Vector3(0, 3, -3))
+    moveCameraToObject(this.camera, this.objectManager.desk, new Vector3(0, 2, -2))
   }
 
   public switchToSTLScene() {
