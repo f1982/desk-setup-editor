@@ -110,6 +110,7 @@ class DSEObject extends Group {
     const { min, max } = this.getContainerBox();
     this._kids.forEach(obj => {
       obj.updateRestrictedArea(min, max);
+      obj.clampIn();
     });
   }
 
