@@ -1,5 +1,5 @@
 import GUI from 'lil-gui';
-import { BoxHelper, Group, MathUtils, Mesh, Vector3 } from 'three';
+import { Box3, BoxHelper, Group, MathUtils, Mesh, Vector3 } from 'three';
 import { GLTF, GLTFLoader } from 'three-stdlib';
 
 export enum ObjectCategory {
@@ -14,10 +14,14 @@ class DSEObject extends Group {
 
   protected restrictMin: Vector3 = new Vector3(-2, -2, -2);
   protected restrictMax: Vector3 = new Vector3(2, 2, 2);
+  //
+  protected _constrainBox: Box3;
 
   protected selectedIndicator: Mesh;
   protected _guiFolder?: GUI;
+  // sub dse object, not the mesh of the current object
   protected _kids: DSEObject[] = []
+
 
 
   public setGUI(gui: GUI) {

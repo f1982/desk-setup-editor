@@ -2,7 +2,7 @@
 import { saveAs } from 'file-saver';
 import gsap from 'gsap';
 import * as THREE from 'three';
-import { Quaternion, Vector3 } from 'three';
+import { Box3, Mesh, Quaternion, Vector3 } from 'three';
 import DSEObject from '../models/DSEObject';
 
 function findType(scene: THREE.Group, type: string, name: string) {
@@ -20,6 +20,12 @@ function getDSEObject(scene: THREE.Scene, name: string) {
   return scene.children.find((item: THREE.Object3D) => item instanceof DSEObject && item.name === name);
 }
 
+function getObjectSize(mesh: Mesh) {
+  const bbox = new Box3().setFromObject(mesh);
+  let size = new Vector3();
+  bbox.getSize(size);
+  return size
+}
 
 const VecZero = () => new Vector3(0, 0, 0);
 
@@ -127,6 +133,7 @@ export {
   findType,
   saveSTL,
   moveCameraToObject,
-  VecZero
+  VecZero,
+  getObjectSize
 };
 

@@ -1,12 +1,13 @@
 import GUI from 'lil-gui';
-import * as THREE from 'three'
-import { Group, Mesh, Vector3 } from 'three';
+import * as THREE from 'three';
+import { Box3, Box3Helper, BoxHelper, Color, Group, Mesh, Vector3 } from 'three';
+import { getObjectSize } from '../utils/threeUtils';
 import DSEObject from './DSEObject';
 
 class SimpleDesk extends DSEObject {
 
   private desktopWidth = 2;
-  private desktopDepth = 0.6;
+  private desktopDepth = 1.6;
   private desktopHeight = 0.05
 
   private legWidth = 0.05;
@@ -20,14 +21,24 @@ class SimpleDesk extends DSEObject {
   private desktop: Mesh;
   private legs: Mesh[] = [];
 
+  private _slotTop: Mesh;
+  private _boxHelper: Box3Helper;
+
   constructor() {
     super();
     this.name = "desk"
 
     this.initDesktop();
+    this.initSlotPlane();
     this.initLegs();
 
+    this.desktopDepth = 3;
     this.layout();
+
+    setTimeout(() => {
+      this.desktopDepth = 2;
+      this.layout();
+    }, 0);
   }
 
   public setGUI(gui: GUI) {
@@ -86,20 +97,20 @@ class SimpleDesk extends DSEObject {
    * @returns {min, max}
    */
   public getContainerBox() {
-    return {
-      min: new Vector3(
-        - this.desktopWidth / 2,
-        // 0,
-        this.legHeight + this.desktopHeight,
-        - this.desktopDepth / 2
-      ),
-      max: new Vector3(
-        + this.desktopWidth / 2,
-        // 0,
-        this.legHeight + this.desktopHeight,
-        + this.desktopDepth / 2
-      )
-    }
+    // const slotSize = getObjectSize(this._slotTop);
+    // var boundingBox = new THREE.Box3();
+    // boundingBox.copy(this._slotTop.geometry.boundingBox!);
+    // this._slotTop.updateMatrixWorld(true); // ensure world matrix is up to date
+    // boundingBox.applyMatrix4(this._slotTop.matrixWorld);
+
+    // let shift = new Vector3();
+    // boundingBox.getCenter(shift);
+    // console.log('shift', shift);
+    // // console.log(boundingBox);
+    // boundingBox.translate(shift);
+    
+    return this.getBox(this._slotTop);
+
   }
 
   /**
@@ -117,8 +128,20 @@ class SimpleDesk extends DSEObject {
     const geo = new THREE.BoxGeometry(1, 1, 1);
     const material = new THREE.MeshLambertMaterial({ color: this.boardColor });
     this.desktop = new THREE.Mesh(geo, material);
-
     this.add(this.desktop);
+  }
+
+  private initSlotPlane() {
+    const geometry = new THREE.PlaneGeometry(1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
+    const plane = new THREE.Mesh(geometry, material);
+    this.add(plane);
+    this._slotTop = plane;
+
+    const helper = new THREE.Box3Helper(new THREE.Box3().setFromObject(this._slotTop), new Color(0xff0000));
+    // this.add(helper);
+    this._boxHelper = helper;
+    this.add(helper);
   }
 
   private initLegs() {
@@ -133,6 +156,25 @@ class SimpleDesk extends DSEObject {
     }
   }
 
+  /**
+   * TODO: get the bounding box by using Box3 center and size
+   * @param mesh 
+   */
+  getBox(mesh: Mesh):Box3 {
+    const bbox = new THREE.Box3();
+
+    // // using set from object
+    bbox.setFromObject(mesh);
+    // //add shift factor
+
+    
+    // let shift = new Vector3();
+    // bbox.getCenter(shift);
+    bbox.translate(new Vector3(-this.position.x, 0, -this.position.z));
+    // console.log('this.position', this.position);
+    return bbox;
+  }
+
   protected layout() {
     this.desktop.rotation.set(Math.PI / 2, 0, 0)
     // this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0)
@@ -141,6 +183,14 @@ class SimpleDesk extends DSEObject {
     this.desktop.scale.set(this.desktopWidth, this.desktopDepth, this.desktopHeight);
     // set position of the desk board
     this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0);
+
+    // this._slotTop.rotation.copy(this.desktop.rotation);
+    // this._slotTop.scale.copy(this.desktop.scale);
+    // this._slotTop.position.set(0, this.legHeight + this.desktopHeight, 0);
+
+    this._slotTop.rotation.set(Math.PI / 2, 0, 0);
+    this._slotTop.scale.set(this.desktopWidth, this.desktopDepth, this.desktopHeight);
+    this._slotTop.position.set(0, this.legHeight + this.desktopHeight, 0);
 
     // resize the legs
     this.legs.forEach((leg: THREE.Mesh) => {
@@ -168,6 +218,16 @@ class SimpleDesk extends DSEObject {
       this.legHeight / 2,
       this.desktopDepth / 2 - this.padding - this.legWidth / 2
     );
+
+    // this._slotTop.updateMatrix();
+    // this._slotTop.updateWorldMatrix(true, true);
+
+    // this._slotTop.applyMatrix4(this._slotTop.matrix);
+    // this.updateMatrix()
+    // this.updateMatrixWorld(true);
+
+   
+    this._boxHelper.box = this.getBox(this._slotTop);
 
     this.updateChildrenRestrictArea();
   }

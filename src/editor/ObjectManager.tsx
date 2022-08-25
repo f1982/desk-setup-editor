@@ -107,9 +107,9 @@ class ObjectManager {
     const desk = this.addTo(new SimpleDesk())
     this._desk = desk as SimpleDesk;
 
-    this.addRandomToRoom();
-    this.addRandomToRoom();
-    this.addRandomToRoom();
+    // this.addRandomToRoom();
+    // this.addRandomToRoom();
+    // this.addRandomToRoom();
   }
 
   private initOnDeskObjects() {
