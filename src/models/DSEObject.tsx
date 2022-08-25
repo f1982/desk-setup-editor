@@ -1,5 +1,5 @@
 import GUI from 'lil-gui';
-import { Box3, BoxHelper, Group, MathUtils, Mesh, Vector3 } from 'three';
+import { Box3, Box3Helper, BoxHelper, Group, MathUtils, Mesh, Vector3 } from 'three';
 import { GLTF, GLTFLoader } from 'three-stdlib';
 
 export enum ObjectCategory {
@@ -10,19 +10,16 @@ export enum ObjectCategory {
 
 class DSEObject extends Group {
 
-  public objType: ObjectCategory = ObjectCategory.None;
+  public _objectType: ObjectCategory = ObjectCategory.None;
 
   protected restrictMin: Vector3 = new Vector3(-2, -2, -2);
   protected restrictMax: Vector3 = new Vector3(2, 2, 2);
-  //
-  protected _constrainBox: Box3;
 
-  protected selectedIndicator: Mesh;
+
   protected _guiFolder?: GUI;
   // sub dse object, not the mesh of the current object
   protected _kids: DSEObject[] = []
-
-
+  protected _debug: boolean = false;
 
   public setGUI(gui: GUI) {
   }
@@ -91,7 +88,6 @@ class DSEObject extends Group {
     return { min: new Vector3(), max: new Vector3() }
   }
 
-
   /**
    * Update the container size
    * @param max 
@@ -102,8 +98,13 @@ class DSEObject extends Group {
     this.restrictMax = max;
   }
 
+  /**
+   * Tell all kids to know which area can be moved in
+   * Clamp kids inside the constraint area
+   * 
+   * @returns 
+   */
   public updateChildrenRestrictArea() {
-    // console.log('updateChildrenRestrictArea');
     if (this._kids.length <= 0) {
       return;
     }
@@ -113,17 +114,6 @@ class DSEObject extends Group {
       obj.clampIn();
     });
   }
-
-  /**
-   * Add this box helper will increase the click area or drag area
-   */
-  protected addBoxHelper() {
-    var helper = new BoxHelper(this, 0x1CFA49);
-    helper.update();
-    // If you want a visible bounding box
-    this.add(helper);
-  }
-
 
   protected loadGLTF(filename: string, callback?: () => void) {
     const url = process.env.PUBLIC_URL + '/static/models/' + filename;
