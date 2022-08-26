@@ -23,7 +23,6 @@ class ObjectManager {
     this.scene = scene;
     this.gui = gui;
 
-
     this.initRoom();
     this.initInRoomObjects();
     this.initOnDeskObjects();
@@ -80,13 +79,6 @@ class ObjectManager {
     this.indicator.hide();
   }
 
-  // public remove(obj: DSEObject) {
-  //   if (obj && obj.parent) {
-  //     obj.removeAllKids();
-  //     obj.parent.remove(obj);
-  //   }
-  // }
-
   public moveIndicator(obj: Object3D) {
     this.indicator.moveTo(obj);
   }
@@ -107,9 +99,7 @@ class ObjectManager {
     const desk = this.addTo(new SimpleDesk())
     this._desk = desk as SimpleDesk;
 
-    // this.addRandomToRoom();
-    // this.addRandomToRoom();
-    // this.addRandomToRoom();
+    this.addRandomToRoom();
   }
 
   private initOnDeskObjects() {

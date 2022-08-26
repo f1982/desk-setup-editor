@@ -25,7 +25,7 @@ class SimpleDesk extends DSEObject {
   constructor() {
     super();
     this.name = "desk"
-    this._debug = true;
+    this._debug = false;
 
     this.initDesktop();
     this.initLegs();
@@ -163,7 +163,7 @@ class SimpleDesk extends DSEObject {
 
     this._slotTop.rotation.copy(this._tableTop.rotation);
     this._slotTop.scale.copy(this._tableTop.scale);
-    this._slotTop.position.set(0, this._legLength + this._topThick, 0);
+    this._slotTop.position.set(0, this._legLength + this._topThick + 0.001, 0);
 
     // resize the _legs
     this._legs.forEach((leg: THREE.Mesh) => {

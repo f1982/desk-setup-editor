@@ -143,6 +143,17 @@ class DSEObject extends Group {
     );
   }
 
+  /**
+   * Get child mesh box
+   * @param mesh 
+   */
+  protected getBox(mesh: Mesh): Box3 {
+    const box = new Box3();
+    box.setFromObject(mesh);
+    // offset with object position
+    box.translate(new Vector3(-this.position.x, 0, -this.position.z));
+    return box;
+  }
 
 }
 
