@@ -21,6 +21,19 @@ class CoffeeCup extends DSEObject {
    * @returns {min:Vector3, max: Vector3}
    */
   public getRestrictArea() {
+    // return {
+    //   max: new Vector3(
+    //     this.restrictMin.x + this.mugWidth / 2,
+    //     this.restrictMin.y,
+    //     this.restrictMin.z + this.mugWidth / 2,
+    //   ),
+    //   min: new Vector3(
+    //     this.restrictMax.x - this.mugWidth / 2,
+    //     this.restrictMax.y,
+    //     this.restrictMax.z - this.mugWidth / 2,
+    //   )
+    // }
+
     if (!this.occupiedMesh) {
       // throw new Error('Cannot find occupied mesh')
       return {

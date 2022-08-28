@@ -3,6 +3,8 @@ import { Object3D, Scene } from "three";
 import { getInRoomObject, getOnTableObject } from "../models";
 import DisplayRoom from "../models/DisplayRoom";
 import DSEObject from "../models/DSEObject";
+import MonitorStand from "../models/MonitorStand";
+import Mug from "../models/Mug";
 import SimpleDesk from "../models/SimpleDesk";
 import SelectedIndicator from "./SelectedIndicator";
 
@@ -103,9 +105,22 @@ class ObjectManager {
   }
 
   private initOnDeskObjects() {
-    this.addRandomToDesk();
-    this.addRandomToDesk();
-    this.addRandomToDesk();
+
+    const monitorStand = new MonitorStand();
+    monitorStand.addEventListener('objectLoaded', ()=>{
+      console.log('monitor stand loaded:');
+      this._desk.addKid(monitorStand);
+
+      // const cup = new CoffeeCup();
+      const cup = new Mug();
+      monitorStand.addKid(cup)
+    })
+    
+
+
+    // this.addRandomToDesk();
+    // this.addRandomToDesk();
+    // this.addRandomToDesk();
   }
 }
 

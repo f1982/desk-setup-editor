@@ -1,5 +1,5 @@
 import GUI from 'lil-gui';
-import { Box3, Box3Helper, BoxHelper, Group, MathUtils, Mesh, Vector3 } from 'three';
+import { Box3, Group, MathUtils, Mesh, Vector3 } from 'three';
 import { GLTF, GLTFLoader } from 'three-stdlib';
 
 export enum ObjectCategory {
@@ -75,7 +75,7 @@ class DSEObject extends Group {
       MathUtils.randFloat(min.x, max.x),
       MathUtils.randFloat(min.y, max.y),
       MathUtils.randFloat(min.z, max.z)
-    )
+    );
   }
 
   /**
@@ -115,6 +115,12 @@ class DSEObject extends Group {
     });
   }
 
+  /**
+   * Load model from file
+   * 
+   * @param filename 
+   * @param callback 
+   */
   protected loadGLTF(filename: string, callback?: () => void) {
     const url = process.env.PUBLIC_URL + '/static/models/' + filename;
 
@@ -129,6 +135,7 @@ class DSEObject extends Group {
         this.add(...gltf.scene.children);
         callback?.();
 
+        this.dispatchEvent({type: 'objectLoaded'});
         //TODO: move to somewhere else
         this.position.copy(this.getRandomPosition());
       },
@@ -138,7 +145,7 @@ class DSEObject extends Group {
       },
       // called when loading has errors
       (error) => {
-        console.log('An error  happened');
+        console.log('An error  happened, error:', error);
       },
     );
   }

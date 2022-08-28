@@ -34,7 +34,7 @@ class SimpleDesk extends DSEObject {
     // this.layout();
     // TODO: figure out why it needs this set timeout
     setTimeout(() => {
-      this._topHeight = 2;
+      this._topHeight = 1.0;
       this.layout();
     }, 10);
   }
@@ -74,16 +74,18 @@ class SimpleDesk extends DSEObject {
    * @returns {min:Vector3, max: Vector3}
    */
   public getRestrictArea() {
+    // add space to avoid overlap
+    const padding = 0.001;
     return {
       max: new Vector3(
-        this.restrictMin.x + this._topWidth / 2,
+        this.restrictMin.x + this._topWidth / 2 + padding,
         0,
-        this.restrictMin.z + this._topHeight / 2,
+        this.restrictMin.z + this._topHeight / 2 + padding,
       ),
       min: new Vector3(
-        this.restrictMax.x - this._topWidth / 2,
+        this.restrictMax.x - this._topWidth / 2 - padding,
         0,
-        this.restrictMax.z - this._topHeight / 2,
+        this.restrictMax.z - this._topHeight / 2 - padding,
       )
     }
   }
