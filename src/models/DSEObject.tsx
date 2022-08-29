@@ -116,6 +116,25 @@ class DSEObject extends Group {
   }
 
   /**
+   * Load model by using await
+   * 
+   * @param filename string
+   * @returns 
+   */
+  protected loadModel(filename: string) {
+    const url = process.env.PUBLIC_URL + '/static/models/' + filename;
+    return new Promise((resolve, reject) => {
+      const loader = new GLTFLoader();
+      loader.load(
+        url,
+        data => resolve(data),
+        (xhr: ProgressEvent) => { },
+        reject
+      );
+    });
+  }
+
+  /**
    * Load model from file
    * 
    * @param filename 
@@ -135,7 +154,7 @@ class DSEObject extends Group {
         this.add(...gltf.scene.children);
         callback?.();
 
-        this.dispatchEvent({type: 'objectLoaded'});
+        this.dispatchEvent({ type: 'objectLoaded' });
         //TODO: move to somewhere else
         this.position.copy(this.getRandomPosition());
       },

@@ -107,14 +107,16 @@ class ObjectManager {
   private initOnDeskObjects() {
 
     const monitorStand = new MonitorStand();
-    monitorStand.addEventListener('objectLoaded', ()=>{
+    const handleObjLoaded = () => {
       console.log('monitor stand loaded:');
+      monitorStand.removeEventListener('objectLoaded', handleObjLoaded)
       this._desk.addKid(monitorStand);
 
       // const cup = new CoffeeCup();
       const cup = new Mug();
       monitorStand.addKid(cup)
-    })
+    }
+    monitorStand.addEventListener('objectLoaded', handleObjLoaded )
     
 
 
