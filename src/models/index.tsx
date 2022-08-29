@@ -1,7 +1,25 @@
 import gsap from 'gsap';
 import * as THREE from 'three';
+import { MathUtils } from 'three';
 import { GLTF, GLTFLoader } from 'three-stdlib';
+import CoffeeCup from './CoffeeCup';
+import DinningChair from './DinningChair';
+import ErgonomicChair from './ErgonomicChair';
+import Monitor24Inch from './Monitor24Inch';
+import MonitorCurved49 from './MonitorCurved49';
+import MonitorStand from './MonitorStand';
 
+
+export const InRoomObjectList = [DinningChair, ErgonomicChair]
+export const OnTableObjectList = [CoffeeCup, MonitorCurved49, MonitorStand, Monitor24Inch]
+
+const getRandom = (list: any[]) => {
+  const ObjClass = list[MathUtils.randInt(0, list.length - 1)];
+  return new ObjClass();
+}
+
+export const getOnTableObject = () => getRandom(OnTableObjectList);
+export const getInRoomObject = () => getRandom(InRoomObjectList);
 
 export const loadScene = (callback: (objects: THREE.Group) => void) => {
   // Instantiate a loader

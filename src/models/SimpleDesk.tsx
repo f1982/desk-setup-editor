@@ -1,59 +1,68 @@
 import GUI from 'lil-gui';
-import * as THREE from 'three'
-import { Group, Mesh, Vector3 } from 'three';
+import * as THREE from 'three';
+import { Box3, Box3Helper, Color, Mesh, Vector3 } from 'three';
 import DSEObject from './DSEObject';
 
 class SimpleDesk extends DSEObject {
 
-  private desktopWidth = 2;
-  private desktopDepth = 0.6;
-  private desktopHeight = 0.05
+  private _topWidth = 2;
+  private _topHeight = 1.6;
+  private _topThick = 0.05
 
-  private legWidth = 0.05;
-  private legHeight = 0.9;
-  private padding = 0.1;
+  private _legWidth = 0.05;
+  private _legLength = 0.9;
+  private _padding = 0.1;
 
-  private boardColor = 0xC26910;
-  private legsColor = 0x000000;
+  private _tableTopColor = 0xC26910;
+  private _legColor = 0x000000;
 
-  private topContainer: Group
-  private desktop: Mesh;
-  private legs: Mesh[] = [];
+  private _tableTop: Mesh;
+  private _legs: Mesh[] = [];
+
+  private _slotTop: Mesh;
+  private _boxHelper: Box3Helper;
 
   constructor() {
     super();
     this.name = "desk"
+    this._debug = false;
 
     this.initDesktop();
     this.initLegs();
+    this.initSlotPlane();
 
-    this.layout();
+    // this.layout();
+    // TODO: figure out why it needs this set timeout
+    setTimeout(() => {
+      this._topHeight = 1.0;
+      this.layout();
+    }, 10);
   }
 
   public setGUI(gui: GUI) {
     const folder = gui.addFolder('Desk');
-    folder.add(this, 'desktopWidth', 1, 3.6, 0.1).onChange((value: number) => {
-      this.desktopWidth = value;
+    folder.add(this, '_topWidth', 1, 3.6, 0.1).onChange((value: number) => {
+      this._topWidth = value;
       this.layout();
     })
-    folder.add(this, 'desktopDepth', 0.5, 2, 0.01).onChange((value: number) => {
-      this.desktopDepth = value;
+    folder.add(this, '_topHeight', 0.5, 2, 0.01).onChange((value: number) => {
+      this._topHeight = value;
       this.layout();
     })
-    folder.add(this, 'desktopHeight', 0.02, 0.1, 0.01).onChange((value: number) => {
-      this.desktopHeight = value;
+    folder.add(this, '_topThick', 0.02, 0.1, 0.01).onChange((value: number) => {
+      this._topThick = value;
       this.layout();
     })
-    folder.add(this, 'legHeight', 0.5, 1.6, 0.1).onChange((value: number) => {
-      this.legHeight = value;
+    folder.add(this, '_legLength', 0.5, 1.6, 0.1).onChange((value: number) => {
+      this._legLength = value;
       this.layout();
     })
-    folder.add(this, 'legWidth', 0.02, 0.12, 0.01).onChange((value: number) => {
-      this.legWidth = value;
+    folder.add(this, '_legWidth', 0.02, 0.12, 0.01).onChange((value: number) => {
+      this._legWidth = value;
       this.layout();
     })
-    folder.add(this, 'padding', 0.01, 0.2, 0.01).onChange((value: number) => {
-      this.padding = value;
+    folder.add(this, '_padding', 0.01, 0.2, 0.01).onChange((value: number) => {
+      this._padding = value;
       this.layout();
     })
     this._guiFolder = folder;
@@ -65,16 +74,18 @@ class SimpleDesk extends DSEObject {
    * @returns {min:Vector3, max: Vector3}
    */
   public getRestrictArea() {
+    // add space to avoid overlap
+    const padding = 0.001;
     return {
       max: new Vector3(
-        this.restrictMin.x + this.desktopWidth / 2,
+        this.restrictMin.x + this._topWidth / 2 + padding,
         0,
-        this.restrictMin.z + this.desktopDepth / 2,
+        this.restrictMin.z + this._topHeight / 2 + padding,
       ),
       min: new Vector3(
-        this.restrictMax.x - this.desktopWidth / 2,
+        this.restrictMax.x - this._topWidth / 2 - padding,
         0,
-        this.restrictMax.z - this.desktopDepth / 2,
+        this.restrictMax.z - this._topHeight / 2 - padding,
       )
     }
   }
@@ -86,20 +97,7 @@ class SimpleDesk extends DSEObject {
    * @returns {min, max}
    */
   public getContainerBox() {
-    return {
-      min: new Vector3(
-        - this.desktopWidth / 2,
-        // 0,
-        this.legHeight + this.desktopHeight,
-        - this.desktopDepth / 2
-      ),
-      max: new Vector3(
-        + this.desktopWidth / 2,
-        // 0,
-        this.legHeight + this.desktopHeight,
-        + this.desktopDepth / 2
-      )
-    }
+    return this.getBox(this._slotTop);
   }
 
   /**
@@ -115,59 +113,91 @@ class SimpleDesk extends DSEObject {
 
   private initDesktop() {
     const geo = new THREE.BoxGeometry(1, 1, 1);
-    const material = new THREE.MeshLambertMaterial({ color: this.boardColor });
-    this.desktop = new THREE.Mesh(geo, material);
+    const material = new THREE.MeshLambertMaterial({ color: this._tableTopColor });
+    this._tableTop = new THREE.Mesh(geo, material);
+    this.add(this._tableTop);
+  }
 
-    this.add(this.desktop);
+  private initSlotPlane() {
+    const geometry = new THREE.PlaneGeometry(1, 1);
+    const material = new THREE.MeshBasicMaterial({ color: 0xffff00, side: THREE.DoubleSide });
+    const plane = new THREE.Mesh(geometry, material);
+    this.add(plane);
+    this._slotTop = plane;
+
+    if (this._debug) {
+      const helper = new THREE.Box3Helper(this.getBox(this._slotTop), new Color(0xff0000));
+      this._boxHelper = helper;
+      this.add(helper);
+    }
   }
 
   private initLegs() {
     for (let i = 0; i < 4; i++) {
       const geo = new THREE.BoxGeometry(1, 1, 1);
-      const material = new THREE.MeshLambertMaterial({ color: this.legsColor });
+      const material = new THREE.MeshLambertMaterial({ color: this._legColor });
       const leg = new THREE.Mesh(geo, material);
 
       leg.rotation.set(Math.PI / 2, 0, 0)
       this.add(leg);
-      this.legs.push(leg);
+      this._legs.push(leg);
     }
   }
 
+  /**
+   * Get child mesh box
+   * @param mesh 
+   */
+  getBox(mesh: Mesh): Box3 {
+    const box = new THREE.Box3();
+    box.setFromObject(mesh);
+    // offset with object position
+    box.translate(new Vector3(-this.position.x, 0, -this.position.z));
+    return box;
+  }
+
   protected layout() {
-    this.desktop.rotation.set(Math.PI / 2, 0, 0)
-    // this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0)
-
+    this._tableTop.rotation.set(Math.PI / 2, 0, 0)
     // resize the desk board
-    this.desktop.scale.set(this.desktopWidth, this.desktopDepth, this.desktopHeight);
+    this._tableTop.scale.set(this._topWidth, this._topHeight, this._topThick);
     // set position of the desk board
-    this.desktop.position.set(0, this.legHeight + this.desktopHeight / 2, 0);
+    this._tableTop.position.set(0, this._legLength + this._topThick / 2, 0);
 
-    // resize the legs
-    this.legs.forEach((leg: THREE.Mesh) => {
-      leg.scale.set(this.legWidth, this.legWidth, this.legHeight);
+    this._slotTop.rotation.copy(this._tableTop.rotation);
+    this._slotTop.scale.copy(this._tableTop.scale);
+    this._slotTop.position.set(0, this._legLength + this._topThick + 0.001, 0);
+
+    // resize the _legs
+    this._legs.forEach((leg: THREE.Mesh) => {
+      leg.scale.set(this._legWidth, this._legWidth, this._legLength);
     });
 
-    // set positions of the legs
-    this.legs[0].position.set(
-      -this.desktopWidth / 2 + this.padding + this.legWidth / 2,
-      this.legHeight / 2,
-      -this.desktopDepth / 2 + this.padding + this.legWidth / 2
+    // set positions of the _legs
+    this._legs[0].position.set(
+      -this._topWidth / 2 + this._padding + this._legWidth / 2,
+      this._legLength / 2,
+      -this._topHeight / 2 + this._padding + this._legWidth / 2
     );
-    this.legs[1].position.set(
-      this.desktopWidth / 2 - this.padding - this.legWidth / 2,
-      this.legHeight / 2,
-      -this.desktopDepth / 2 + this.padding + this.legWidth / 2
+    this._legs[1].position.set(
+      this._topWidth / 2 - this._padding - this._legWidth / 2,
+      this._legLength / 2,
+      -this._topHeight / 2 + this._padding + this._legWidth / 2
     );
-    this.legs[2].position.set(
-      -this.desktopWidth / 2 + this.padding + this.legWidth / 2,
-      this.legHeight / 2,
-      this.desktopDepth / 2 - this.padding - this.legWidth / 2
+    this._legs[2].position.set(
+      -this._topWidth / 2 + this._padding + this._legWidth / 2,
+      this._legLength / 2,
+      this._topHeight / 2 - this._padding - this._legWidth / 2
     );
-    this.legs[3].position.set(
-      this.desktopWidth / 2 - this.padding - this.legWidth / 2,
-      this.legHeight / 2,
-      this.desktopDepth / 2 - this.padding - this.legWidth / 2
+    this._legs[3].position.set(
+      this._topWidth / 2 - this._padding - this._legWidth / 2,
+      this._legLength / 2,
+      this._topHeight / 2 - this._padding - this._legWidth / 2
     );
+
+    // draw the slot
+    if (this._debug) {
+      this._boxHelper.box = this.getBox(this._slotTop);
+    }
 
     this.updateChildrenRestrictArea();
   }

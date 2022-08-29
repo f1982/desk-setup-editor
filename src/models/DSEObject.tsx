@@ -1,5 +1,6 @@
 import GUI from 'lil-gui';
-import { BoxHelper, Group, MathUtils, Mesh, Vector3 } from 'three';
+import { Box3, Group, MathUtils, Mesh, Vector3 } from 'three';
+import { GLTF, GLTFLoader } from 'three-stdlib';
 
 export enum ObjectCategory {
   Movable = "Movable",
@@ -9,15 +10,16 @@ export enum ObjectCategory {
 
 class DSEObject extends Group {
 
-  public objType: ObjectCategory = ObjectCategory.None;
+  public _objectType: ObjectCategory = ObjectCategory.None;
 
   protected restrictMin: Vector3 = new Vector3(-2, -2, -2);
   protected restrictMax: Vector3 = new Vector3(2, 2, 2);
 
-  protected selectedIndicator: Mesh;
-  protected _guiFolder?: GUI;
-  protected _kids: DSEObject[] = []
 
+  protected _guiFolder?: GUI;
+  // sub dse object, not the mesh of the current object
+  protected _kids: DSEObject[] = []
+  protected _debug: boolean = false;
 
   public setGUI(gui: GUI) {
   }
@@ -26,14 +28,22 @@ class DSEObject extends Group {
     this._guiFolder?.destroy();
   }
 
-  public get kids () {
+  public get kids() {
     return this._kids;
   }
-  
+
   public addKid(kid: DSEObject) {
     this._kids.push(kid);
     this.add(kid);
     this.updateChildrenRestrictArea();
+  }
+
+  public removeAllKids() {
+    if (this._kids.length < 1) return;
+    this._kids.forEach(item => {
+      this.remove(item);
+    })
+    this._kids.length = 0;
   }
 
   /**
@@ -45,7 +55,7 @@ class DSEObject extends Group {
   public getRestrictArea(): { min: Vector3, max: Vector3 } {
     return { min: new Vector3(), max: new Vector3() }
   }
-  
+
   /**
    * clamp object inside the constraint area
    */
@@ -65,7 +75,7 @@ class DSEObject extends Group {
       MathUtils.randFloat(min.x, max.x),
       MathUtils.randFloat(min.y, max.y),
       MathUtils.randFloat(min.z, max.z)
-    )
+    );
   }
 
   /**
@@ -78,7 +88,6 @@ class DSEObject extends Group {
     return { min: new Vector3(), max: new Vector3() }
   }
 
-  
   /**
    * Update the container size
    * @param max 
@@ -88,26 +97,88 @@ class DSEObject extends Group {
     this.restrictMin = min;
     this.restrictMax = max;
   }
-  
+
+  /**
+   * Tell all kids to know which area can be moved in
+   * Clamp kids inside the constraint area
+   * 
+   * @returns 
+   */
   public updateChildrenRestrictArea() {
-    // console.log('updateChildrenRestrictArea');
-    if(this._kids.length<=0){
+    if (this._kids.length <= 0) {
       return;
     }
     const { min, max } = this.getContainerBox();
     this._kids.forEach(obj => {
       obj.updateRestrictedArea(min, max);
+      obj.clampIn();
     });
   }
 
   /**
-   * Add this box helper will increase the click area or drag area
+   * Load model by using await
+   * 
+   * @param filename string
+   * @returns 
    */
-  protected addBoxHelper() {
-    var helper = new BoxHelper(this, 0x1CFA49);
-    helper.update();
-    // If you want a visible bounding box
-    this.add(helper);
+  protected loadModel(filename: string) {
+    const url = process.env.PUBLIC_URL + '/static/models/' + filename;
+    return new Promise((resolve, reject) => {
+      const loader = new GLTFLoader();
+      loader.load(
+        url,
+        data => resolve(data),
+        (xhr: ProgressEvent) => { },
+        reject
+      );
+    });
+  }
+
+  /**
+   * Load model from file
+   * 
+   * @param filename 
+   * @param callback 
+   */
+  protected loadGLTF(filename: string, callback?: () => void) {
+    const url = process.env.PUBLIC_URL + '/static/models/' + filename;
+
+    // Instantiate a loader
+    const loader = new GLTFLoader();
+    // Load a glTF resource
+    loader.load(
+      // resource URL
+      url,
+      // called when the resource is loaded
+      (gltf: GLTF) => {
+        this.add(...gltf.scene.children);
+        callback?.();
+
+        this.dispatchEvent({ type: 'objectLoaded' });
+        //TODO: move to somewhere else
+        this.position.copy(this.getRandomPosition());
+      },
+      // called while loading is progressing
+      (xhr: ProgressEvent) => {
+        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
+      },
+      // called when loading has errors
+      (error) => {
+        console.log('An error  happened, error:', error);
+      },
+    );
+  }
+
+  /**
+   * Get child mesh box
+   * @param mesh 
+   */
+  protected getBox(mesh: Mesh): Box3 {
+    const box = new Box3();
+    box.setFromObject(mesh);
+    // offset with object position
+    box.translate(new Vector3(-this.position.x, 0, -this.position.z));
+    return box;
   }
 
 }

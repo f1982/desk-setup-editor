@@ -96,7 +96,7 @@ class GlobalController extends EventDispatcher {
     // TODO: remove listeners
     this.rayControl.addEventListener(SelectObjectEvent, (evt) => {
 
-      if (this.selected && this.selected !== evt.selected) {
+      if (this.selected) {
         this.selected.removeGUI();
       }
 
