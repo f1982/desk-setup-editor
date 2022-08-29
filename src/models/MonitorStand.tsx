@@ -15,7 +15,7 @@ class MonitorStand extends DSEObject {
   constructor() {
     super();
 
-    this._debug = true;
+    this._debug = false;
     
     this.loadGLTF('monitor-stand.gltf', () => {
       console.log(this.children);

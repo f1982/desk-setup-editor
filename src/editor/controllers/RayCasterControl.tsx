@@ -1,36 +1,44 @@
-import { Camera, EventDispatcher, Mesh, Object3D, Raycaster, Renderer, Scene, Vector2 } from 'three'
+import { Camera, EventDispatcher, Mesh, Raycaster, Renderer, Scene, Vector2 } from 'three';
 import DSEObject from '../../models/DSEObject';
 
-/**
- * Get all the meshes that can be interacted with 
- * 
- * @param scene current scene
- * @returns mesh array
- */
-function getMovableMeshes(scene: THREE.Scene) {
-  //find in room objects
-  const interactiveMeshes: any[] = [];
+function findAllMeshes(scene: Scene): Mesh[] {
 
-  const room = scene.children.find((item: THREE.Object3D) => item.name === 'displayRoom');
-  const roomMeshes = room?.children.filter(item => (item instanceof Mesh));
-  if (roomMeshes){
-    interactiveMeshes.push(...roomMeshes);
+  const allMesh: Mesh[] = [];
+
+  const getMeshes = (obj: DSEObject) => {
+    const meshes: Mesh[] = obj.children.filter(item => (item instanceof Mesh)) as Mesh[];
+    allMesh.push(...meshes)
+    obj.kids.forEach((subObj: DSEObject) => {
+      getMeshes(subObj)
+    });
   }
 
-  (room as DSEObject).kids.forEach(inRoomObj => {
-    // put all mesh inside dse object into list
-    const objInnerMeshes = inRoomObj.children.filter(item => (item instanceof Mesh));
-    interactiveMeshes.push(...objInnerMeshes);
+  const room = scene.children.find(item => item.name === 'displayRoom');
+  if (room){
+    getMeshes(room as DSEObject);
+  }
 
-    // in room dse object has kids
-    if ((inRoomObj as DSEObject).kids) {
-      (inRoomObj as DSEObject).kids.forEach((item) => {
-        const subObjMeshes = item.children.filter(subItem => (subItem instanceof Mesh));
-        interactiveMeshes.push(...subObjMeshes);
-      })
-    }
-  });
-  return interactiveMeshes;
+  return allMesh;
+}
+
+function findAllDSEObjects(scene: Scene): DSEObject[] {
+
+  const allObjects: DSEObject[] = [];
+
+  const getObject = (obj: DSEObject) => {
+    allObjects.push(...obj.kids);
+    obj.kids.forEach((subObj: DSEObject) => {
+      getObject(subObj)
+    });
+  }
+  
+  const room = scene.children.find(item => item.name === 'displayRoom');
+  if (room){
+    getObject(room as DSEObject);
+  }
+  
+  console.log('allObjects', allObjects);
+  return allObjects;
 }
 
 export const SelectObjectEvent = "selectObjectEvent";
@@ -78,8 +86,10 @@ class RayCasterControl extends EventDispatcher {
     this.rayCaster!.setFromCamera(this.rayPointer, this.camera!);
 
     // get and set the object can be interacted with
-    const selectableElements = getMovableMeshes(this.scene!);
-    const intersects = this.rayCaster!.intersectObjects<Object3D>(selectableElements, true);
+    // const selectableElements = getMovableMeshes(this.scene!);
+    // get and set the object can be interacted with
+    const selectableElements = findAllDSEObjects(this.scene!);
+    const intersects = this.rayCaster!.intersectObjects<DSEObject>(selectableElements, true);
 
     if (
       intersects.length > 0 &&
