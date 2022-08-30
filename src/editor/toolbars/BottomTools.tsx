@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import AddIcon from '../../component/icons/AddIcon';
 import BugIcon from '../../component/icons/BugIcon';
 import CameraNextIcon from '../../component/icons/CameraNextIcon';
@@ -11,7 +11,7 @@ export enum ButtonIds {
   FocusMonitor = 'FocusMonitor'
 }
 
-interface BottomToolsProps {
+export interface BottomToolsProps {
   callback: (buttonId: string) => void
 }
 const BottomTools: React.FC<BottomToolsProps> = ({ callback }) => {
