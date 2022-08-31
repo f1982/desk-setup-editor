@@ -1,6 +1,7 @@
+import GUI from 'lil-gui';
 import Stats from 'stats.js';
-import { AmbientLight, BoxGeometry, Clock, Color, DirectionalLight, Mesh, MeshLambertMaterial, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three';
-import { EffectComposer, RenderPass } from 'three-stdlib';
+import { AmbientLight, BoxGeometry, Clock, Color, DirectionalLight, GridHelper, Mesh, MeshLambertMaterial, Object3D, PerspectiveCamera, Scene, Vector3, WebGLRenderer } from 'three';
+import { EffectComposer, OrbitControls, RenderPass } from 'three-stdlib';
 
 export class ThreeSceneBase {
   protected clientWidth: number;
@@ -14,12 +15,13 @@ export class ThreeSceneBase {
   protected clock: Clock;
   protected camera: PerspectiveCamera;
   private stats: Stats;
+  protected _gui: GUI;
 
   protected box: Mesh;
 
-  protected _initFun: (scene: Scene) => void;
+  protected _initFun: (scene: Scene, gui: GUI) => void;
 
-  set initFun(fun: (scene: Scene) => void) {
+  set initFun(fun: (scene: Scene, gui:GUI) => void) {
     this._initFun = fun
   }
 
@@ -37,15 +39,20 @@ export class ThreeSceneBase {
     this.mountPoint = mountPoint;
 
     this.initSetups();
-    this.initObjects();
+    this.initControl();
 
-    this._initFun?.(this.scene);
+    // this.initObjects();
+
+    this._initFun?.(this.scene, this._gui);
   }
 
   initSetups() {
     const scene = new Scene();
     scene.background = new Color('#cccccc');
     this.scene = scene;
+
+    const grid = new GridHelper(10, 50, 0xffffff, 0xffffff);
+    this.scene.add(grid);
 
     const ambientLight = new AmbientLight(0xffffff, 0.66);
     ambientLight.position.set(0, 3, 0);
@@ -57,7 +64,7 @@ export class ThreeSceneBase {
 
     const camera = new PerspectiveCamera(50, this.clientWidth / this.clientHeight, 0.1, 1000);
     // const camera = new OrthographicCamera(75, this.clientWidth / this.clientHeight, 0.1, 1000);
-    camera.position.set(2, 1, -2);
+    camera.position.set(5, 3, -5);
     camera.lookAt(new Vector3(0, 0, 0));
     // camera.rotation.set(0, 0, 0)
     this.camera = camera;
@@ -82,6 +89,16 @@ export class ThreeSceneBase {
     const stats = new Stats();
     stats.showPanel(0);
     this.stats = stats;
+  }
+
+  protected initControl() {
+    this._gui = new GUI({ width: 210 });
+    
+    const orbit = new OrbitControls(this.camera, this.renderer.domElement);
+    orbit.enablePan = false;
+    orbit.enableDamping = true;
+    orbit.update();
+    // orbit.addEventListener('change', () => { });
   }
 
   protected initObjects() {
@@ -114,11 +131,11 @@ export class ThreeSceneBase {
   }
 
   protected render() {
-    this.box.rotation.set(
-      this.box.rotation.x + 0.01,
-      this.box.rotation.y + 0.01,
-      this.box.rotation.z + 0.01
-    )
+    // this.box.rotation.set(
+    //   this.box.rotation.x + 0.01,
+    //   this.box.rotation.y + 0.01,
+    //   this.box.rotation.z + 0.01
+    // )
   };
 
   public dispose() {

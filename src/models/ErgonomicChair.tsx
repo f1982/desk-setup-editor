@@ -3,7 +3,6 @@ import DSEObject from './DSEObject';
 
 class ErgonomicChair extends DSEObject {
 
-  mugWidth: number = 0.2;
   occupiedMesh?: Object3D;
 
 
@@ -12,7 +11,7 @@ class ErgonomicChair extends DSEObject {
 
     this.loadGLTF('ergonomic-chair.gltf', () => {
       this.occupiedMesh = this.children.find(item => item.name === 'occupied');
-      this.occupiedMesh!.visible = false;
+      // this.occupiedMesh!.visible = false;
     })
   }
 
@@ -36,14 +35,13 @@ class ErgonomicChair extends DSEObject {
     return {
       max: new Vector3(
         this.restrictMin.x + measure.x / 2,
-        this.restrictMin.y,
+        0,
         this.restrictMin.z + measure.z / 2,
       ),
       min: new Vector3(
         this.restrictMax.x - measure.x / 2,
-        this.restrictMax.y,
-        this
-        .restrictMax.z - measure.z / 2,
+        0,
+        this.restrictMax.z - measure.z / 2,
       )
     }
   }

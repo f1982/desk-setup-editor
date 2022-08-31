@@ -11,12 +11,14 @@ const ThreeAdapter: React.FC<ThreeAdapterProps> = ({ three }) => {
   useEffect(() => {
     if (canvasRef.current) {
       const { clientWidth, clientHeight } = canvasRef.current;
+      // init scene
       three.init({
         mountPoint: canvasRef.current,
         width: clientWidth,
         height: clientHeight,
       })
 
+      // start animation looping
       three.startAnimationLoop();
       return () => {
         three.dispose();
