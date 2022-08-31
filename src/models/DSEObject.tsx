@@ -156,7 +156,7 @@ class DSEObject extends Group {
 
         this.dispatchEvent({ type: 'objectLoaded' });
         //TODO: move to somewhere else
-        this.position.copy(this.getRandomPosition());
+        // this.position.copy(this.getRandomPosition());
       },
       // called while loading is progressing
       (xhr: ProgressEvent) => {
