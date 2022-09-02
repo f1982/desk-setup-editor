@@ -53,7 +53,8 @@ class DSEObject extends Group {
    * @returns 
    */
   public getRestrictArea(): { min: Vector3, max: Vector3 } {
-    return { min: new Vector3(), max: new Vector3() }
+    return { min: this.restrictMin, max: this.restrictMax } 
+    // return { min: new Vector3(), max: new Vector3() }
   }
 
   /**
@@ -84,12 +85,19 @@ class DSEObject extends Group {
    * 
    * @returns {min, max}
    */
-  public getContainerBox() {
-    return { min: new Vector3(), max: new Vector3() }
+  public getContainerBox():Box3 {
+    // return {
+    //   min: new Vector3(0.01, 0.01, 0.01),
+    //   max: new Vector3(0.02, 0.02, 0.02)
+    // }
+    const bbox = new Box3()
+    bbox.setFromCenterAndSize(new Vector3(0.01, 0.01, 0.01), new Vector3(0.02, 0.02, 0.02));
+    return bbox;
   }
 
   /**
-   * Update the container size
+   * Update the area which this object can be moved around
+   * This will be used for object.position.clamp
    * @param max 
    * @param min 
    */
@@ -111,6 +119,7 @@ class DSEObject extends Group {
     const { min, max } = this.getContainerBox();
     this._kids.forEach(obj => {
       obj.updateRestrictedArea(min, max);
+      // move object to restrict area
       obj.clampIn();
     });
   }
