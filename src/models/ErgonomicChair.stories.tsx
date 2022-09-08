@@ -11,18 +11,12 @@ export default {
 };
 
 export const Demos = () => {
-  useEffect(() => {
-
-    return () => {
-      console.log('unmount...')
-    }
-  }, []);
-
   const getScene = () => {
     const threeScene = new ThreeSceneBase();
-    threeScene.initFun = (scene: Scene, gui: GUI) => {
+    
+    // add additional objects after scene created
+    threeScene.addObject = (scene: Scene, gui: GUI) => {
       const desk = new ErgonomicChair();
-      // desk.setGUI(gui);
       scene.add(desk);
     }
     return threeScene;

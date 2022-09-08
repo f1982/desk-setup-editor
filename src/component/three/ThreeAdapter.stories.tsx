@@ -10,7 +10,9 @@ export default {
 
 export const Demos = () => {
   const threeScene = new ThreeSceneBase();
-  threeScene.initFun = (scene: Scene, gui: GUI) => {
+  
+  // add additional objects after scene created
+  threeScene.addObject = (scene: Scene, gui: GUI) => {
     // const geo = new BoxGeometry(1, 1, 1);
     // const material = new MeshLambertMaterial({ color: 0xff0000 });
     // const box = new Mesh(geo, material);
@@ -18,7 +20,7 @@ export const Demos = () => {
   }
 
   return (
-    < div >
+    <div>
       <ThreeAdapter three={threeScene} />
     </div >
   )
