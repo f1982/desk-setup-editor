@@ -3,7 +3,9 @@ import { saveAs } from 'file-saver';
 import gsap from 'gsap';
 import * as THREE from 'three';
 import { Box3, Mesh, Quaternion, Vector3 } from 'three';
+import { STLExporter } from 'three-stdlib';
 import DSEObject from '../models/DSEObject';
+// import { STLExporter } from 'three/examples/jsm/exporters/STLExporter';
 
 function findType(scene: THREE.Group, type: string, name: string) {
   return scene.children.find((child) => (child.type === type && child.name === name));
@@ -31,7 +33,7 @@ const VecZero = () => new Vector3(0, 0, 0);
 
 // Use FileSaver.js 'saveAs' function to save the string
 async function saveSTL(scene: THREE.Object3D, name: string) {
-  const { STLExporter } = await import('three/examples/jsm/exporters/STLExporter');
+  // const { STLExporter } = await import('three/examples/jsm/exporters/STLExporter');
   // const { STLExporter } = await import('three-stdlib/exporters/STLExporter');
   const exporter = new STLExporter();
   const stlString = exporter.parse(scene, { binary: false });
