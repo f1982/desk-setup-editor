@@ -1,8 +1,8 @@
 import React from 'react';
-import AddIcon from '../../component/icons/AddIcon';
-import BugIcon from '../../component/icons/BugIcon';
-import CameraNextIcon from '../../component/icons/CameraNextIcon';
-import ResetCameraIcon from '../../component/icons/CameraResetIcon';
+import AddIcon from '../icons/AddIcon';
+import BugIcon from '../icons/BugIcon';
+import CameraNextIcon from '../icons/CameraNextIcon';
+import ResetCameraIcon from '../icons/CameraResetIcon';
 import './BottomTools.scss';
 
 export enum ButtonIds {

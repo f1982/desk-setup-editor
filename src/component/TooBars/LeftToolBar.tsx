@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import ResetCameraIcon from '../../component/icons/CameraNextIcon';
+import ResetCameraIcon from '../icons/CameraNextIcon';
 import './LeftToolBar.scss'
 
 const ToolBar: React.FC<{ callback: () => void }> = ({ callback }) => {

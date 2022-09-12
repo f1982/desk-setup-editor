@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import ThreeCanvas from '../EditScene';
-import BottomTools, { ButtonIds } from '../toolbars/BottomTools';
-import LeftToolBar from '../toolbars/LeftToolBar';
+import BottomTools, { ButtonIds } from '../../component/TooBars/BottomTools';
+import LeftToolBar from '../../component/TooBars/LeftToolBar';
 import './ThreeWrapper.scss';
 
 
