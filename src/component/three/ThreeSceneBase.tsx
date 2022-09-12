@@ -88,7 +88,6 @@ export class ThreeSceneBase {
 
     const stats = new Stats();
     stats.showPanel(0);
-    this.stats = stats;
   }
 
   protected initControl() {
