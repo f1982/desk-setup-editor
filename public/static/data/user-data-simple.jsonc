@@ -22,31 +22,13 @@
       "items": [
         {
           "id": "002",
-          "name": "ikea-desk",
-          // attached object id
-          "attached": {
-            "object": "0023",
-            "area": "desk"
-          },
+          "parentId": "0022",
           "color": "",
           "material": "",
-          "transform": {
-            "position": {
-              "x": 1,
-              "y": 2,
-              "z": 3
-            },
-            "rotation": {
-              "x": 1,
-              "y": 2,
-              "z": 3
-            },
-            "scale": {
-              "x": 1,
-              "y": 2,
-              "z": 3
-            }
-          }
+          "state": "s1",
+          "position": "1.2344,2.1222,2.430",
+          "rotation": "1.2344,2.1222,2.430",
+          "scale": "1.2344,2.1222,2.430"
         },
         {
           "id": "002",

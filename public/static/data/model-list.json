@@ -66,6 +66,19 @@
           "preview": "lg-monitor-34.png",
           "name": "LG 34 monitor",
           "link": "",
+          "image": "lg-34-monitor.png",
+          "states": [
+            "s1",
+            "s2",
+            "s3"
+          ],
+          "slots": [
+            "stand"
+          ],
+          "attachable": [
+            "desktop",
+            "monitor-stand"
+          ],
           "specs": [
             {
               "key": "size",
@@ -75,10 +88,6 @@
               "key": "color",
               "value": "black"
             }
-          ],
-          "attachable": [
-            "desktop",
-            "monitor-stand"
           ]
         }
       ]
@@ -99,6 +108,11 @@
           "preview": "logitech-mx-master.png",
           "name": "Logitech MX Master",
           "link": "",
+          "states": "vertical|flat",
+          "attachable": [
+            "desktop|flat",
+            "shelf_slot|vertical"
+          ],
           "specs": [
             {
               "key": "size",
@@ -162,15 +176,15 @@
       "config": {},
       "list": []
     },
-    "computer":{},
-    "phone&tablet":{},
-    "laptop":{},
-    "decor":{},
-    "mug":{},
-    "pad":{},
-    "stationary":{},
-    "timer":{},
-    "photo":{},
-    "plants":{}
+    "computer": {},
+    "phone&tablet": {},
+    "laptop": {},
+    "decor": {},
+    "mug": {},
+    "pad": {},
+    "stationary": {},
+    "timer": {},
+    "photo": {},
+    "plants": {}
   }
 }
